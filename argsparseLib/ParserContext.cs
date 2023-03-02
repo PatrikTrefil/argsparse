@@ -9,18 +9,18 @@ public abstract class ParserContext
 public class ConsoleContext
 {
 
-    // TODO
     public void ShowHelp()
     {
 
     }
 
-    public void Println(object message)
-    {
+    public void ShowUsage() => ShowHelp();
 
+    public void Println(string message)
+    {
     }
 
-    public void PrintError(object message)
+    public void PrintError(string message)
     {
 
     }

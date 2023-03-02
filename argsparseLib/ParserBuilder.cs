@@ -5,24 +5,50 @@ namespace Argsparse;
 public class ParserBuilder<C>
     where C : ParserContext
 {
+    public string[] Help { get; }
 
-    public ParserBuilder<C> WithHelp(params string[] help)
+    public ParserBuilder(Func<C> contextFactory)
+    {
+    }
+
+    public ParserBuilder(C contextInstance)
+    {
+    }
+
+    public ParserBuilder<C> WithHelpText(params string[] help)
     {
         return this;
     }
 
-    public ParserBuilder<C2> WithCommand<C2>(string name)
-        where C2 : SubcommandParserContext
+    public ParserBuilder<C> WithoutDefaultHelpOption()
     {
-        return new ParserBuilder<C2>();
+        return this;
     }
+    
+    /// <summary>
+    /// Use this option instead to show help.
+    /// </summary>
+    /// <param name="option"></param>
+    /// <returns></returns>
+    public ParserBuilder<C> WithHelpOption(OptionBuilder<C> helpOption)
+    {
+        return this;
+    }
+
+    // We decided to not allow fluent adding of subparsers
+    // as not permit confusing multiline monstrosities
+    //public ParserBuilder<C2> WithCommand<C2>(string name)
+    //    where C2 : SubcommandParserContext
+    //{
+    //    return new ParserBuilder<C2>();
+    //}
 
     public ParserBuilder<C> WithCommand<C2>(ParserBuilder<C2> command)
         where C2 : SubcommandParserContext
     {
         return this;
     }
-
+    
     public OptionBuilder<C> WithOption(params string[] names)
     {
         return new OptionBuilder<C>(this);
@@ -33,47 +59,19 @@ public class ParserBuilder<C>
         return this;
     }
 
-    public ArgumentBuilder<C, V> WithArgument<V>(string name)
+    public CustomArgumentBuilder<C, V> WithArgument<V>(string name)
     {
-        return new ArgumentBuilder<C, V>(this);
+        return new CustomArgumentBuilder<C, V>(this);
     }
 
-    public ParserBuilder<C> WithArgument<V>(ArgumentBuilder<C, V> argument)
+    public ParserBuilder<C> WithArgument<V>(CustomArgumentBuilder<C, V> argument)
     {
         return this;
     }
 
-    public ParserBuilder<C> Does(Action<C> action)
+    public ParserBuilder<C> Runs(Action<C> action)
     {
         return this;
-    }
-
-
-    protected ParserBuilder<C>? parentBuilder;
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <exception cref="InvalidBuilderContextTraversalException">
-    /// 
-    /// </exception>
-    /// <returns></returns>
-    public ParserBuilder<C> Furthermore()
-    {
-        /* Information whether there is a parent parser cannot be 
-         * added in a subtype - the parent methods would have bad 
-         * return types, eg. if we had SubparserBuilder and called
-         * WithOption on it, we would get return value of Parserbuilder
-         * and could not call Furthermore on it.
-         */
-        /* Moreover, the information, whether we have a subparser, cannot 
-         * be part of the type - we could have something like OptionBuilder
-         * and FluentOptionBuilder with a parent, however this would result
-         * in code duplication and bad mantainability.
-         */
-
-        return this.parentBuilder;
     }
 
     public Parser<C> Build()
@@ -81,12 +79,11 @@ public class ParserBuilder<C>
         return null;
     }
 
+        // convenience method
     public ParserResult Parse(string input)
     {
-        // convenience method
         var parser = this.Build();
         return parser.Parse(input);
     }
-
-    // todo add other convenience methods
+    
 }

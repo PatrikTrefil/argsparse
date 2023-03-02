@@ -2,47 +2,46 @@
 
 namespace Argsparse;
 
-public class ArgumentBuilder<C, V>
+public class ArgumentBuilder<C> : CustomArgumentBuilder<C, string>
     where C : ParserContext
 {
-    ParserBuilder<C>? parentParser;
-
-    public ArgumentBuilder(ParserBuilder<C> parentParser)
+    private ArgumentBuilder(ParserBuilder<C> parentParser) : base(parentParser) { }
+    
+    protected ArgumentBuilder() : base() { }
+    
+    public new static ArgumentBuilder<C> Create()
     {
-        this.parentParser = parentParser;
+        return null;
     }
 
-    public ArgumentBuilder()
+    public new static ArgumentBuilder<C> Create(ParserBuilder<C> parentParser)
     {
-        this.parentParser = null;
+        return null;
     }
 
 
-    public ArgumentBuilder<C, V> WithHelp(string help)
+    public new ArgumentBuilder<C> WithHelpText(string help)
     {
-        return this;
+        return (base.WithHelpText(help) as ArgumentBuilder<C>)!;
     }
 
-    public ArgumentBuilder<C, V> Default(V defaultValue)
+    public new ArgumentBuilder<C> Default(string defaultValue)
     {
-        return this;
+        return (base.Default(defaultValue) as ArgumentBuilder<C>)!;
     }
 
-    public ArgumentBuilder<C, V> Optional()
+    public new ArgumentBuilder<C> Name(string name)
     {
-        return this;
+        return (base.Name(name) as ArgumentBuilder<C>)!;
     }
 
-    public ArgumentBuilder<C, V> Does(Action<C, V> action)
+    public new ArgumentBuilder<C> Optional()
     {
-        return this;
+        return (base.Optional() as ArgumentBuilder<C>)!;
     }
 
-    /// <exception cref="InvalidBuilderContextTraversalException">
-    /// 
-    /// </exception>
-    public ParserBuilder<C> And()
+    public new ArgumentBuilder<C> Does(Action<C, string> action)
     {
-        return this.parentParser;
+        return (base.Does(action) as ArgumentBuilder<C>)!;
     }
 }
