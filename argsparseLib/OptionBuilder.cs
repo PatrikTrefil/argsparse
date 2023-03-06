@@ -23,7 +23,7 @@ public class OptionBuilder<C>
     {
     }
 
-    public OptionBuilder<C> WithHelp(string help)
+    public OptionBuilder<C> WithHelpText(string help)
     {
         return this;
     }
@@ -35,10 +35,15 @@ public class OptionBuilder<C>
 
     // We decided to let value conversion up to the consumer
     // Except for some predefined class
-    //public OptionBuilder<C, V> WithValue<V>()
+    //public ValueOptionBuilder<C, V> WithValue<V>()
     //{
-    //    return new OptionBuilder<C, V>(this);
+    //    return new ValueOptionBuilder<C, V>(this);
     //}
+
+    public ValueOptionBuilder<C> WithValue()
+    {
+        return new ValueOptionBuilder<C>(this);
+    }
 
     public OptionBuilder<C> Does(Action<C> action)
     {
