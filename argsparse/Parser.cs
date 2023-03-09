@@ -52,16 +52,21 @@ public record ArgumentMultiplicity
 
 public interface IArgument<C>
 {
-    public string[]? Names { get; set; }
+    public string Name { get; set; }
     public string Description { get; set; }
+    /// <summary>
+    /// Value placeholder will be used in synopsis e.g. program [options] <value-placeholder> ...
+    /// </summary>
+    public string ValuePlaceholder { get; set; }
     public ArgumentMultiplicity Multiplicity { get; set; }
     internal void Process(C config, string value);
 }
 
 public sealed record Argument<C, V> : IArgument<C>
 {
-    public string[]? Names { get; set; }
+    public string Name { get; set; } = "";
     public string Description { get; set; } = "";
+    public string ValuePlaceholder { get; set; } = "";
     public Func<string, V> Converter { get; set; } = (strVal) => default;
     public Action<C, V> Action { get; set; } = (conf, val) => { };
     public ArgumentMultiplicity Multiplicity { get; set; } = new ArgumentMultiplicity.SpecificCount(Number: 1, IsRequired: true);
