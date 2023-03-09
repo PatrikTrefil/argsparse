@@ -133,7 +133,7 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
         System.Console.WriteLine();
         System.Console.WriteLine(parser.Description);
         System.Console.WriteLine();
-        foreach (var option in parser.Options)
+        foreach (var option in parser.GetOptions())
         {
             foreach (var name in option.Names)
             {
@@ -143,7 +143,7 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
             System.Console.WriteLine("- ");
             System.Console.WriteLine(option.Description);
         }
-        foreach (var flag in parser.Flags)
+        foreach (var flag in parser.GetFlags())
         {
             foreach (var name in flag.Names)
             {
@@ -153,7 +153,7 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
             Console.WriteLine();
             Console.WriteLine(flag.Description);
         }
-        foreach (var arg in parser.Arguments)
+        foreach (var arg in parser.GetArguments())
         {
             foreach (var name in arg.Names)
             {
