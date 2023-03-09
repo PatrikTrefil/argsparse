@@ -211,13 +211,26 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
 }
 
 
-public record Parser<C>
+public interface IParser
+{
+    void ParseAndRun(string[] args);
+    void Parse(string[] args);
+}
+public record Parser<C> : IParser
 {
     public string Name { get; set; } = "";
     public string Description { get; set; } = "";
     public string PlainArgumentsDelimiter { get; set; } = "--";
-    public C Config { get; set; }
-    public Func<C>? ConfigFactory { get; set; } = null;
+    public C? Config { get; private set; }
+    public Func<C>? ConfigFactory { get; private set; }
+    public Action<C> Run { get; set; } = (_) => { };
+    Dictionary<string, IParser> SubParsers { get; set; } = new();
+    public IReadOnlyDictionary<string, IParser> GetSubparsers() => SubParsers;
+    public Parser<C> AddSubparser(string command, IParser commandParser)
+    {
+        // validate that command has no spaces and that this command is not already registered
+        return this;
+    }
 
     protected List<Flag<C>> Flags { get; set; } = new();
     public IReadOnlyList<Flag<C>> GetFlags() => Flags;
@@ -254,11 +267,38 @@ public record Parser<C>
     {
         Config = config;
     }
+    public Parser(Func<C> configFactory)
+    {
+        ConfigFactory = configFactory;
+    }
 
     public void PrintHelp(IParserHelpFormatter<C> formatter, TextWriter writer) => formatter.PrintHelp(this, writer);
     public void PrintHelp(TextWriter writer) => PrintHelp(new DefaultHelpFormatter<C>(), writer);
     public void PrintHelp(IParserHelpFormatter<C> formatter) => PrintHelp(formatter, System.Console.Out);
     public void PrintHelp() => PrintHelp(new DefaultHelpFormatter<C>(), System.Console.Out);
 
-    public void Parse(string[] args) { throw new NotImplementedException(); }
+    public void ParseAndRun(string[] args) => ParseAndRun(args, true, Run);
+    public void Parse(string[] args) => ParseAndRun(args, true, (_) => { });
+    void ParseAndRun(string[] args, bool isRoot, Action<C> localRun)
+    {
+        throw new NotImplementedException();
+        if (isRoot)
+        {
+            // determine command and then find parser and run ParseAndRun on
+            // that parser with the commands removed from the arguments
+            //ParseAndRun(..., false);
+        }
+        else
+        {
+            if (Config is null)
+            {
+                if (ConfigFactory is null)
+                    throw new Exception("Config and ConfigFactory are both null. This should never happen");
+                Config = ConfigFactory();
+            }
+            // TODO: parse remaining arguments
+
+            localRun(Config);
+        }
+    }
 }
