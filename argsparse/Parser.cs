@@ -82,6 +82,11 @@ public interface IOption<C>
     public string[]? Names { get; set; }
     public string Description { get; set; }
     public bool IsRequired { get; set; }
+    /// <summary>
+    /// Value used in help message as placeholder for value.
+    /// e.g. when set to FILE for option --output, the help
+    /// message will be: --output=FILE
+    /// </summary>
     public string ValuePlaceHolder { get; set; }
     internal void Process(C config, string value);
 }
@@ -89,11 +94,6 @@ public interface IOption<C>
 public sealed record Option<C, V> : IOption<C>
 {
     public string[]? Names { get; set; }
-    /// <summary>
-    /// Value used in help message as placeholder for value.
-    /// e.g. when set to FILE for option --output, the help
-    /// message will be: --output=FILE
-    /// </summary>
     public string ValuePlaceHolder { get; set; } = "";
     public string Description { get; set; } = "";
     public Action<C, V> Action { get; set; } = (conf, val) => { };
