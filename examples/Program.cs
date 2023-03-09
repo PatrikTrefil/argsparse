@@ -1,7 +1,7 @@
 ﻿namespace Argsparse.Examples;
 
 class Program
-{ 
+{
 
     internal class ExampleConfiguration
     {
@@ -11,29 +11,32 @@ class Program
 
     static void Main(string[] args)
     {
-        // If the user does not mind null values in the config, they can just provide
-        // the config object directly
-        // 
         var config = new ExampleConfiguration();
 
-        var parser =  Parser<ExampleConfiguration>.Create(config)
-            .WithName("program")
-            .WithDescription("Program description");
+        var parser = new Parser<ExampleConfiguration>(config)
+        {
+            Name = "program",
+            Description = "Program description"
+        };
 
-        var helpOption = (Flag<ExampleConfiguration>.Create())
-            .WithNames("-h", "--help")
-            .WithDescription("Show help")
-            .WithAction((storage) => { storage.help = true; });
-        parser.AddFlag(helpOption);
+        var helpFlag = new Flag<ExampleConfiguration>()
+        {
+            Names = new string[] { "-h", "--help" },
+            Description = "Show help",
+            Action = (storage) => { storage.help = true; }
+        };
 
-        var algorithmOption = OptionFactory.CreateStringOption<ExampleConfiguration>()
-            .WithNames("-a", "--algorithm")
-            .WithDescription("Set algorithm to use")
-            .WithAction((storage, value) => { storage.algorithm = value; });
+        parser.AddFlag(helpFlag);
 
+        var algorithmOption = OptionFactory.CreateStringOption<ExampleConfiguration>() with
+        {
+            Names = new string[] { "-a", "--algorithm" },
+            Description = "Set algorithm to use",
+            Action = (storage, value) => { storage.algorithm = value; }
+        };
 
+        parser.AddOption(algorithmOption);
 
         parser.Parse(args);
-
     }
 }
