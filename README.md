@@ -15,12 +15,12 @@ The Parser class is the main class of the library. It is used to define the argu
 
 The interface IParser defines the methods that the Parser class implements. The interface is used to provide a handle for all parsers, irrespective of their config context type argument.
 
-## Architecture decisions {#architecture_decisions}
+## Architecture decisions 
 
 For some notes on the design decisions,
 see [architecture_decisions](architecture_decisions.md).
 
-## An example {#example}
+## An example 
 
 We define the following configuration class as "config context" for the parser:
 
