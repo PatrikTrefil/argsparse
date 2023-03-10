@@ -15,6 +15,11 @@ The Parser class is the main class of the library. It is used to define the argu
 
 The interface IParser defines the methods that the Parser class implements. The interface is used to provide a handle for all parsers, irrespective of their config context type argument.
 
+## Architecture decisions {#architecture_decisions}
+
+For some notes on the design decisions,
+see [architecture_decisions.md](architecture_decisions.md).
+
 ## An example {#example}
 
 We define the following configuration class as "config context" for the parser:
@@ -72,3 +77,12 @@ The project uses the C# 6.0. To build the project, run the following command:
 ```bash
 dotnet build
 ```
+### Building documentation
+
+To build the documentation with Doxygen, run the following command:
+
+```bash
+doxygen
+```
+
+For more information, see [Doxygen manual](https://www.doxygen.nl/manual/index.html).
