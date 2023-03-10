@@ -79,7 +79,17 @@ public sealed record Argument<C, V> : IArgument<C>
 
 public interface IOption<C>
 {
+    /// <summary>
+    /// Names the options as they will be parsed by the parser.
+    /// Names of long options are prefixed with two dashes '--'
+    /// Names of short options are prefixed with one dash '-'
+    /// One option can represent both long and short options
+    /// </summary>
     public string[]? Names { get; set; }
+    
+    /// <summary>
+    /// Description will be used in help message.
+    /// </summary>
     public string Description { get; set; }
     public bool IsRequired { get; set; }
     /// <summary>
@@ -210,57 +220,161 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
 
 }
 
-
+/// <summary>
+/// Models a <c>Parser</c> of any context.
+/// </summary>
 public interface IParser
 {
+    /// <summary>
+    /// Parses command line-like input from <paramref name="args"/> and then invoke
+    /// the action provided to the specific parser in <c>Run</c>.
+    /// </summary>
     void ParseAndRun(string[] args);
+
+    /// <summary>
+    /// Parses command line-like input from <paramref name="args"/>.
+    /// </summary>
     void Parse(string[] args);
 }
 public record Parser<C> : IParser
 {
+    /// <value>The parser name as it will appear in help and debug messages.</value>
     public string Name { get; set; } = "";
+    /// <value>The parser description as it will appear in help.</value>
     public string Description { get; set; } = "";
+    /// <value><para><c>PlainArgumentsDelimiter</c> can be used to configure the arguments delimiter,
+    /// which when parsed gives signal to the parser to treat all subsequent tokens as plain
+    /// arguments.</para>
+    /// <para>
+    /// Defaults to "--".
+    /// </para>
+    /// </value>
     public string PlainArgumentsDelimiter { get; set; } = "--";
+
+    /// <value>Config context instance. Either passed to the parser in the constructor or created
+    /// by the parser right before parsing of input.</value>
     public C? Config { get; private set; }
+    /// <value>
+    /// Factory method used to create config context instance when the parser is run.
+    /// <para>
+    /// <c>Null</c> if the parser is created with a provided config context instance.
+    /// </para>
+    /// </value>
     public Func<C>? ConfigFactory { get; private set; }
+
+    /// <value>
+    /// Delegate to be run after the parser finishes parsing.
+    /// <para>
+    /// Defaults to an empty action.
+    /// </para>
+    /// </value>
     public Action<C> Run { get; set; } = (_) => { };
     Dictionary<string, IParser> SubParsers { get; set; } = new();
+
+    /// <summary>
+    /// Returns a dictionary of all atached subparsers with keys being names of the 
+    /// commands attached to the parsers.
+    /// </summary>
     public IReadOnlyDictionary<string, IParser> GetSubparsers() => SubParsers;
+    /// <summary>
+    /// Attach a subparser to this parser as a subcommand <paramref name="command"/>. 
+    /// The subparser is then triggered and used to parse the rest of the input after the command
+    /// token is found in input.
+    /// </summary>
+    /// <param name="command">A string command with which the subparser will be triggred. May not contain spaces</param>
+    /// <param name="commandParser">Parser to attach.</param>
+    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddSubparser(string command, IParser commandParser)
     {
         // validate that command has no spaces and that this command is not already registered
         return this;
     }
 
+
     protected List<Flag<C>> Flags { get; set; } = new();
+    /// <summary>
+    /// Returns all flag-like options attached to the parser via the methods <see cref="AddFlag(Flag{C})"/> and <see cref="AddFlags(Flag{C}[])"/>.
+    /// </summary>
     public IReadOnlyList<Flag<C>> GetFlags() => Flags;
+
+    /// <summary>
+    /// Attach a flag-like option to the parser.
+    /// <para>To attach more <see cref="Flag{C}"/> objects at once, see <see cref="AddFlags(Flag{C}[])"/></para>
+    /// </summary>
+    /// <seealso cref="Flag{C}"/>
+    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddFlag(Flag<C> flag)
     {
         // TODO: check that option/flag/command with the same name does not exist
         Flags.Add(flag);
         return this;
     }
+    /// <summary>
+    /// Attach one or more flag-like options to the parser.
+    /// 
+    /// </summary>
+    /// <seealso cref="Flag{C}"/>
+    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddFlags(params Flag<C>[] flags) { return this; }
 
     protected List<IOption<C>> Options { get; set; } = new();
+    /// <summary>
+    /// Returns all value options attached to the parser via the methods <see cref="AddFlag(Flag{C})"/> and <see cref="AddFlags(Flag{C}[])"/>.
+    /// <para>
+    /// See also
+    /// <seealso cref="Option{C, V}"/>.
+    /// </para>
+    /// </summary>
     public IReadOnlyList<IOption<C>> GetOptions() => Options;
+    /// <summary>
+    /// Attach a value option to the parser.
+    /// <para>To attach more <see cref="Option{C,V}"/> objects at once, see <see cref="AddOptions(IOption{C}[])"/></para>
+    /// <para> See also
+    /// <seealso cref="Option{C, V}"/>
+    /// <seealso cref="OptionFactory"/>
+    /// </para>
+    /// </summary>
+    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddOption(IOption<C> option)
     {
         // TODO: check that option/flag/command with the same name does not exist
         Options.Add(option);
         return this;
     }
+    /// <summary>
+    /// Attach one or more value options to the parser.
+    /// <para> See also
+    /// <seealso cref="Option{C, V}"/>,
+    /// <seealso cref="OptionFactory"/>
+    /// </para>
+    /// </summary>
+    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddOptions(params IOption<C>[] options) { return this; }
-
-
     protected List<IArgument<C>> Arguments { get; private set; } = new();
+    /// <summary>
+    /// Returns all plain arguments attached to the parser via the methods <see cref="AddArgument(IArgument{C}))"/> and <see cref="AddArguments(IArgument{C}[])"/>.
+    /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
+    /// </summary>
     public IReadOnlyList<IArgument<C>> GetArguments() => Arguments;
+
+    /// <summary>
+    /// Attach a plain argument to the parser.
+    /// <para>To attach more plain arguments at once, use <see cref="AddArguments(IArgument{C}[])"/>.</para>
+    /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
+    /// </summary>
+    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddArgument(IArgument<C> argument)
     {
         // TODO: check that option/flag/command with the same name does not exist
         Arguments.Add(argument);
         return this;
+
     }
+    /// <summary>
+    /// Attach one or more plain arguments to the parser.
+    /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
+    /// </summary>
+    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddArguments(params IArgument<C>[] argument) { return this; }
 
     public Parser(C config)
