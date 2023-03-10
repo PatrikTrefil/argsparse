@@ -18,7 +18,7 @@ The interface IParser defines the methods that the Parser class implements. The 
 ## Architecture decisions {#architecture_decisions}
 
 For some notes on the design decisions,
-see [architecture_decisions.md](architecture_decisions.md).
+see [architecture_decisions](architecture_decisions.md).
 
 ## An example {#example}
 
