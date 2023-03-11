@@ -38,7 +38,7 @@ public interface IArgument<C>
     /// <summary>
     /// Description of the argument as it should appear in help write-up.
     /// </summary>
-    public string Description { get; set; }
+    public string? Description { get; set; }
     /// <summary>
     /// Value placeholder will be used in synopsis e.g. program [options] <value-placeholder> ...
     /// </summary>
@@ -53,7 +53,7 @@ public interface IArgument<C>
 public sealed record Argument<C, V> : IArgument<C>
 {
     public string Name { get; set; } = "";
-    public string Description { get; set; } = "";
+    public string? Description { get; set; }
     public string ValuePlaceholder { get; set; } = "<arg>";
     /// <summary>
     /// Function to convert the argument value parsed as a string from the input to the target type.
@@ -85,7 +85,7 @@ public interface IOption<C>
     /// <summary>
     /// Description of the option as it should appear in help write-up.
     /// </summary>
-    public string Description { get; set; }
+    public string? Description { get; set; }
     /// <summary>
     /// If false, the parser will produce an error state upon finishing parsing without encountering
     /// the option.
@@ -109,7 +109,7 @@ public sealed record Option<C, V> : IOption<C>
 {
     public string[]? Names { get; set; }
     public string ValuePlaceHolder { get; set; } = "<value>";
-    public string Description { get; set; } = "";
+    public string? Description { get; set; }
     /// <summary>
     /// Action to be carried out upon parsing and conversion of the option from the input.
     /// </summary>
@@ -257,7 +257,7 @@ public sealed record Flag<C>
     /// <summary>
     /// Description of the flag-like option as it should appear in help write-up.
     /// </summary>
-    public string Description { get; set; } = "";
+    public string? Description { get; set; }
     /// <summary>
     /// Action to be carried out upon parsing of the flag in the input.
     /// </summary>
@@ -288,27 +288,34 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
     public void PrintHelp(Parser<T> parser, TextWriter writer)
     {
         System.Console.WriteLine(parser.Name);
-        System.Console.WriteLine();
-        System.Console.WriteLine(parser.Description);
+
+        if (parser.Description is not null)
+        {
+            System.Console.WriteLine();
+            System.Console.WriteLine(parser.Description);
+        }
+
         System.Console.WriteLine();
 
         Console.Write(parser.Name);
         if (parser.GetOptions().Any() || parser.GetFlags().Any())
             Console.Write(" [options]");
-        foreach (var arg in parser.GetArguments())
+        if (parser.GetArguments().Any())
         {
-            Console.Write(" " + arg.ValuePlaceholder);
-            switch (arg.Multiplicity)
+            foreach (var arg in parser.GetArguments())
             {
-                case ArgumentMultiplicity.SpecificCount:
-                    var argMulSpecCount = arg.Multiplicity as ArgumentMultiplicity.SpecificCount;
-                    for (int i = 0; i < argMulSpecCount.Number; i++)
-                        Console.Write(" " + arg.ValuePlaceholder);
+                switch (arg.Multiplicity)
+                {
+                    case ArgumentMultiplicity.SpecificCount:
+                        var argMulSpecCount = arg.Multiplicity as ArgumentMultiplicity.SpecificCount;
+                        for (int i = 0; i < argMulSpecCount.Number; i++)
+                            Console.Write(" " + arg.ValuePlaceholder);
 
-                    break;
-                case ArgumentMultiplicity.AllThatFollow:
-                    Console.Write(arg.ValuePlaceholder + " ...");
-                    break;
+                        break;
+                    case ArgumentMultiplicity.AllThatFollow:
+                        Console.Write(" " + arg.ValuePlaceholder + " ...");
+                        break;
+                }
             }
             Console.WriteLine();
         }
@@ -326,8 +333,12 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
                 System.Console.Write(name + "=" + option.ValuePlaceHolder);
                 System.Console.Write(", ");
             }
-            System.Console.Write("- ");
-            System.Console.WriteLine(option.Description);
+            if (option.Description is not null)
+            {
+                System.Console.Write("- ");
+                System.Console.Write(option.Description);
+            }
+            Console.WriteLine();
         }
 
         if (parser.GetFlags().Any())
@@ -342,8 +353,12 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
                 Console.Write(name);
                 Console.Write(", ");
             }
-            Console.Write("- ");
-            Console.WriteLine(flag.Description);
+            if (flag.Description is not null)
+            {
+                Console.Write("- ");
+                Console.Write(flag.Description);
+            }
+            Console.WriteLine();
         }
 
         if (parser.GetArguments().Any())
@@ -354,8 +369,12 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
         foreach (var arg in parser.GetArguments())
         {
             Console.Write(arg.Name);
-            Console.Write("- ");
-            Console.WriteLine(arg.Description);
+            if (arg.Description is not null)
+            {
+                Console.Write("- ");
+                Console.Write(arg.Description);
+            }
+            Console.WriteLine();
         }
         Console.WriteLine();
     }
@@ -384,7 +403,7 @@ public record Parser<C> : IParser
     /// <value>The parser name as it will appear in help and debug messages.</value>
     public string Name { get; set; } = "";
     /// <value>The parser description as it will appear in help.</value>
-    public string Description { get; set; } = "";
+    public string? Description { get; set; }
     /// <value><para><c>PlainArgumentsDelimiter</c> can be used to configure the arguments delimiter,
     /// which when parsed gives signal to the parser to treat all subsequent tokens as plain
     /// arguments.</para>
