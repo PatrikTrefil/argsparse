@@ -298,11 +298,11 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
         System.Console.WriteLine();
 
         Console.Write(parser.Name);
-        if (parser.GetOptions().Any() || parser.GetFlags().Any())
+        if (parser.Options.Any() || parser.Flags.Any())
             Console.Write(" [options]");
-        if (parser.GetArguments().Any())
+        if (parser.Arguments.Any())
         {
-            foreach (var arg in parser.GetArguments())
+            foreach (var arg in parser.Arguments)
             {
                 switch (arg.Multiplicity)
                 {
@@ -320,13 +320,13 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
             Console.WriteLine();
         }
 
-        if (parser.GetOptions().Any())
+        if (parser.Options.Any())
         {
             Console.WriteLine();
             Console.WriteLine("Options:");
         }
 
-        foreach (var option in parser.GetOptions())
+        foreach (var option in parser.Options)
         {
             foreach (var name in option.Names)
             {
@@ -341,12 +341,12 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
             Console.WriteLine();
         }
 
-        if (parser.GetFlags().Any())
+        if (parser.Flags.Any())
         {
             Console.WriteLine();
             Console.WriteLine("Flags:");
         }
-        foreach (var flag in parser.GetFlags())
+        foreach (var flag in parser.Flags)
         {
             foreach (var name in flag.Names)
             {
@@ -361,12 +361,12 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
             Console.WriteLine();
         }
 
-        if (parser.GetArguments().Any())
+        if (parser.Arguments.Any())
         {
             Console.WriteLine();
             Console.WriteLine("Arguments:");
         }
-        foreach (var arg in parser.GetArguments())
+        foreach (var arg in parser.Arguments)
         {
             Console.Write(arg.Name);
             if (arg.Description is not null)
@@ -383,6 +383,32 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
 }
 
 /// <summary>
+/// Models an expception thrown when the parser is not configured properly, for example with subcommands of the same name.
+/// </summary>
+public class InvalidParserConfigurationException : Exception
+{
+    public InvalidParserConfigurationException(string message) : base(message) { }
+}
+
+/// <summary>
+/// Models an exception thrown when the parser fails to convert a value from string to the intended type.
+/// </summary>
+public class ParserConversionException : Exception
+{
+
+    public ParserConversionException(string message, Exception inner) : base(message, inner) { }
+}
+
+/// <summary>
+/// Models an exception thrown when the parser fails to run the action associated with an option, flag or argument or a parser.
+/// </summary>
+public class ParserRuntimeException : Exception
+{
+
+    public ParserRuntimeException(string message, Exception inner) : base(message, inner) { }
+}
+
+/// <summary>
 /// Models a <c>Parser</c> of any context.
 /// </summary>
 public interface IParser
@@ -391,11 +417,17 @@ public interface IParser
     /// Parses command line-like input from <paramref name="args"/> and then invoke
     /// the action provided to the specific parser in <c>Run</c>.
     /// </summary>
+    /// <exception cref="InvalidParserConfigurationException">Thrown when the parser is not configured properly.</exception>
+    /// <exception cref="ParserConversionException">Thrown when the parser fails to convert a value from string to the intended type.</exception>
+    /// <exception cref="ParserRuntimeException">Thrown when the parser fails to run the action associated with an option, flag or argument or a parser.</exception>
     void ParseAndRun(string[] args);
 
     /// <summary>
     /// Parses command line-like input from <paramref name="args"/>.
     /// </summary>
+    /// <exception cref="InvalidParserConfigurationException">Thrown when the parser is not configured properly.</exception>
+    /// <exception cref="ParserConversionException">Thrown when the parser fails to convert a value from string to the intended type.</exception>
+    /// <exception cref="ParserRuntimeException">Thrown when the parser fails to run the action associated with an option, flag or argument or a parser.</exception>
     void Parse(string[] args);
 }
 public record Parser<C> : IParser
@@ -431,14 +463,14 @@ public record Parser<C> : IParser
     /// </para>
     /// </value>
     public Action<C> Run { get; set; } = (_) => { };
-    Dictionary<string, IParser> SubParsers { get; set; } = new();
 
     /// <summary>
     /// Returns a dictionary of all atached subparsers with keys being names of the 
     /// commands attached to the parsers.
     /// <para>See <see cref="AddSubparser(string, IParser)"</see></para>
     /// </summary>
-    public IReadOnlyDictionary<string, IParser> GetSubparsers() => SubParsers;
+    public Dictionary<string, IParser> SubParsers { get; set; } = new();
+
     /// <summary>
     /// Attach a subparser to this parser as a subcommand <paramref name="command"/>. 
     /// The subparser is then triggered and used to parse the rest of the input after the command
@@ -457,11 +489,11 @@ public record Parser<C> : IParser
     }
 
 
-    protected List<Flag<C>> Flags { get; set; } = new();
     /// <summary>
     /// Returns all flag-like options attached to the parser via the methods <see cref="AddFlag(Flag{C})"/> and <see cref="AddFlags(Flag{C}[])"/>.
     /// </summary>
-    public IReadOnlyList<Flag<C>> GetFlags() => Flags;
+    public List<Flag<C>> Flags { get; private set; } = new();
+
 
     /// <summary>
     /// Attach a flag-like option to the parser.
@@ -485,7 +517,6 @@ public record Parser<C> : IParser
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddFlags(params Flag<C>[] flags) { return this; }
 
-    protected List<IOption<C>> Options { get; set; } = new();
     /// <summary>
     /// Returns all value options attached to the parser via the methods <see cref="AddFlag(Flag{C})"/> and <see cref="AddFlags(Flag{C}[])"/>.
     /// <para>
@@ -493,7 +524,8 @@ public record Parser<C> : IParser
     /// <seealso cref="Option{C, V}"/>.
     /// </para>
     /// </summary>
-    public IReadOnlyList<IOption<C>> GetOptions() => Options;
+    public List<IOption<C>> Options { get; private set; } = new();
+
     /// <summary>
     /// Attach a value option to the parser.
     /// <para>To attach more <see cref="Option{C,V}"/> objects at once, see <see cref="AddOptions(IOption{C}[])"/></para>
@@ -518,12 +550,12 @@ public record Parser<C> : IParser
     /// </summary>
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddOptions(params IOption<C>[] options) { return this; }
-    protected List<IArgument<C>> Arguments { get; private set; } = new();
+    
     /// <summary>
     /// Returns all plain arguments attached to the parser via the methods <see cref="AddArgument(IArgument{C}))"/> and <see cref="AddArguments(IArgument{C}[])"/>.
     /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
     /// </summary>
-    public IReadOnlyList<IArgument<C>> GetArguments() => Arguments;
+    public List<IArgument<C>> Arguments { get; private set; } = new();
 
     /// <summary>
     /// Attach a plain argument to the parser.
