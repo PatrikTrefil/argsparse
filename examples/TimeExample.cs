@@ -88,6 +88,7 @@ internal class TimeExample
         parser.AddOption(outputFileOption);
 
 
+        // if we needed special parsing for different kinds of commands, we could use subparsers
         parser.AddArgument(ArgumentFactory.CreateStringArgument<TimeCommandConfiguration>() with
         {
             Multiplicity = new ArgumentMultiplicity.SpecificCount(1, true),
