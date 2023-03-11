@@ -63,7 +63,7 @@ public sealed record Argument<C, V> : IArgument<C>
     /// Action to be carried out upon parsing of the argument in the input.
     /// </summary>
     public Action<C, V> Action { get; set; } = (conf, val) => { };
-    
+
     public ArgumentMultiplicity Multiplicity { get; set; } = new ArgumentMultiplicity.SpecificCount(Number: 1, IsRequired: true);
     void IArgument<C>.Process(C config, string value)
     {
@@ -151,6 +151,35 @@ public static class OptionFactory
     public static Option<C, List<T>> CreateListOption<C, T>(Func<string, T> convertor, char separator = ',')
     {
         return new Option<C, List<T>>() { Converter = (string s) => { return s.Split(separator).Select(x => convertor(x)).ToList(); } };
+    }
+    /// <summary>
+    /// Creates a simple bool-valued option for a <see cref="Parser{C}"/> 
+    /// with config context <typeparamref name="C"/>.
+    /// </summary>
+    public static Option<C, bool> CreateBoolOption<C>()
+    {
+        return new Option<C, bool>()
+        {
+            Converter = (string s) =>
+            {
+                if (s == "true") return true;
+                return false;
+            }
+        };
+    }
+    /// <summary>
+    /// Creates a simple int-valued option for a <see cref="Parser{C}"/> 
+    /// with config context <typeparamref name="C"/>.
+    /// </summary>
+    public static Option<C, int> CreateIntOption<C>()
+    {
+        return new Option<C, int>()
+        {
+            Converter = (string s) =>
+            {
+                return int.Parse(s);
+            }
+        };
     }
 }
 
