@@ -184,6 +184,63 @@ public static class OptionFactory
 }
 
 /// <summary>
+/// A convenience class used for speedy creation of common argument types.
+/// </summary>
+public static class ArgumentFactory
+{
+    /// <summary>
+    /// Creates a simple string-valued argument for a <see cref="Parser{C}"/> 
+    /// with config context <typeparamref name="C"/>.
+    /// </summary>
+    public static Argument<C, string> CreateStringArgument<C>()
+    {
+        return new Argument<C, string>() { Converter = (string s) => { return s; } };
+    }
+
+    /// <summary>
+    /// Creates a argument which accepts a list of values convertible to type <typeparamref name="T"/>
+    /// by the provided convertor function <paramref name="convertor"/>.
+    /// </summary>
+    /// <typeparam name="C">Config context type of the parent parser.</typeparam>
+    /// <typeparam name="T">Type of the individual values listed in the argument value.</typeparam>
+    /// <param name="convertor">Function to convert the individiual values from string to intended type.</param>
+    /// <param name="separator">Separator of the individual values in the argument value</param>
+    public static Argument<C, List<T>> CreateListArgument<C, T>(Func<string, T> convertor, char separator = ',')
+    {
+        return new Argument<C, List<T>>() { Converter = (string s) => { return s.Split(separator).Select(x => convertor(x)).ToList(); } };
+    }
+    /// <summary>
+    /// Creates a simple bool-valued argument for a <see cref="Parser{C}"/> 
+    /// with config context <typeparamref name="C"/>.
+    /// </summary>
+    public static Argument<C, bool> CreateBoolArgument<C>()
+    {
+        return new Argument<C, bool>()
+        {
+            Converter = (string s) =>
+            {
+                if (s == "true") return true;
+                return false;
+            }
+        };
+    }
+    /// <summary>
+    /// Creates a simple int-valued argument for a <see cref="Parser{C}"/> 
+    /// with config context <typeparamref name="C"/>.
+    /// </summary>
+    public static Argument<C, int> CreateIntArgument<C>()
+    {
+        return new Argument<C, int>()
+        {
+            Converter = (string s) =>
+            {
+                return int.Parse(s);
+            }
+        };
+    }
+}
+
+/// <summary>
 /// Represent a flag, an option that is always only either ON or OFF, i.e. without any further
 /// value provided by the user.
 /// </summary>
