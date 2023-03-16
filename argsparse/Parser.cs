@@ -11,21 +11,21 @@ namespace Argsparse;
 /// See <see cref="Argument{C, V}"/>, <see cref="IArgument{C}"/>.
 /// </para>
 /// </summary>
-public record ArgumentMultiplicity
+public record class ArgumentMultiplicity
 {
     /// <summary>
     /// Represents such a multiplicity in which the number of parts and argument should have is one
     /// number known in advance.
     /// </summary>
     /// <param name="IsRequired">Allows for the omitting of the argument.</param>
-    public sealed record SpecificCount(int Number, bool IsRequired) : ArgumentMultiplicity();
+    public sealed record class SpecificCount(int Number, bool IsRequired) : ArgumentMultiplicity();
     /// <summary>
     /// Represents such a multiplicity in which all the following argument parts belong to the given
     /// plain argument. 
     /// </summary>
     /// <param name="MinimumNumberOfArguments">Allow for the specification of minimum number of parts required
     /// which should then be enforced by the parser.</param>
-    public sealed record AllThatFollow(int MinimumNumberOfArguments = 0) : ArgumentMultiplicity();
+    public sealed record class AllThatFollow(int MinimumNumberOfArguments = 0) : ArgumentMultiplicity();
     private ArgumentMultiplicity() { }
 }
 
@@ -50,7 +50,7 @@ public interface IArgument<C>
     internal void Process(C config, string value);
 }
 
-public sealed record Argument<C, V> : IArgument<C>
+public sealed record class Argument<C, V> : IArgument<C>
 {
     public string Name { get; set; } = "";
     public string? Description { get; set; }
@@ -105,7 +105,7 @@ public interface IOption<C>
 /// </summary>
 /// <typeparam name="C">The cofiguration context type for the given parser, see <see cref="Parser{C}"/></typeparam>
 /// <typeparam name="V">Type of the value the provided string is to be converted to. /// </typeparam>
-public sealed record Option<C, V> : IOption<C>
+public sealed record class Option<C, V> : IOption<C>
 {
     public string[]? Names { get; set; }
     public string ValuePlaceHolder { get; set; } = "<value>";
@@ -245,7 +245,7 @@ public static class ArgumentFactory
 /// value provided by the user.
 /// </summary>
 /// <typeparam name="C">The cofiguration context type for the given parser, see <see cref="Parser{C}"/> </typeparam>
-public sealed record Flag<C>
+public sealed record class Flag<C>
 {
     /// <summary>
     /// Names the options as they will be parsed by the parser.
@@ -430,7 +430,7 @@ public interface IParser
     /// <exception cref="ParserRuntimeException">Thrown when the parser fails to run the action associated with an option, flag or argument or a parser.</exception>
     void Parse(string[] args);
 }
-public record Parser<C> : IParser
+public record class Parser<C> : IParser
 {
     /// <value>The parser name as it will appear in help and debug messages.</value>
     public string Name { get; set; } = "";
