@@ -18,14 +18,14 @@ public record ArgumentMultiplicity
     /// number known in advance.
     /// </summary>
     /// <param name="IsRequired">Allows for the omitting of the argument.</param>
-    public record SpecificCount(int Number, bool IsRequired) : ArgumentMultiplicity();
+    public sealed record SpecificCount(int Number, bool IsRequired) : ArgumentMultiplicity();
     /// <summary>
     /// Represents such a multiplicity in which all the following argument parts belong to the given
     /// plain argument. 
     /// </summary>
     /// <param name="MinimumNumberOfArguments">Allow for the specification of minimum number of parts required
     /// which should then be enforced by the parser.</param>
-    public record AllThatFollow(int MinimumNumberOfArguments = 0) : ArgumentMultiplicity();
+    public sealed record AllThatFollow(int MinimumNumberOfArguments = 0) : ArgumentMultiplicity();
     private ArgumentMultiplicity() { }
 }
 
