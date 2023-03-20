@@ -550,7 +550,7 @@ public record Parser<C> : IParser
     /// </summary>
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddOptions(params IOption<C>[] options) { return this; }
-    
+
     /// <summary>
     /// Returns all plain arguments attached to the parser via the methods <see cref="AddArgument(IArgument{C}))"/> and <see cref="AddArguments(IArgument{C}[])"/>.
     /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
