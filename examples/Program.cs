@@ -7,5 +7,6 @@ class Program
         SimpleExample.Run(args);
         ComplexExample.Run(args);
         TimeExample.Run(args);
+        NumactlExample.Run(args);
     }
 }

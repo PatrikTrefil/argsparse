@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace argsparse;
+namespace Argparse;
 
 /// <summary>
 /// Models an expception thrown when the parser is not configured properly, for example with subcommands of the same name.
