@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -99,7 +99,8 @@ public static class ArgumentFactory
     }
     /// <summary>
     /// Creates a simple bool-valued argument for a <see cref="Parser{C}"/> 
-    /// with config context <typeparamref name="C"/>.
+    /// with config context <typeparamref name="C"/>. The argument value will be true
+    /// if the string value is "true" and false otherwise.
     /// </summary>
     public static Argument<C, bool> CreateBoolArgument<C>()
     {
