@@ -10,7 +10,7 @@ namespace Argparse;
 /// See <see cref="Argument{C, V}"/>, <see cref="IArgument{C}"/>.
 /// </para>
 /// </summary>
-public record class ArgumentMultiplicity
+public abstract record class ArgumentMultiplicity
 {
     /// <summary>
     /// Represents such a multiplicity in which the number of parts and argument should have is one
@@ -25,7 +25,6 @@ public record class ArgumentMultiplicity
     /// <param name="MinimumNumberOfArguments">Allow for the specification of minimum number of parts required
     /// which should then be enforced by the parser.</param>
     public sealed record class AllThatFollow(int MinimumNumberOfArguments = 0) : ArgumentMultiplicity();
-    private ArgumentMultiplicity() { }
 }
 
 public interface IArgument<C>
