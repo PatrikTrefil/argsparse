@@ -59,7 +59,8 @@ public sealed record class Argument<C, V> : IArgument<C>
     /// </summary>
     public Func<string, V> Converter { get; set; } = (strVal) => default;
     /// <summary>
-    /// Action to be carried out upon parsing of the argument in the input.
+    /// This action is run for every value parsed from the input, e.g. when the argument is specified
+    /// to have 3 values and is required, this action will be run exactly 3 times.
     /// </summary>
     public Action<C, V> Action { get; set; } = (conf, val) => { };
 
@@ -86,7 +87,7 @@ public static class ArgumentFactory
     }
 
     /// <summary>
-    /// Creates a argument which accepts a list of values convertible to type <typeparamref name="T"/>
+    /// Creates a argument which accepts a single string which is a list of values convertible to type <typeparamref name="T"/>
     /// by the provided convertor function <paramref name="convertor"/>.
     /// </summary>
     /// <typeparam name="C">Config context type of the parent parser.</typeparam>
