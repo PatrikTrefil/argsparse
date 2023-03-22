@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace argparse;
+namespace Argparse;
 
 /// <summary>
 /// Models a <c>Parser</c> of any context.

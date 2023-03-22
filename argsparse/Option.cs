@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace argparse;
+namespace Argparse;
 
 public interface IOption<C>
 {

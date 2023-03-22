@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.33027.164
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "argsparse", "argsparse\argsparse.csproj", "{23F8E469-BBD8-4001-98CC-E4908169604C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Argsparse", "argsparse\Argsparse.csproj", "{23F8E469-BBD8-4001-98CC-E4908169604C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "examples", "examples\examples.csproj", "{64BAFA0C-49DB-4491-B698-99423310A086}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples", "examples\Examples.csproj", "{64BAFA0C-49DB-4491-B698-99423310A086}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace argparse;
+namespace Argparse;
 
 /// <summary>
 /// Models information about a plain argument, how many parts it should consist of.

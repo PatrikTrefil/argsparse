@@ -1,4 +1,4 @@
-﻿namespace argparse.Examples;
+﻿namespace Argparse.Examples;
 
 class Program
 {

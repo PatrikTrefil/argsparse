@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace argparse.Examples;
+namespace Argparse.Examples;
 
 internal class TimeExample
 {

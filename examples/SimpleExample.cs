@@ -1,4 +1,4 @@
-﻿namespace argparse.Examples;
+﻿namespace Argparse.Examples;
 internal class SimpleExample
 {
     record ExampleConfiguration
