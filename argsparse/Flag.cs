@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Argsparse;
+namespace argparse;
 
 /// <summary>
 /// Represent a flag, an option that is always only either ON or OFF, i.e. without any further

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Argsparse.Examples;
+namespace argparse.Examples;
 
 internal class ComplexExample
 {

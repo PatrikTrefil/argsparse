@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Argsparse;
+namespace argparse;
 
 /// <summary>
 /// An object which is used to create help write-ups for parsers, the message one usually sees
