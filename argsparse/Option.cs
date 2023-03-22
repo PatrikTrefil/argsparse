@@ -117,7 +117,7 @@ public static class OptionFactory
                 int value = int.Parse(s);
                 if (value < minValue || value > maxValue)
                 {
-                    string optionName = intOption.Names is null ? string.Join(", ", intOption.Names) : "no-name-provided";
+                    string optionName = intOption.Names is not null ? string.Join(", ", intOption.Names) : "no-name-provided";
                     throw new ArgumentException($"Value {value} in option named {optionName} is out of range [{minValue}, {maxValue}]");
                 }
 
