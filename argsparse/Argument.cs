@@ -25,6 +25,10 @@ public abstract record class ArgumentMultiplicity
     /// <param name="MinimumNumberOfArguments">Allow for the specification of minimum number of parts required
     /// which should then be enforced by the parser.</param>
     public sealed record class AllThatFollow(int MinimumNumberOfArguments = 0) : ArgumentMultiplicity();
+    /// <summary>
+    /// Hiding the constructor so that the user can't create a class that is derived from this one.
+    /// </summary>
+    private ArgumentMultiplicity() { }
 }
 
 public interface IArgument<C>
