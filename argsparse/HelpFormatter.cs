@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -68,11 +68,15 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
 
         foreach (var option in parser.Options)
         {
+            if (option.Names is null)
+                Console.Write("no-names-provided");
+            else
             foreach (var name in option.Names)
             {
                 System.Console.Write(name + "=" + option.ValuePlaceHolder);
                 System.Console.Write(", ");
             }
+
             if (option.Description is not null)
             {
                 System.Console.Write("- ");
@@ -88,11 +92,15 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
         }
         foreach (var flag in parser.Flags)
         {
+            if (flag.Names is null)
+                Console.Write("no-name-provided");
+            else
             foreach (var name in flag.Names)
             {
                 Console.Write(name);
                 Console.Write(", ");
             }
+
             if (flag.Description is not null)
             {
                 Console.Write("- ");
