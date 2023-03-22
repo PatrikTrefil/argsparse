@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -114,16 +114,28 @@ public static class ArgumentFactory
     }
     /// <summary>
     /// Creates a simple int-valued argument for a <see cref="Parser{C}"/> 
-    /// with config context <typeparamref name="C"/>.
+    /// with config context <typeparamref name="C"/>. You can limit the range of valid
+    /// values by providing <paramref name="minValue"/> and <paramref name="maxValue"/>.
+    /// If the converted value is out of range, an <see cref="ArgumentException"/> will be thrown.
+    /// If the parsing of the string value fails, a <see cref="FormatException"/> will be thrown.
     /// </summary>
-    public static Argument<C, int> CreateIntArgument<C>()
+    public static Argument<C, int> CreateIntArgument<C>(int minValue = int.MinValue, int maxValue = int.MaxValue)
     {
-        return new Argument<C, int>()
+        var intArgument = new Argument<C, int>();
+        intArgument = intArgument with
         {
             Converter = (string s) =>
             {
-                return int.Parse(s);
+                int value = int.Parse(s);
+                if (value < minValue || value > maxValue)
+                {
+                    string argName = intArgument.Name ?? "no-name-provided";
+                    throw new ArgumentException($"Value {value} in argument named {argName} is out of range [{minValue}, {maxValue}]");
+                }
+
+                return value;
             }
         };
+        return intArgument;
     }
 }

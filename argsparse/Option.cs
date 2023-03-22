@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -101,16 +101,28 @@ public static class OptionFactory
     }
     /// <summary>
     /// Creates a simple int-valued option for a <see cref="Parser{C}"/> 
-    /// with config context <typeparamref name="C"/>.
+    /// with config context <typeparamref name="C"/>. You can limit the range of valid
+    /// values by providing <paramref name="minValue"/> and <paramref name="maxValue"/>.
+    /// If the converted value is out of range, an <see cref="ArgumentException"/> will be thrown.
+    /// If the parsing of the string value fails, a <see cref="FormatException"/> will be thrown.
     /// </summary>
-    public static Option<C, int> CreateIntOption<C>()
+    public static Option<C, int> CreateIntOption<C>(int minValue = int.MinValue, int maxValue = int.MaxValue)
     {
-        return new Option<C, int>()
+        var intOption = new Option<C, int>();
+        intOption = intOption with
         {
             Converter = (string s) =>
             {
-                return int.Parse(s);
+                int value = int.Parse(s);
+                if (value < minValue || value > maxValue)
+                {
+                    string optionName = intOption.Names is null ? string.Join(", ", intOption.Names) : "no-name-provided";
+                    throw new ArgumentException($"Value {value} in option named {optionName} is out of range [{minValue}, {maxValue}]");
+                }
+
+                return value;
             }
         };
+        return intOption;
     }
 }
