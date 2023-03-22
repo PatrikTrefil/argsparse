@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33502.453
@@ -6,6 +5,8 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Argparse", "argsparse\Argparse.csproj", "{23F8E469-BBD8-4001-98CC-E4908169604C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples", "examples\Examples.csproj", "{64BAFA0C-49DB-4491-B698-99423310A086}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Numactl", "numactl\Numactl.csproj", "{3B3E0950-3BDD-41B5-8257-C86DAE9326F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +22,10 @@ Global
 		{64BAFA0C-49DB-4491-B698-99423310A086}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64BAFA0C-49DB-4491-B698-99423310A086}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64BAFA0C-49DB-4491-B698-99423310A086}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B3E0950-3BDD-41B5-8257-C86DAE9326F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B3E0950-3BDD-41B5-8257-C86DAE9326F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B3E0950-3BDD-41B5-8257-C86DAE9326F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B3E0950-3BDD-41B5-8257-C86DAE9326F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
