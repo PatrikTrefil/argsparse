@@ -45,7 +45,7 @@ internal class ComplexExample
             Description = "Print help"
         });
 
-        var numberArg = ArgumentFactory.CreateIntArgument<ComplexExampleSubCommandConfig>() with
+        var numberArg = ArgumentFactory<ComplexExampleSubCommandConfig>.CreateIntArgument() with
         {
             Name = "Number",
             Description = "Number description",

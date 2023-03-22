@@ -73,15 +73,16 @@ public sealed record class Argument<C, V> : IArgument<C>
 }
 
 /// <summary>
-/// A convenience class used for speedy creation of common argument types.
+/// A convenience class used for speedy creation of common argument types
+/// for a <see cref="Parser{C}"/> with config context <typeparamref name="C"/>.
 /// </summary>
-public static class ArgumentFactory
+public static class ArgumentFactory<C>
 {
     /// <summary>
     /// Creates a simple string-valued argument for a <see cref="Parser{C}"/> 
     /// with config context <typeparamref name="C"/>.
     /// </summary>
-    public static Argument<C, string> CreateStringArgument<C>()
+    public static Argument<C, string> CreateStringArgument()
     {
         return new Argument<C, string>() { Converter = (string s) => { return s; } };
     }
@@ -94,7 +95,7 @@ public static class ArgumentFactory
     /// <typeparam name="T">Type of the individual values listed in the argument value.</typeparam>
     /// <param name="convertor">Function to convert the individiual values from string to intended type.</param>
     /// <param name="separator">Separator of the individual values in the argument value</param>
-    public static Argument<C, List<T>> CreateListArgument<C, T>(Func<string, T> convertor, char separator = ',')
+    public static Argument<C, List<T>> CreateListArgument<T>(Func<string, T> convertor, char separator = ',')
     {
         return new Argument<C, List<T>>() { Converter = (string s) => { return s.Split(separator).Select(x => convertor(x)).ToList(); } };
     }
@@ -103,7 +104,7 @@ public static class ArgumentFactory
     /// with config context <typeparamref name="C"/>. The argument value will be true
     /// if the string value is "true" and false otherwise.
     /// </summary>
-    public static Argument<C, bool> CreateBoolArgument<C>()
+    public static Argument<C, bool> CreateBoolArgument()
     {
         return new Argument<C, bool>()
         {
@@ -121,7 +122,7 @@ public static class ArgumentFactory
     /// If the converted value is out of range, an <see cref="ArgumentException"/> will be thrown.
     /// If the parsing of the string value fails, a <see cref="FormatException"/> will be thrown.
     /// </summary>
-    public static Argument<C, int> CreateIntArgument<C>(int minValue = int.MinValue, int maxValue = int.MaxValue)
+    public static Argument<C, int> CreateIntArgument(int minValue = int.MinValue, int maxValue = int.MaxValue)
     {
         var intArgument = new Argument<C, int>();
         intArgument = intArgument with

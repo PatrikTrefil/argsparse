@@ -27,14 +27,14 @@ internal class SimpleExample
 
         parser.AddFlag(helpFlag);
 
-        var algorithmOption = OptionFactory.CreateStringOption<ExampleConfiguration>() with
+        var algorithmOption = OptionFactory<ExampleConfiguration>.CreateStringOption() with
         {
             Names = new string[] { "-a", "--algorithm" },
             Description = "Set algorithm to use",
             Action = (storage, value) => { storage.algorithm = value; }
         };
 
-        var inputFileArg = ArgumentFactory.CreateStringArgument<ExampleConfiguration>() with
+        var inputFileArg = ArgumentFactory<ExampleConfiguration>.CreateStringArgument() with
         {
             Name = "input file",
             ValuePlaceholder = "INPUT-FILE",

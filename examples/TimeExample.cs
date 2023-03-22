@@ -67,7 +67,7 @@ internal class TimeExample
 
         parser.AddFlag(portabilityFlag);
 
-        var formatOption = OptionFactory.CreateStringOption<TimeCommandConfiguration>() with
+        var formatOption = OptionFactory<TimeCommandConfiguration>.CreateStringOption() with
         {
             Names = new string[] { "-f", "--format" },
             Description = "Specify output format, possibly overriding the format specified in the environment variable TIME.",
@@ -79,7 +79,7 @@ internal class TimeExample
         };
         parser.AddOption(formatOption);
 
-        var outputFileOption = OptionFactory.CreateStringOption<TimeCommandConfiguration>() with
+        var outputFileOption = OptionFactory<TimeCommandConfiguration>.CreateStringOption() with
         {
             Names = new string[] { "-o", "--output" },
             Description = "Do not send the results to stderr, but overwrite the specified file.",
@@ -89,7 +89,7 @@ internal class TimeExample
 
 
         // if we needed special parsing for different kinds of commands, we could use subparsers
-        parser.AddArgument(ArgumentFactory.CreateStringArgument<TimeCommandConfiguration>() with
+        parser.AddArgument(ArgumentFactory<TimeCommandConfiguration>.CreateStringArgument() with
         {
             Multiplicity = new ArgumentMultiplicity.SpecificCount(1, true),
             Action = (storage, value) => { storage.command = value; },
@@ -97,7 +97,7 @@ internal class TimeExample
             ValuePlaceholder = "command"
         });
 
-        parser.AddArgument(ArgumentFactory.CreateStringArgument<TimeCommandConfiguration>() with
+        parser.AddArgument(ArgumentFactory<TimeCommandConfiguration>.CreateStringArgument() with
         {
             Multiplicity = new ArgumentMultiplicity.AllThatFollow(),
             Action = (storage, value) => { storage.arguments.Add(value); },

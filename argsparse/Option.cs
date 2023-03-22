@@ -59,15 +59,16 @@ public sealed record class Option<C, V> : IOption<C>
 }
 
 /// <summary>
-/// A convenience class used for speedy creation of common option types.
+/// A convenience class used for speedy creation of common option types
+/// for a <see cref="Parser{C}"/> with config context <typeparamref name="C"/>.
 /// </summary>
-public static class OptionFactory
+public static class OptionFactory<C>
 {
     /// <summary>
     /// Creates a simple string-valued option for a <see cref="Parser{C}"/> 
     /// with config context <typeparamref name="C"/>.
     /// </summary>
-    public static Option<C, string> CreateStringOption<C>()
+    public static Option<C, string> CreateStringOption()
     {
         return new Option<C, string>() { Converter = (string s) => { return s; } };
     }
@@ -80,7 +81,7 @@ public static class OptionFactory
     /// <typeparam name="T">Type of the individual values listed in the option value.</typeparam>
     /// <param name="convertor">Function to convert the individiual values from string to intended type.</param>
     /// <param name="separator">Separator of the individual values in the option value</param>
-    public static Option<C, List<T>> CreateListOption<C, T>(Func<string, T> convertor, char separator = ',')
+    public static Option<C, List<T>> CreateListOption<T>(Func<string, T> convertor, char separator = ',')
     {
         return new Option<C, List<T>>() { Converter = (string s) => { return s.Split(separator).Select(x => convertor(x)).ToList(); } };
     }
@@ -89,7 +90,7 @@ public static class OptionFactory
     /// with config context <typeparamref name="C"/>. The option will be true if the
     /// string value is "true" and false otherwise.
     /// </summary>
-    public static Option<C, bool> CreateBoolOption<C>()
+    public static Option<C, bool> CreateBoolOption()
     {
         return new Option<C, bool>()
         {
@@ -107,7 +108,7 @@ public static class OptionFactory
     /// If the converted value is out of range, an <see cref="ArgumentException"/> will be thrown.
     /// If the parsing of the string value fails, a <see cref="FormatException"/> will be thrown.
     /// </summary>
-    public static Option<C, int> CreateIntOption<C>(int minValue = int.MinValue, int maxValue = int.MaxValue)
+    public static Option<C, int> CreateIntOption(int minValue = int.MinValue, int maxValue = int.MaxValue)
     {
         var intOption = new Option<C, int>();
         intOption = intOption with
