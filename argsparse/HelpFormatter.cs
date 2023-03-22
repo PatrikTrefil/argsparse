@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 
@@ -46,8 +46,7 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
             {
                 switch (arg.Multiplicity)
                 {
-                    case ArgumentMultiplicity.SpecificCount:
-                        var argMulSpecCount = arg.Multiplicity as ArgumentMultiplicity.SpecificCount;
+                    case ArgumentMultiplicity.SpecificCount argMulSpecCount:
                         for (int i = 0; i < argMulSpecCount.Number; i++)
                             Console.Write(" " + arg.ValuePlaceholder);
 
@@ -71,11 +70,11 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
             if (option.Names is null)
                 Console.Write("no-names-provided");
             else
-            foreach (var name in option.Names)
-            {
-                System.Console.Write(name + "=" + option.ValuePlaceHolder);
-                System.Console.Write(", ");
-            }
+                foreach (var name in option.Names)
+                {
+                    System.Console.Write(name + "=" + option.ValuePlaceHolder);
+                    System.Console.Write(", ");
+                }
 
             if (option.Description is not null)
             {
@@ -95,11 +94,11 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
             if (flag.Names is null)
                 Console.Write("no-name-provided");
             else
-            foreach (var name in flag.Names)
-            {
-                Console.Write(name);
-                Console.Write(", ");
-            }
+                foreach (var name in flag.Names)
+                {
+                    Console.Write(name);
+                    Console.Write(", ");
+                }
 
             if (flag.Description is not null)
             {
