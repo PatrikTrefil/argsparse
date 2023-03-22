@@ -213,7 +213,7 @@ public record class Parser<C> : IParser
     /// </summary>
     public void PrintHelp() => PrintHelp(new DefaultHelpFormatter<C>(), System.Console.Out);
     public void Parse(string[] args) => ParseAndRun(args, true, (_) => { });
-    public void ParseAndRun(string[] args) => ParseAndRun(args, true, this.Run);
+    public void ParseAndRun(string[] args) => ParseAndRun(args, isRoot: true, localRun: Run);
     void ParseAndRun(string[] args, bool isRoot, Action<C> localRun)
     {
         throw new NotImplementedException();
