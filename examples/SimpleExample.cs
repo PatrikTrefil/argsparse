@@ -27,20 +27,22 @@ internal class SimpleExample
 
         parser.AddFlag(helpFlag);
 
-        var algorithmOption = OptionFactory<ExampleConfiguration>.CreateStringOption() with
+        var algorithmOption = new Option<ExampleConfiguration, string>
         {
             Names = new string[] { "-a", "--algorithm" },
             Description = "Set algorithm to use",
-            Action = (storage, value) => { storage.algorithm = value; }
+            Action = (storage, value) => { storage.algorithm = value; },
+            Converter = ConverterFactory.CreateStringConverter(),
         };
 
-        var inputFileArg = ArgumentFactory<ExampleConfiguration>.CreateStringArgument() with
+        var inputFileArg = new Argument<ExampleConfiguration, string>
         {
             Name = "input file",
             ValuePlaceholder = "INPUT-FILE",
             Description = "File to process",
             Multiplicity = new ArgumentMultiplicity.SpecificCount(1, true),
-            Action = (storage, value) => { storage.inputFile = value; }
+            Action = (storage, value) => { storage.inputFile = value; },
+            Converter = ConverterFactory.CreateStringConverter()
         };
         parser.AddArgument(inputFileArg);
 

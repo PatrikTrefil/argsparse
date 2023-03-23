@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace Argparse;
 
-internal static class ConverterFactory
+public static class ConverterFactory
 {
     public static Func<string, string> CreateStringConverter() => (string s) => { return s; };
-    public static Func<string, List<T>> CreateListConverter<T>(Func<string, T> converter, char separator)
+    public static Func<string, List<T>> CreateListConverter<T>(Func<string, T> converter, char separator = ',')
     {
         return (string s) => { return s.Split(separator).Select(x => converter(x)).ToList(); };
     }
@@ -19,7 +19,7 @@ internal static class ConverterFactory
                 return false;
             };
     }
-    public static Func<string, int> CreateIntConverter(int minValue, int maxValue)
+    public static Func<string, int> CreateIntConverter(int minValue = int.MinValue, int maxValue = int.MaxValue)
     {
         return (string s) =>
             {

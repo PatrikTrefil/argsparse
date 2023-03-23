@@ -204,20 +204,22 @@ internal static class NumactlExample
             Converter = NumactlConfiguration.ParseNumaNode
         });
 
-        parser.AddArgument(ArgumentFactory<NumactlConfiguration>.CreateStringArgument() with
+        parser.AddArgument(new Argument<NumactlConfiguration, string>
         {
             Name = "command",
             Description = "Command to run",
             Action = (storage, value) => { storage.Command = value; },
-            Multiplicity = new ArgumentMultiplicity.SpecificCount(1, false)
+            Multiplicity = new ArgumentMultiplicity.SpecificCount(1, false),
+            Converter = ConverterFactory.CreateStringConverter()
         });
 
-        parser.AddArgument(ArgumentFactory<NumactlConfiguration>.CreateStringArgument() with
+        parser.AddArgument(new Argument<NumactlConfiguration, string>
         {
             Name = "command arguments",
             Description = "Arguments for command",
             Action = (storage, value) => { storage.CommandArgs.Add(value); },
-            Multiplicity = new ArgumentMultiplicity.AllThatFollow()
+            Multiplicity = new ArgumentMultiplicity.AllThatFollow(),
+            Converter = ConverterFactory.CreateStringConverter()
         });
     }
 

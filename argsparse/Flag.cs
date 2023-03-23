@@ -15,13 +15,13 @@ public sealed record class Flag<C>
     /// Names of short options are prefixed with one dash '-'
     /// One option can represent both long and short options
     /// </summary>
-    public string[]? Names { get; set; }
+    public required string[] Names { get; set; }
     /// <summary>
     /// Description of the flag-like option as it should appear in help write-up.
     /// </summary>
-    public string? Description { get; set; }
+    public required string Description { get; set; }
     /// <summary>
     /// Action to be carried out upon parsing of the flag in the input.
     /// </summary>
-    public Action<C> Action { get; set; } = (conf) => { };
+    public required Action<C> Action { get; set; }
 }

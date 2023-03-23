@@ -45,11 +45,12 @@ internal class ComplexExample
             Description = "Print help"
         });
 
-        var numberArg = ArgumentFactory<ComplexExampleSubCommandConfig>.CreateIntArgument() with
+        var numberArg = new Argument<ComplexExampleSubCommandConfig, int>
         {
             Name = "Number",
             Description = "Number description",
-            Action = (storage, value) => { storage.number = value; }
+            Action = (storage, value) => { storage.number = value; },
+            Converter = ConverterFactory.CreateIntConverter()
         };
         subcommandParser.AddArgument(numberArg);
 

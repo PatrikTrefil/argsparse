@@ -14,6 +14,7 @@ internal class TimeExample
         public string? format;
         public List<string> arguments = new();
         public string? command;
+        public string? outputFile;
     }
 
     public static void Run(string[] args)
@@ -67,7 +68,7 @@ internal class TimeExample
 
         parser.AddFlag(portabilityFlag);
 
-        var formatOption = OptionFactory<TimeCommandConfiguration>.CreateStringOption() with
+        var formatOption = new Option<TimeCommandConfiguration, string>
         {
             Names = new string[] { "-f", "--format" },
             Description = "Specify output format, possibly overriding the format specified in the environment variable TIME.",
@@ -75,33 +76,43 @@ internal class TimeExample
             Action = (storage, value) =>
             {
                 storage.format = value;
-            }
+            },
+            Converter = ConverterFactory.CreateStringConverter()
         };
         parser.AddOption(formatOption);
 
-        var outputFileOption = OptionFactory<TimeCommandConfiguration>.CreateStringOption() with
+        var outputFileOption = new Option<TimeCommandConfiguration, string>
         {
             Names = new string[] { "-o", "--output" },
             Description = "Do not send the results to stderr, but overwrite the specified file.",
-            ValuePlaceHolder = "FILE"
+            ValuePlaceHolder = "FILE",
+            Converter = ConverterFactory.CreateStringConverter(),
+            Action = (storage, value) =>
+            {
+                storage.outputFile = value;
+            }
         };
         parser.AddOption(outputFileOption);
 
 
         // if we needed special parsing for different kinds of commands, we could use subparsers
-        parser.AddArgument(ArgumentFactory<TimeCommandConfiguration>.CreateStringArgument() with
+        parser.AddArgument(new Argument<TimeCommandConfiguration, string>
         {
             Multiplicity = new ArgumentMultiplicity.SpecificCount(1, true),
             Action = (storage, value) => { storage.command = value; },
             Name = "command",
-            ValuePlaceholder = "command"
+            ValuePlaceholder = "command",
+            Converter = ConverterFactory.CreateStringConverter(),
+            Description = "command to run"
         });
 
-        parser.AddArgument(ArgumentFactory<TimeCommandConfiguration>.CreateStringArgument() with
+        parser.AddArgument(new Argument<TimeCommandConfiguration, string>
         {
             Multiplicity = new ArgumentMultiplicity.AllThatFollow(),
             Action = (storage, value) => { storage.arguments.Add(value); },
-            Name = "arg-name"
+            Name = "arg-name",
+            Converter = ConverterFactory.CreateStringConverter(),
+            Description = "arg desc"
         });
 
 
