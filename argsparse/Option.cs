@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Argparse;
 
@@ -70,20 +69,23 @@ public static class OptionFactory<C>
     /// </summary>
     public static Option<C, string> CreateStringOption()
     {
-        return new Option<C, string>() { Converter = (string s) => { return s; } };
+        return new Option<C, string>() { Converter = ConverterFactory.CreateStringConverter() };
     }
 
     /// <summary>
     /// Creates a option which accepts a list of values convertible to type <typeparamref name="T"/>
-    /// by the provided convertor function <paramref name="convertor"/>.
+    /// by the provided convertor function <paramref name="converter"/>.
     /// </summary>
     /// <typeparam name="C">Config context type of the parent parser.</typeparam>
     /// <typeparam name="T">Type of the individual values listed in the option value.</typeparam>
-    /// <param name="convertor">Function to convert the individiual values from string to intended type.</param>
+    /// <param name="converter">Function to convert the individiual values from string to intended type.</param>
     /// <param name="separator">Separator of the individual values in the option value</param>
-    public static Option<C, List<T>> CreateListOption<T>(Func<string, T> convertor, char separator = ',')
+    public static Option<C, List<T>> CreateListOption<T>(Func<string, T> converter, char separator = ',')
     {
-        return new Option<C, List<T>>() { Converter = (string s) => { return s.Split(separator).Select(x => convertor(x)).ToList(); } };
+        return new Option<C, List<T>>()
+        {
+            Converter = ConverterFactory.CreateListConverter(converter, separator)
+        };
     }
     /// <summary>
     /// Creates a simple bool-valued option for a <see cref="Parser{C}"/> 
@@ -94,11 +96,7 @@ public static class OptionFactory<C>
     {
         return new Option<C, bool>()
         {
-            Converter = (string s) =>
-            {
-                if (s == "true") return true;
-                return false;
-            }
+            Converter = ConverterFactory.CreateBoolConverter()
         };
     }
     /// <summary>
@@ -110,21 +108,9 @@ public static class OptionFactory<C>
     /// </summary>
     public static Option<C, int> CreateIntOption(int minValue = int.MinValue, int maxValue = int.MaxValue)
     {
-        var intOption = new Option<C, int>();
-        intOption = intOption with
+        return new Option<C, int>()
         {
-            Converter = (string s) =>
-            {
-                int value = int.Parse(s);
-                if (value < minValue || value > maxValue)
-                {
-                    string optionName = intOption.Names is not null ? string.Join(", ", intOption.Names) : "no-name-provided";
-                    throw new ArgumentException($"Value {value} in option named {optionName} is out of range [{minValue}, {maxValue}]");
-                }
-
-                return value;
-            }
+            Converter = ConverterFactory.CreateIntConverter(minValue, maxValue)
         };
-        return intOption;
     }
 }

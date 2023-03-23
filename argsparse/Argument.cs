@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Argparse;
 
@@ -87,20 +86,20 @@ public static class ArgumentFactory<C>
     /// </summary>
     public static Argument<C, string> CreateStringArgument()
     {
-        return new Argument<C, string>() { Converter = (string s) => { return s; } };
+        return new Argument<C, string>() { Converter = ConverterFactory.CreateStringConverter() };
     }
 
     /// <summary>
     /// Creates a argument which accepts a single string which is a list of values convertible to type <typeparamref name="T"/>
-    /// by the provided convertor function <paramref name="convertor"/>.
+    /// by the provided convertor function <paramref name="converter"/>.
     /// </summary>
     /// <typeparam name="C">Config context type of the parent parser.</typeparam>
     /// <typeparam name="T">Type of the individual values listed in the argument value.</typeparam>
-    /// <param name="convertor">Function to convert the individiual values from string to intended type.</param>
+    /// <param name="converter">Function to convert the individiual values from string to intended type.</param>
     /// <param name="separator">Separator of the individual values in the argument value</param>
-    public static Argument<C, List<T>> CreateListArgument<T>(Func<string, T> convertor, char separator = ',')
+    public static Argument<C, List<T>> CreateListArgument<T>(Func<string, T> converter, char separator = ',')
     {
-        return new Argument<C, List<T>>() { Converter = (string s) => { return s.Split(separator).Select(x => convertor(x)).ToList(); } };
+        return new Argument<C, List<T>>() { Converter = ConverterFactory.CreateListConverter(converter, separator) };
     }
     /// <summary>
     /// Creates a simple bool-valued argument for a <see cref="Parser{C}"/> 
@@ -111,11 +110,7 @@ public static class ArgumentFactory<C>
     {
         return new Argument<C, bool>()
         {
-            Converter = (string s) =>
-            {
-                if (s == "true") return true;
-                return false;
-            }
+            Converter = ConverterFactory.CreateBoolConverter()
         };
     }
     /// <summary>
@@ -127,21 +122,9 @@ public static class ArgumentFactory<C>
     /// </summary>
     public static Argument<C, int> CreateIntArgument(int minValue = int.MinValue, int maxValue = int.MaxValue)
     {
-        var intArgument = new Argument<C, int>();
-        intArgument = intArgument with
+        return new Argument<C, int>()
         {
-            Converter = (string s) =>
-            {
-                int value = int.Parse(s);
-                if (value < minValue || value > maxValue)
-                {
-                    string argName = intArgument.Name ?? "no-name-provided";
-                    throw new ArgumentException($"Value {value} in argument named {argName} is out of range [{minValue}, {maxValue}]");
-                }
-
-                return value;
-            }
+            Converter = ConverterFactory.CreateIntConverter(minValue, maxValue)
         };
-        return intArgument;
     }
 }
