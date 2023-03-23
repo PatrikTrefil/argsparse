@@ -42,14 +42,16 @@ internal class ComplexExample
         subcommandParser.AddFlag(new Flag<ComplexExampleSubCommandConfig>()
         {
             Names = new string[] { "-h", "--help" },
-            Description = "Print help"
+            Description = "Print help",
+            Action = (c) => { c.help = true; }
         });
 
-        var numberArg = ArgumentFactory<ComplexExampleSubCommandConfig>.CreateIntArgument() with
+        var numberArg = new Argument<ComplexExampleSubCommandConfig, int>
         {
             Name = "Number",
             Description = "Number description",
-            Action = (storage, value) => { storage.number = value; }
+            Action = (storage, value) => { storage.number = value; },
+            Converter = ConverterFactory.CreateIntConverter()
         };
         subcommandParser.AddArgument(numberArg);
 

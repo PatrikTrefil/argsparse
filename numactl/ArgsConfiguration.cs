@@ -1,4 +1,5 @@
 using Argparse;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Numactl;
@@ -46,32 +47,36 @@ class NumaParser
             Action = (x) => x.Help = true,
         });
 
-        parser.AddOption(OptionFactory<NumaCtlArgs>.CreateListOption<int>(int.Parse) with
+        parser.AddOption(new Option<NumaCtlArgs, List<int>>
         {
             Names = new string[] { "-i", "--interleave" },
             Description = "Interleave memory allocation across given nodes.",
             Action = (x, v) => x.Interleave = v,
+            Converter = ConverterFactory.CreateListConverter(int.Parse),
         });
 
-        parser.AddOption(OptionFactory<NumaCtlArgs>.CreateIntOption() with
+        parser.AddOption(new Option<NumaCtlArgs, int>
         {
             Names = new string[] { "-p", "--preferred" },
             Description = "Prefer memory allocations from given node.",
             Action = (x, v) => x.Preferred = v,
+            Converter = ConverterFactory.CreateIntConverter()
         });
 
-        parser.AddOption(OptionFactory<NumaCtlArgs>.CreateListOption<int>(int.Parse) with
+        parser.AddOption(new Option<NumaCtlArgs, List<int>>
         {
             Names = new string[] { "-m", "--membind" },
             Description = "Allocate memory from given nodes only.",
             Action = (x, v) => x.MemBind = v,
+            Converter = ConverterFactory.CreateListConverter(int.Parse),
         });
 
-        parser.AddOption(OptionFactory<NumaCtlArgs>.CreateListOption<int>(int.Parse) with
+        parser.AddOption(new Option<NumaCtlArgs, List<int>>
         {
             Names = new string[] { "-C", "--physcpubind" },
             Description = "Run on given CPUs only.",
             Action = (x, v) => x.PhysCpuBind = v,
+            Converter = ConverterFactory.CreateListConverter(int.Parse),
         });
 
         parser.AddFlag(new Flag<NumaCtlArgs>
@@ -88,20 +93,22 @@ class NumaParser
             Action = (x) => x.Hardware = true,
         });
 
-        parser.AddArgument(ArgumentFactory<NumaCtlArgs>.CreateStringArgument() with
+        parser.AddArgument(new Argument<NumaCtlArgs, string>
         {
             Description = "Command to be executed on NUMA architecture.",
             ValuePlaceholder = "command",
             Multiplicity = new ArgumentMultiplicity.SpecificCount(1, IsRequired: false),
             Action = (x, v) => x.Command = v,
+            Converter = ConverterFactory.CreateStringConverter()
         });
 
-        parser.AddArgument(ArgumentFactory<NumaCtlArgs>.CreateListArgument<string>(s => s) with
+        parser.AddArgument(new Argument<NumaCtlArgs, List<string>>
         {
             Description = "Arguments of the specified command.",
             ValuePlaceholder = "args",
             Multiplicity = new ArgumentMultiplicity.AllThatFollow(),
             Action = (x, v) => x.CommandArgs = v,
+            Converter = ConverterFactory.CreateListConverter(ConverterFactory.CreateStringConverter())
         });
     }
 }
