@@ -42,7 +42,8 @@ internal class ComplexExample
         subcommandParser.AddFlag(new Flag<ComplexExampleSubCommandConfig>()
         {
             Names = new string[] { "-h", "--help" },
-            Description = "Print help"
+            Description = "Print help",
+            Action = (c) => { c.help = true; }
         });
 
         var numberArg = new Argument<ComplexExampleSubCommandConfig, int>
