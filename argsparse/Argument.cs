@@ -31,16 +31,13 @@ public abstract record class ArgumentMultiplicity
 
 public interface IArgument<C>
 {
-    /// <summary>
-    /// Name of the argument as it should appear in help write-up and debug messages.
-    /// </summary>
-    public string Name { get; init; }
+
     /// <summary>
     /// Description of the argument as it should appear in help write-up.
     /// </summary>
     public string Description { get; init; }
     /// <summary>
-    /// Value placeholder will be used in synopsis e.g. program [options] <value-placeholder> ...
+    /// Value placeholder will be used in synopsis e.g. program [options] <value-placeholder> and appear in help write-up.
     /// </summary>
     public string ValuePlaceholder { get; init; }
     /// <summary>
@@ -52,7 +49,6 @@ public interface IArgument<C>
 
 public sealed record class Argument<C, V> : IArgument<C>
 {
-    public string Name { get; init; }
     public required string Description { get; init; }
     public string ValuePlaceholder { get; init; } = "<arg>";
     /// <summary>

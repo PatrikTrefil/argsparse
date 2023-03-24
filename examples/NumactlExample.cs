@@ -206,7 +206,7 @@ internal static class NumactlExample
 
         parser.AddArgument(new Argument<NumactlConfiguration, string>
         {
-            Name = "command",
+            ValuePlaceholder = "command",
             Description = "Command to run",
             Action = (storage, value) => { storage.Command = value; },
             Multiplicity = new ArgumentMultiplicity.SpecificCount(1, false),
@@ -215,7 +215,7 @@ internal static class NumactlExample
 
         parser.AddArgument(new Argument<NumactlConfiguration, string>
         {
-            Name = "command arguments",
+            ValuePlaceholder = "command arguments",
             Description = "Arguments for command",
             Action = (storage, value) => { storage.CommandArgs.Add(value); },
             Multiplicity = new ArgumentMultiplicity.AllThatFollow(),
