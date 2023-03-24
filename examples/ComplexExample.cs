@@ -20,7 +20,7 @@ internal class ComplexExample
             () => new ComplexExampleCommandConfig()
             )
         {
-            Name = "My program",
+            Names = new string[] {"My program"},
             Description = "My description",
             Run = (c) => { Console.WriteLine("I will run after my config is ready"); }
         };
@@ -35,7 +35,7 @@ internal class ComplexExample
             () => new ComplexExampleSubCommandConfig()
             )
         {
-            Name = "My subcommand",
+            Names = new string[] {"My subcommand"},
             Description = "My subcommand description",
             Run = (c) => { Console.WriteLine("I will run after my config is ready"); }
         };

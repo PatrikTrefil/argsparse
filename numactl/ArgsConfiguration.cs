@@ -9,7 +9,10 @@ class NumaParser
 
     NumaCtlArgs args = new NumaCtlArgs();
 
-    private Parser<NumaCtlArgs> parser = new Parser<NumaCtlArgs>(() => new NumaCtlArgs());
+    private Parser<NumaCtlArgs> parser = new Parser<NumaCtlArgs>(() => new NumaCtlArgs()) {
+        Names = new string[] { "numactl" },
+        Description = "Run a program under control of numactl.",
+    };
 
     public NumaParser()
     {
