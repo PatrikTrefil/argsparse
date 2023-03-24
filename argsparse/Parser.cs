@@ -59,7 +59,7 @@ public record class Parser<C> : IParser
     /// Defaults to an empty action.
     /// </para>
     /// </value>
-    public Action<C, Parser<C>> Run { get; set; } = (_, _) => { };
+    public Action<C> Run { get; set; } = (_) => { };
 
     /// <summary>
     /// Returns a dictionary of all atached subparsers with keys being names of the 
@@ -206,7 +206,7 @@ public record class Parser<C> : IParser
     /// </summary>
     public void PrintHelp() => PrintHelp(new DefaultHelpFormatter<C>(), System.Console.Out);
     public void Parse(string[] args) => ParseAndRun(args, true, (_, _) => { });
-    public void ParseAndRun(string[] args) => ParseAndRun(args, isRoot: true, localRun: Run);
+    public void ParseAndRun(string[] args) => ParseAndRun(args, isRoot: true, localRun: (c, _) => Run(c));
     void ParseAndRun(string[] args, bool isRoot, Action<C, Parser<C>> localRun)
     {
         throw new NotImplementedException();
