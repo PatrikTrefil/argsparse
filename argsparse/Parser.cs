@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace Argparse;
@@ -65,7 +66,7 @@ public record class Parser<C> : IParser
     /// commands attached to the parsers.
     /// <para>See <see cref="AddSubparser(string, IParser)"</see></para>
     /// </summary>
-    public Dictionary<string, IParser> SubParsers { get; set; } = new();
+    public ReadOnlyDictionary<string, IParser> SubParsers => default!; // ! to avoid warning, to be implemented
 
     /// <summary>
     /// Attach a subparser to this parser as a subcommand <paramref name="command"/>. 
@@ -80,7 +81,6 @@ public record class Parser<C> : IParser
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddSubparser(string command, IParser commandParser)
     {
-        // validate that command has no spaces and that this command is not already registered
         return this;
     }
 
@@ -88,7 +88,7 @@ public record class Parser<C> : IParser
     /// <summary>
     /// Returns all flag-like options attached to the parser via the methods <see cref="AddFlag(Flag{C})"/> and <see cref="AddFlags(Flag{C}[])"/>.
     /// </summary>
-    public List<Flag<C>> Flags { get; private set; } = new();
+    public ReadOnlyCollection<Flag<C>> Flags => default!; // ! to avoid warning, to be implemented
 
 
     /// <summary>
@@ -99,8 +99,6 @@ public record class Parser<C> : IParser
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddFlag(Flag<C> flag)
     {
-        // TODO: check that option/flag/command with the same name does not exist
-        Flags.Add(flag);
         return this;
     }
     /// <summary>
@@ -120,7 +118,7 @@ public record class Parser<C> : IParser
     /// <seealso cref="Option{C, V}"/>.
     /// </para>
     /// </summary>
-    public List<IOption<C>> Options { get; private set; } = new();
+    public ReadOnlyCollection<IOption<C>> Options => default!; // ! to avoid warning, to be implemented
 
     /// <summary>
     /// Attach a value option to the parser.
@@ -133,8 +131,6 @@ public record class Parser<C> : IParser
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddOption(IOption<C> option)
     {
-        // TODO: check that option/flag/command with the same name does not exist
-        Options.Add(option);
         return this;
     }
     /// <summary>
@@ -151,7 +147,7 @@ public record class Parser<C> : IParser
     /// Returns all plain arguments attached to the parser via the methods <see cref="AddArgument(IArgument{C}))"/> and <see cref="AddArguments(IArgument{C}[])"/>.
     /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
     /// </summary>
-    public List<IArgument<C>> Arguments { get; private set; } = new();
+    public ReadOnlyCollection<IArgument<C>> Arguments  => default!; // ! to avoid warning, to be implemented	
 
     /// <summary>
     /// Attach a plain argument to the parser.
@@ -161,10 +157,7 @@ public record class Parser<C> : IParser
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
     public Parser<C> AddArgument(IArgument<C> argument)
     {
-        // TODO: check that option/flag/command with the same name does not exist
-        Arguments.Add(argument);
         return this;
-
     }
     /// <summary>
     /// Attach one or more plain arguments to the parser.
