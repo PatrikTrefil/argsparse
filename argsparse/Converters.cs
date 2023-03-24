@@ -37,6 +37,10 @@ public static class ConverterFactory
             };
     }
 
+     public static Func<string, double> CreateDoubleConverter(double minValueInclusive = double.NegativeInfinity, double maxValueInclusive = double.PositiveInfinity) {
+        return null!;
+     }
+
     /// <summary>
     /// Creates a converter for an enumeration type.
     /// </summary>
