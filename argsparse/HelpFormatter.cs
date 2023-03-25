@@ -15,7 +15,9 @@ public interface IParserHelpFormatter<T>
     /// Prints a help write-up to the provided <see cref="TextWriter"/> from the information
     /// gathered from the provided <paramref name="parser"/>.
     /// </summary>
-    public abstract void PrintHelp(Parser<T> parser, TextWriter writer);
+    public abstract void PrintHelp<T2>(Parser<T2> parser, TextWriter writer) 
+        where T2 : T;
+
 }
 
 /// <summary>
@@ -25,7 +27,8 @@ public interface IParserHelpFormatter<T>
 public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
 {
 
-    public void PrintHelp(Parser<T> parser, TextWriter writer)
+    public void PrintHelp<T2>(Parser<T2> parser, TextWriter writer)
+        where T2 : T
     {
         System.Console.WriteLine(parser.Name);
 
