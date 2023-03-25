@@ -13,7 +13,7 @@ class NumaParser
 
     public NumaParser()
     {
-        parser.Run = result => args = result;
+        parser.Run = (result,_) => args = result;
         Configure();
     }
 

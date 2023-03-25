@@ -22,7 +22,7 @@ internal class ComplexExample
         {
             Name = "My program",
             Description = "My description",
-            Run = (c) => { Console.WriteLine("I will run after my config is ready"); }
+            Run = (c,_) => { Console.WriteLine("I will run after my config is ready"); }
         };
         toplevelParser.AddFlag(new Flag<ComplexExampleCommandConfig>
         {
@@ -37,7 +37,7 @@ internal class ComplexExample
         {
             Name = "My subcommand",
             Description = "My subcommand description",
-            Run = (c) => { Console.WriteLine("I will run after my config is ready"); }
+            Run = (c,_) => { Console.WriteLine("I will run after my config is ready"); }
         };
         subcommandParser.AddFlag(new Flag<ComplexExampleSubCommandConfig>()
         {
