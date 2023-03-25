@@ -115,7 +115,7 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
         }
         foreach (var arg in parser.Arguments)
         {
-            Console.Write(arg.Name);
+            Console.Write(arg.ValuePlaceholder);
             if (arg.Description is not null)
             {
                 Console.Write("- ");

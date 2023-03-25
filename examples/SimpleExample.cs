@@ -37,8 +37,7 @@ internal class SimpleExample
 
         var inputFileArg = new Argument<ExampleConfiguration, string>
         {
-            Name = "input file",
-            ValuePlaceholder = "INPUT-FILE",
+            ValuePlaceholder = "input file",
             Description = "File to process",
             Multiplicity = new ArgumentMultiplicity.SpecificCount(1, true),
             Action = (storage, value) => { storage.inputFile = value; },

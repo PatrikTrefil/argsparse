@@ -48,7 +48,7 @@ internal class ComplexExample
 
         var numberArg = new Argument<ComplexExampleSubCommandConfig, int>
         {
-            Name = "Number",
+            ValuePlaceholder = "Number",
             Description = "Number description",
             Action = (storage, value) => { storage.number = value; },
             Converter = ConverterFactory.CreateIntConverter()

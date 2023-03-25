@@ -100,7 +100,6 @@ internal class TimeExample
         {
             Multiplicity = new ArgumentMultiplicity.SpecificCount(1, true),
             Action = (storage, value) => { storage.command = value; },
-            Name = "command",
             ValuePlaceholder = "command",
             Converter = ConverterFactory.CreateStringConverter(),
             Description = "command to run"
@@ -110,7 +109,7 @@ internal class TimeExample
         {
             Multiplicity = new ArgumentMultiplicity.AllThatFollow(),
             Action = (storage, value) => { storage.arguments.Add(value); },
-            Name = "arg-name",
+            ValuePlaceholder = "arg-name",
             Converter = ConverterFactory.CreateStringConverter(),
             Description = "arg desc"
         });
