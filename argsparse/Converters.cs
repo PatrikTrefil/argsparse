@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Argparse;
@@ -46,8 +47,9 @@ public static class ConverterFactory
     /// </summary>
     /// <typeparam name="T">The enumeration type, has to be Enum</typeparam>
     /// <param name="caseSensitive">If true, the converter match enum values no matter the case</param>
-    /// <param name="explicitMapping">A dictionary that maps strings to enum values. If a string is not found in the dictionary, the converter will try to parse the string as an enum value. If no mapping is provided, the convertor will try to match enum names.</param>
+    /// <param name="explicitMapping">A dictionary that maps enum values to possible string values provided by the user. If a string is not found in the dictionary values, the converter will try to parse the string as an enum value. If no explicit mapping is provided, the convertor will use implicit mapping</param>
     /// <param name="useImplicitMapping">If true, the converter will not try to match the input string to enum value names in code, but only use provided explicit mapping.</param>
+    /// <exception cref="ArgumentException">If both explicit and implicit mapping are disabled.</exception>
     /// <description>
     /// The converter will try to match the input string to the enum values in the following order:
     /// 1. Explicit mapping: the converter will try to match the input string to the keys in the <paramref cref="explicitMapping">.
@@ -59,35 +61,10 @@ public static class ConverterFactory
     /// </para>
     /// </description>
     public static Func<string, T> CreateEnumerationConverter<T>(
-        bool caseSensitive = true, Dictionary<string, T>? explicitMapping = null, bool useImplicitMapping = true)
+        bool caseSensitive = true, Dictionary<T, ImmutableHashSet<string>>? explicitMapping = null, bool useImplicitMapping = true)
         where T : Enum
     {        
         return null!;
     }
 
-    /// <summary>
-    /// Creates a converter for an enumeration type.
-    /// </summary>
-    /// <typeparam name="T">The enumeration type, has to be Enum</typeparam>
-    /// <param name="caseSensitive">If true, the converter match enum values no matter the case</param>
-    /// <param name="mapping">A dictionary that maps strings to enum values. If a string is not found in the dictionary, the converter will try to parse the string as an enum value. If no mapping is provided, the convertor will try to match enum names.</param>
-    /// <param name="disableImplicitMapping">If true, the converter will not try to match the input string to enum value names in code, but only use provided explicit mapping.</param>
-    /// <description>
-    /// The converter will try to match the input string to the enum values in the following order:
-    /// 1. Explicit mapping: the converter will try to match the input string to the keys in the <paramref cref="explicitMapping">.
-    /// 2. Implicit mapping: the converter will try to match the input string to the keys in the mapping.
-    /// 3. If not found in any mapping, <see cref="ArgumentException"/> will be thrown.
-    /// <para>
-    /// Implicit mapping can be disabled by setting <paramref cref="useImplicitMapping"/> to false.
-    /// Explicit mapping can be disabled leaving out <paramref cref="explicitMapping"/> or by setting it to null .
-    /// </para>
-    /// <para>
-    /// If a string is present in more than one key array, the first match will be used.
-    /// </para>
-    /// </description>
-    public static Func<string, T> CreateEnumerationConverter<T>(bool caseSensitive = true, Dictionary<string[], T>? explicitMapping = null, bool useImplicitMapping = true)
-        where T : Enum
-    {        
-        return null!;
-    }
 }
