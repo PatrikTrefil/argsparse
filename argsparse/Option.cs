@@ -17,7 +17,7 @@ public interface IOption<C>
     /// </summary>
     public string Description { get; init; }
     /// <summary>
-    /// If false, the parser will produce an error state upon finishing parsing without encountering
+    /// If true, the parser will produce an error state upon finishing parsing without encountering
     /// the option.
     /// </summary>
     public bool IsRequired { get; init; }
@@ -46,8 +46,15 @@ public sealed record class Option<C, V> : IOption<C>
     public required Action<C, V> Action { get; init; }
     public bool IsRequired { get; init; } = false;
     /// <summary>
-    /// Function to convert the argument value parsed as a string from the input to the target type.
+    /// Function to convert the option value parsed as a string from the input to the target type.
     /// </summary>
+    /// <remarks>
+    /// <para>Converters may throw exceptions, 
+    /// they will be caught and the parser will throw <see cref="ParserConversionException"/></para>
+    /// <para>Some of the basic converters are available in <see cref="ConverterFactory"/></para>
+    /// <para>It is good practice to not use converters to store the value or manipulate outer state.
+    /// </para>
+    /// </remarks>
     public required Func<string, V> Converter { get; init; }
     void IOption<C>.Process(C config, string value)
     {
