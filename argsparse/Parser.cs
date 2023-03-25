@@ -10,6 +10,12 @@ namespace Argparse;
 /// </summary>
 public interface IParser
 {
+    /// <value>The parser name as it will appear in help and debug messages.</value>
+    public string[] Names { get; init; }
+    /// <value>The parser description as it will appear in help.</value>
+    public string Description { get; init; }
+    public string PlainArgumentsDelimiter { get; init; }
+    public Dictionary<string, IParser> SubParsers { get; }
     /// <summary>
     /// Parses command line-like input from <paramref name="args"/> and then invoke
     /// the action provided to the specific parser in <c>Run</c>.
@@ -29,10 +35,9 @@ public interface IParser
 }
 public record class Parser<C> : IParser
 {
-    /// <value>The parser name as it will appear in help and debug messages.</value>
-    public string Name { get; set; } = "";
+    public required string[] Names { get; init; }
     /// <value>The parser description as it will appear in help.</value>
-    public string? Description { get; set; }
+    public required string Description { get; init; }
     /// <value><para><c>PlainArgumentsDelimiter</c> can be used to configure the arguments delimiter,
     /// which when parsed gives signal to the parser to treat all subsequent tokens as plain
     /// arguments.</para>
@@ -40,7 +45,7 @@ public record class Parser<C> : IParser
     /// Defaults to "--".
     /// </para>
     /// </value>
-    public string PlainArgumentsDelimiter { get; set; } = "--";
+    public string PlainArgumentsDelimiter { get; init; } = "--";
 
     /// <value>Config context instance. Either passed to the parser in the constructor or created
     /// by the parser right before parsing of input.</value>

@@ -14,7 +14,7 @@ internal class SimpleExample
 
         var parser = new Parser<ExampleConfiguration>(config)
         {
-            Name = "program",
+            Names = new string[] { "program" },
             Description = "Program description"
         };
 
