@@ -7,12 +7,29 @@ namespace Argparse;
 
 public static class ConverterFactory
 {
-    
+
+    /// <summary>
+    /// Creates a converter that does not convert the input string, but returns it as is.
+    /// </summary>
     public static Func<string, string> CreateStringConverter() => (string s) => { return s; };
+
+    /// <summary>
+    /// Creates a converter that converts a string to a list of values of type T.
+    /// </summary>
+    /// <typeparam name="T">Type of each element in the list</typeparam>
+    /// <param name="converter">Converter to be used for indivial elements, after they are parsed from their list representations.</param>
+    /// <param name="separator">Separator that should separate the individual values. May not be whitespace.</param>
+    /// <exception cref="ArgumentException">If the separator is a whitespace.</exception>
     public static Func<string, List<T>> CreateListConverter<T>(Func<string, T> converter, char separator = ',')
     {
         return (string s) => { return s.Split(separator).Select(x => converter(x)).ToList(); };
     }
+
+    /// <summary>
+    /// Creates a converter that converts a value to boolean.
+    /// Accepts following values: true, false, 1, 0, yes, no, y, n, on, off.
+    /// Created converter is case insensitive.
+    /// </summary>
     public static Func<string, bool> CreateBoolConverter()
     {
         // this implementation is only a demo, it is not complete, do not base tests on it
@@ -23,6 +40,19 @@ public static class ConverterFactory
                 return false;
             };
     }
+
+    /// <summary>
+    /// Creates a converter that converts a value to integer.
+    /// </summary>
+    /// <param name="minValueInclusive">
+    /// Minimum value that the converter will accept. If the value is lower, <see cref="ArgumentException"/> will be thrown.
+    /// </param>
+    /// <param name="maxValueInclusive">
+    /// Maximum value that the converter will accept. If the value is higher, <see cref="ArgumentException"/> will be thrown.
+    /// </param>
+    /// <exception cref="ArgumentException">
+    /// If the min value provided is higher than the max value.
+    /// </exception>
     public static Func<string, int> CreateIntConverter(int minValueInclusive = int.MinValue, int maxValueInclusive = int.MaxValue)
     {
         // this implementation is only a demo, it is not complete, do not base tests on it
@@ -38,7 +68,20 @@ public static class ConverterFactory
             };
     }
 
-     public static Func<string, double> CreateDoubleConverter(double minValueInclusive = double.NegativeInfinity, double maxValueInclusive = double.PositiveInfinity) {
+
+    /// <summary>
+    /// Creates a converter that converts a value to a double.
+    /// </summary>
+    /// <param name="minValueInclusive">
+    /// Minimum value that the converter will accept. If the value is lower, <see cref="ArgumentException"/> will be thrown.
+    /// </param>
+    /// <param name="maxValueInclusive">
+    /// Maximum value that the converter will accept. If the value is higher, <see cref="ArgumentException"/> will be thrown.
+    /// </param>
+    /// <exception cref="ArgumentException">
+    /// If the min value provided is higher than the max value.
+    /// </exception>
+    public static Func<string, double> CreateDoubleConverter(double minValueInclusive = double.NegativeInfinity, double maxValueInclusive = double.PositiveInfinity) {
         return null!;
      }
 

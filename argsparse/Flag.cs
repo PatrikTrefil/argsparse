@@ -22,6 +22,7 @@ public sealed record class Flag<C>
     public required string Description { get; set; }
     /// <summary>
     /// Action to be carried out upon parsing of the flag in the input.
+    /// The action is carried out each time the flag is encountered.
     /// </summary>
     public required Action<C> Action { get; set; }
 }
