@@ -1,0 +1,33 @@
+image: mcr.microsoft.com/dotnet/sdk:7.0
+
+variables:
+  EXE_RELEASE_FOLDER: 'argsparse/bin/Release'
+  MSI_RELEASE_FOLDER: 'argsparse/bin/Release'
+  TEST_FOLDER: 'tests/bin/Release'
+
+stages:
+  - build
+  - test
+
+build_job:
+  stage: build
+  script:
+    - dotnet restore
+    - dotnet build --configuration Release
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - '${EXE_RELEASE_FOLDER}/'
+      - '${TEST_FOLDER}/'
+
+test_job:
+  stage: test
+  script:
+    - dotnet test "./${TEST_FOLDER}/Tests.dll" --logger "trx;LogFileName=TestResult.xml"
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - './TestResult.xml'
+  dependencies:
+    - build_job

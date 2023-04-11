@@ -71,7 +71,7 @@ public record class Parser<C> : IParser
     /// commands attached to the parsers.
     /// <para>See <see cref="AddSubparser(string, IParser)"</see></para>
     /// </summary>
-    public ReadOnlyDictionary<string, IParser> SubParsers => default!; // ! to avoid warning, to be implemented
+    public Dictionary<string, IParser> SubParsers => default!; // ! to avoid warning, to be implemented
 
     /// <summary>
     /// Attach a subparser to this parser as a subcommand <paramref name="command"/>. 
