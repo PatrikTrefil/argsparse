@@ -165,6 +165,6 @@ public class SpecificParsingTests
         Assert.That(config.StringValue, Is.EqualTo("foo"));
         
         args = Array.Empty<string>();
-        Assert.Throws<ArgumentException>(() => parser.Parse(args));
+        Assert.Throws<ParserRuntimeException>(() => parser.Parse(args));
     }
 }
