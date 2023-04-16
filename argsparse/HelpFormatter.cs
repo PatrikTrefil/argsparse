@@ -30,7 +30,8 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
     public void PrintHelp<T2>(Parser<T2> parser, TextWriter writer)
         where T2 : T
     {
-        System.Console.WriteLine(parser.Names);
+        if(parser.Names.Length > 0)
+            System.Console.WriteLine(parser.Names[0]);
 
         if (parser.Description is not null)
         {
@@ -40,7 +41,7 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
 
         System.Console.WriteLine();
 
-        Console.Write(parser.Names);
+        Console.Write(string.Join(',', parser.Names));
         if (parser.Options.Any() || parser.Flags.Any())
             Console.Write(" [options]");
         if (parser.Arguments.Any())
