@@ -15,6 +15,7 @@ public class InvalidParserConfigurationException : Exception
 /// </summary>
 public class ParserConversionException : Exception
 {
+    public ParserConversionException(string message) : base(message) { }
 
     public ParserConversionException(string message, Exception inner) : base(message, inner) { }
 }
@@ -24,6 +25,7 @@ public class ParserConversionException : Exception
 /// </summary>
 public class ParserRuntimeException : Exception
 {
+    public ParserRuntimeException(string message) : base(message) { }
 
     public ParserRuntimeException(string message, Exception inner) : base(message, inner) { }
 }
