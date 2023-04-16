@@ -88,9 +88,9 @@ public class HelperTests
     {
         var converter = ConverterFactory.CreateIntConverter(0, 10);
         
-        Assert.Throws<ArgumentException>(() => converter("-1"));
-        Assert.Throws<ArgumentException>(() => converter("11"));
-        Assert.Throws<ArgumentException>(() => converter("abc"));
+        Assert.Throws<ParserConversionException>(() => converter("-1"));
+        Assert.Throws<ParserConversionException>(() => converter("11"));
+        Assert.Throws<ParserConversionException>(() => converter("abc"));
     }
     
     [Test]
@@ -107,6 +107,6 @@ public class HelperTests
     {
         var converter = ConverterFactory.CreateListConverter<int>(ConverterFactory.CreateIntConverter());
         
-        Assert.Throws<ArgumentException>(() => converter("1,2,3,4,abc"));
+        Assert.Throws<ParserConversionException>(() => converter("1,2,3,4,abc"));
     }
 }
