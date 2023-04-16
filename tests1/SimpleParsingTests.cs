@@ -191,47 +191,47 @@ public class SimpleParsingTests
     public void Parse_ThrowsOnMissingValue()
     {
         string[] args = { "--string" };
-        Assert.Throws<ArgumentException>(() => _parser.Parse(args));
+        Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
     
     [Test]
     public void Parse_ThrowsOnUnknownArgument()
     {
         string[] args = { "--unknown" };
-        Assert.Throws<ArgumentException>(() => _parser.Parse(args));
+        Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
     
     [Test]
     public void Parse_ThrowsOnDuplicateOption()
     {
         string[] args = { "--int", "42", "--int", "43" };
-        Assert.Throws<ArgumentException>(() => _parser.Parse(args));
+        Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
     
     [Test]
     public void Parse_ThrowsOnDuplicateFlag()
     {
         string[] args = { "--flag", "--flag" };
-        Assert.Throws<ArgumentException>(() => _parser.Parse(args));
+        Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
     
     [Test]
     public void Parse_ThrowsOnDuplicateFlagOneShort()
     {
         string[] args = { "--flag", "-f" };
-        Assert.Throws<ArgumentException>(() => _parser.Parse(args));
+        Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
     [Test]
     public void Parse_ThrowsOnInvalidInt()
     {
         string[] args = { "--int", "foo" };
-        Assert.Throws<ArgumentException>(() => _parser.Parse(args));
+        Assert.Throws<ParserConversionException>(() => _parser.Parse(args));
     }
     
     [Test]
     public void Parse_ThrowsOnInvalidIntList()
     {
         string[] args = { "--int-list", "1", "foo", "3" };
-        Assert.Throws<ArgumentException>(() => _parser.Parse(args));
+        Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
 }
