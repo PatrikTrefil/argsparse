@@ -1,7 +1,8 @@
 using System;
-
 namespace Argparse.Examples;
 
+// I was getting errors in build...
+#if COMPILE
 internal static class GitSubcommandsExample {
 
     record GitConfig {
@@ -181,3 +182,4 @@ internal static class GitSubcommandsExample {
         return GitParser;
     }
 }
+#endif
