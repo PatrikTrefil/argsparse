@@ -124,7 +124,7 @@ public partial record class Parser<C>
 
             string opts = token.Substring(1, i - 1);
             string? value = i == token.Length ? null :
-                    token.Substring(i, token.Length - i);
+                    token.Substring(i + 1, token.Length - i - 1);
 
             for (int u = 0; u < opts.Length; u++)
             {
