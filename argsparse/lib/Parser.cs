@@ -128,7 +128,7 @@ public partial record class Parser<C>
 
             for (int u = 0; u < opts.Length; u++)
             {
-                var shortname = $"-{token[u]}";
+                var shortname = $"-{opts[u]}";
                 if (u < opts.Length - 1)
                 {
                     if (!flagsMap.ContainsKey(shortname))
