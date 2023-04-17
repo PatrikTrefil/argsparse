@@ -84,7 +84,7 @@ namespace TestsArgparseAPI.ParsingTests
         [TestCase("--help", "--version")]
         [TestCase("--version", "-h")]
         [TestCase("--help", "-v")]
-        [TestCase("--v", "-h")]
+        [TestCase("-v", "-h")]
         public void ParseMultipleFlags(string firstFlag, string secondFlag)
         {
             parser.Parse(new string[] { firstFlag, secondFlag });
