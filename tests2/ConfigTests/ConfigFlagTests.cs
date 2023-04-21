@@ -56,7 +56,7 @@ namespace TestsArgparseAPI.ConfigTests
                 Action = storage => { storage.Version = true; }
             };
 
-            parser.AddFlags(new Flag<TestConfiguration>[] {helpFlag, versionFlag});
+            parser.AddFlags(new Flag<TestConfiguration>[] { helpFlag, versionFlag });
 
             var flags = parser.Flags;
 

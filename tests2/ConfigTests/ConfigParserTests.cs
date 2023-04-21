@@ -14,8 +14,8 @@ namespace TestsArgparseAPI.ConfigTests
         public void CreateParserInstanceWithoutExistingInstanceOfConfigRecord()
         {
             var parser = new Parser<TestConfiguration>(() => new TestConfiguration())
-            { 
-                Names = new string[] {"test"},
+            {
+                Names = new string[] { "test" },
                 Description = "Test parser."
             };
 

@@ -2,7 +2,7 @@
 
 namespace Argparse;
 
-public interface IOption<C> 
+public interface IOption<C>
 {
     /// <summary>
     /// Names the options as they will be parsed by the parser.

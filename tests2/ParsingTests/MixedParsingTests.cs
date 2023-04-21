@@ -43,8 +43,9 @@ namespace TestsArgparseAPI.ParsingTests
                 Description = "test mixed inputs"
             };
 
-            parser.AddFlag(new Flag<MixedConfig> {
-                Names = new string[] {"--help", "-h"},
+            parser.AddFlag(new Flag<MixedConfig>
+            {
+                Names = new string[] { "--help", "-h" },
                 Description = "prints help message",
                 Action = (storage) => { storage.helpFlag = true; },
             });

@@ -22,10 +22,10 @@ namespace TestsArgparseAPI.ParsingTests
         public void FlagTestsSetup()
         {
             config = new FlagTestConfig();
-            parser = new Parser<FlagTestConfig>(config) 
+            parser = new Parser<FlagTestConfig>(config)
             {
-                Names = new string[] {"flagTest" },
-                Description= "test inputs for flags" 
+                Names = new string[] { "flagTest" },
+                Description = "test inputs for flags"
             };
 
             parser.AddFlag(new Flag<FlagTestConfig>
@@ -50,14 +50,14 @@ namespace TestsArgparseAPI.ParsingTests
         public void ParseFlagAccesedViaShortName(string shortName)
         {
             parser.Parse(new string[] { shortName });
-            
+
             switch (shortName)
             {
                 case "-h":
-                    Assert.That(config.Help , Is.True);
+                    Assert.That(config.Help, Is.True);
                     break;
                 case "-v":
-                    Assert.That(config.Version , Is.True);
+                    Assert.That(config.Version, Is.True);
                     break;
             }
         }

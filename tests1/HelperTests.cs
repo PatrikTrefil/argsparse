@@ -26,7 +26,7 @@ public class HelperTests
         Assert.That(flag.Description, Is.EqualTo("A flag for testing purposes"));
         Assert.That(flag.Action, Is.Not.Null);
     }
-    
+
     [Test]
     public void Argument_SetProperties()
     {
@@ -46,7 +46,7 @@ public class HelperTests
         Assert.That(arg.Converter, Is.Not.Null);
         Assert.That(arg.Action, Is.Not.Null);
     }
-    
+
     [Test]
     public void Option_SetProperties()
     {
@@ -82,17 +82,17 @@ public class HelperTests
         var value = converter("5");
         Assert.That(value, Is.EqualTo(5));
     }
-    
+
     [Test]
     public void IntConverter_ThrowsException()
     {
         var converter = ConverterFactory.CreateIntConverter(0, 10);
-        
+
         Assert.Throws<ParserConversionException>(() => converter("-1"));
         Assert.Throws<ParserConversionException>(() => converter("11"));
         Assert.Throws<ParserConversionException>(() => converter("abc"));
     }
-    
+
     [Test]
     public void ListConverter_ConvertsProperly()
     {
@@ -101,12 +101,12 @@ public class HelperTests
 
         Assert.That(list, Is.EqualTo(new[] { 1, 2, 3, 4, 5 }));
     }
-    
+
     [Test]
     public void ListConverter_ThrowsException()
     {
         var converter = ConverterFactory.CreateListConverter<int>(ConverterFactory.CreateIntConverter());
-        
+
         Assert.Throws<ParserConversionException>(() => converter("1,2,3,4,abc"));
     }
 }

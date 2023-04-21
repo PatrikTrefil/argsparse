@@ -253,8 +253,8 @@ namespace TestsArgparseAPI.ParsingTests
         [TestCase("-i", " ", 3, "--str", "=", "fourth")]
         [TestCase("--int", " ", 4, "--str", " ", "fifth")]
         public void ParseTwoOptionsWithValues(
-            string firstOption, 
-            string firstSeparator, 
+            string firstOption,
+            string firstSeparator,
             int firstValue,
             string secondOption,
             string secondSeparator,
@@ -285,7 +285,7 @@ namespace TestsArgparseAPI.ParsingTests
         }
 
         [Test]
-        [TestCase("-l","=","wrong")]
+        [TestCase("-l", "=", "wrong")]
         [TestCase("-i", " ", "wrong")]
         [TestCase("-p", "=", "wrong")]
         [TestCase("--list", "=", ",")]

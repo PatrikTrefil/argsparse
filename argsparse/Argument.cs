@@ -27,7 +27,7 @@ public abstract record class ArgumentMultiplicity
     /// <remarks>Only one such argument is allowed per parser. 
     /// Do not mix non-required <see cref="SpecificCount"/> arguments with <see cref="AllThatFollow"/></remarks>
     public sealed record class AllThatFollow(int MinimumNumberOfArguments = 0) : ArgumentMultiplicity();
-    
+
     /// <summary>
     /// Hiding the constructor so that the user can't create a class that is derived from this one.
     /// </summary>
@@ -41,7 +41,7 @@ public interface IArgument<C>
     /// Description of the argument as it should appear in help write-up.
     /// </summary>
     public string Description { get; init; }
-    
+
     /// <summary>
     /// Value placeholder will be used in synopsis and appear in help write-up, 
     /// e.g. program [options] <value-placeholder>

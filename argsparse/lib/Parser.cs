@@ -145,19 +145,19 @@ public partial record class Parser<C>
                 else if (!optionsMap.ContainsKey(shortname))
                     throw new ParserRuntimeException(
                         $"Unknown option: {shortname}");
-                else 
+                else
                 {
                     if (value is null)
                     {
-                        if(remainingTokens.Count() == 0)
-                        throw new ParserRuntimeException(
-                        $"Option requires value: {shortname}");
+                        if (remainingTokens.Count() == 0)
+                            throw new ParserRuntimeException(
+                            $"Option requires value: {shortname}");
                         value = remainingTokens.First();
                         remainingTokens = remainingTokens.Skip(1);
                     }
-                    invokeOption(shortname, value);    
+                    invokeOption(shortname, value);
                 }
-                    
+
             }
 
             return remainingTokens;

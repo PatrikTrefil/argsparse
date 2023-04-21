@@ -10,10 +10,10 @@ public class SimpleParsingTests
         public bool Flag { get; set; }
         public int IntValue { get; set; }
         public string? StringValue { get; set; }
-        
+
         public List<int> IntList { get; set; } = new();
     }
-        
+
     private TestConfig _config;
     private Parser<TestConfig> _parser;
 
@@ -23,10 +23,10 @@ public class SimpleParsingTests
         _config = new TestConfig();
         _parser = new Parser<TestConfig>(_config)
         {
-            Names = new []{"program"},
+            Names = new[] { "program" },
             Description = "Program description"
         };
-        
+
         var exampleFlag = new Flag<TestConfig>()
         {
             Names = new[] { "-f", "--flag" },
@@ -50,7 +50,7 @@ public class SimpleParsingTests
             Converter = ConverterFactory.CreateStringConverter()
         };
         _parser.AddOption(stringOption);
-        
+
         var intOption = new Option<TestConfig, int>
         {
             Names = new[]
@@ -65,9 +65,9 @@ public class SimpleParsingTests
             },
             Converter = ConverterFactory.CreateIntConverter()
         };
-        
+
         _parser.AddOption(intOption);
-        
+
         var intListOption = new Option<TestConfig, List<int>>
         {
             Names = new[]
@@ -82,7 +82,7 @@ public class SimpleParsingTests
             },
             Converter = ConverterFactory.CreateListConverter(ConverterFactory.CreateIntConverter())
         };
-        
+
         _parser.AddOption(intListOption);
     }
 
@@ -101,7 +101,7 @@ public class SimpleParsingTests
         _parser.Parse(args);
         Assert.That(_config.StringValue, Is.EqualTo("foo"));
     }
-    
+
     [Test]
     public void Parse_SetsStringMultipleWords()
     {
@@ -110,7 +110,7 @@ public class SimpleParsingTests
         Assert.That(_config.StringValue, Is.EqualTo("foo bar"));
     }
 
-    
+
     [Test]
     public void Parse_SetsInt()
     {
@@ -143,7 +143,7 @@ public class SimpleParsingTests
         Assert.That(_config.IntValue, Is.EqualTo(0));
         Assert.That(_config.IntList, Is.Empty);
     }
-    
+
     [Test]
     public void Parse_SetsIntList()
     {
@@ -151,7 +151,7 @@ public class SimpleParsingTests
         _parser.Parse(args);
         Assert.That(_config.IntList, Is.EqualTo(new List<int> { 1, 2, 3 }));
     }
-    
+
     [Test]
     public void Parse_SetsIntListAndInt()
     {
@@ -160,7 +160,7 @@ public class SimpleParsingTests
         Assert.That(_config.IntList, Is.EqualTo(new List<int> { 1, 2, 3 }));
         Assert.That(_config.IntValue, Is.EqualTo(42));
     }
-    
+
     [Test]
     public void Parse_PrintsHelp()
     {
@@ -168,11 +168,11 @@ public class SimpleParsingTests
         Console.SetOut(stringWriter);
 
         _parser.PrintHelp();
-        
+
         var output = stringWriter.ToString();
-        
+
         // TODO be more specific - I don't want to dictate the exact output format based on the implementation
-        
+
         Assert.That(output, Does.Contain("program"));
         Assert.That(output, Does.Contain("Program description"));
         Assert.That(output, Does.Contain("-f, --flag"));
@@ -186,35 +186,35 @@ public class SimpleParsingTests
 
         Console.SetOut(new StreamWriter(Console.OpenStandardOutput()));
     }
- 
+
     [Test]
     public void Parse_ThrowsOnMissingValue()
     {
         string[] args = { "--string" };
         Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
-    
+
     [Test]
     public void Parse_ThrowsOnUnknownArgument()
     {
         string[] args = { "--unknown" };
         Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
-    
+
     [Test]
     public void Parse_ThrowsOnDuplicateOption()
     {
         string[] args = { "--int", "42", "--int", "43" };
         Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
-    
+
     [Test]
     public void Parse_ThrowsOnDuplicateFlag()
     {
         string[] args = { "--flag", "--flag" };
         Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
     }
-    
+
     [Test]
     public void Parse_ThrowsOnDuplicateFlagOneShort()
     {
@@ -227,7 +227,7 @@ public class SimpleParsingTests
         string[] args = { "--int", "foo" };
         Assert.Throws<ParserConversionException>(() => _parser.Parse(args));
     }
-    
+
     [Test]
     public void Parse_ThrowsOnInvalidIntList()
     {

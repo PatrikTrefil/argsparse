@@ -87,7 +87,8 @@ public static class ConverterFactory
     /// <exception cref="ArgumentException">
     /// If the min value provided is higher than the max value.
     /// </exception>
-    public static Func<string, double> CreateDoubleConverter(double minValueInclusive = double.NegativeInfinity, double maxValueInclusive = double.PositiveInfinity) {
+    public static Func<string, double> CreateDoubleConverter(double minValueInclusive = double.NegativeInfinity, double maxValueInclusive = double.PositiveInfinity)
+    {
         return (string s) =>
         {
             double value;
@@ -123,7 +124,7 @@ public static class ConverterFactory
     public static Func<string, T> CreateEnumerationConverter<T>(
         bool caseSensitive = true, Dictionary<T, ImmutableHashSet<string>>? explicitMapping = null, bool useImplicitMapping = true)
         where T : Enum
-    {        
+    {
         return null!;
     }
 

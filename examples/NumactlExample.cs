@@ -229,7 +229,7 @@ internal static class NumactlExample
         var config = new NumactlConfiguration();
         var parser = new Parser<NumactlConfiguration>(config)
         {
-            Names = new string[] {"numactl"},
+            Names = new string[] { "numactl" },
             Description = "numactl description"
         };
 

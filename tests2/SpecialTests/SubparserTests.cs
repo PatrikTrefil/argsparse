@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TestsArgparseAPI.SpecialTests
 {
-    
+
     record RootCommandConfig
     {
         public bool help = false;
@@ -217,7 +217,8 @@ namespace TestsArgparseAPI.SpecialTests
 
             toplevelParser.AddSubparser("subcommand", subcommandParser);
             subcommandParser.AddSubparser("nestedcommand", secondsubcommandParser);
-            subcommandParser.AddFlag(new Flag<SubCommandConfig>(){
+            subcommandParser.AddFlag(new Flag<SubCommandConfig>()
+            {
                 Names = new string[] { "-f", "--ff" },
                 Description = "Additional flag",
                 Action = (c) => { c.flag = true; }

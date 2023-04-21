@@ -11,18 +11,18 @@ public class SpecificParsingTests
         public int IntValue { get; set; }
         public List<int> IntList { get; set; } = new();
     }
-    
+
     [Test]
     public void Parse_Arguments()
     {
         var config = new ArgumentConfig();
         var parser = new Parser<ArgumentConfig>(config)
         {
-            Names = new []
+            Names = new[]
                 {"program"},
             Description = null
         };
-        
+
         var stringArgument = new Argument<ArgumentConfig, string>
         {
             Description = "Example string argument",
@@ -35,7 +35,7 @@ public class SpecificParsingTests
             Multiplicity = new ArgumentMultiplicity.SpecificCount(Number: 1, IsRequired: true)
         };
         parser.AddArgument(stringArgument);
-        
+
         var intArgument = new Argument<ArgumentConfig, int>
         {
             Description = "Example int argument",
@@ -48,7 +48,7 @@ public class SpecificParsingTests
             Multiplicity = new ArgumentMultiplicity.SpecificCount(Number: 1, IsRequired: true)
         };
         parser.AddArgument(intArgument);
-        
+
         var intListArgument = new Argument<ArgumentConfig, int>
         {
             Description = "Example int list argument",
@@ -61,25 +61,25 @@ public class SpecificParsingTests
             Multiplicity = new ArgumentMultiplicity.SpecificCount(Number: 2, IsRequired: false)
         };
         parser.AddArgument(intListArgument);
-        
+
         string[] args = { "foo", "1", "2", "3" };
         parser.Parse(args);
         Assert.That(config.StringValue, Is.EqualTo("foo"));
         Assert.That(config.IntValue, Is.EqualTo(1));
         Assert.That(config.IntList, Is.EqualTo(new List<int> { 2, 3 }));
     }
-    
+
     [Test]
     public void Parse_ArgumentAfterDoubleDash()
     {
         var config = new ArgumentConfig();
         var parser = new Parser<ArgumentConfig>(config)
         {
-            Names = new []
+            Names = new[]
                 {"program"},
             Description = null
         };
-        
+
         var intOption = new Option<ArgumentConfig, int>
         {
             Names = new[] { "--int-option", "-i" },
@@ -90,9 +90,9 @@ public class SpecificParsingTests
                 storage.IntValue = value;
             }
         };
-        
+
         parser.AddOption(intOption);
-        
+
         var stringArgument = new Argument<ArgumentConfig, string>
         {
             Description = "Example string argument",
@@ -118,7 +118,7 @@ public class SpecificParsingTests
             Multiplicity = new ArgumentMultiplicity.SpecificCount(Number: 2, IsRequired: false)
         };
         parser.AddArgument(intListArgument);
-        
+
         string[] args = { "-i", "1", "--", "-i", "2", "3" };
         parser.Parse(args);
         Assert.That(config.StringValue, Is.EqualTo("-i"));
@@ -137,11 +137,11 @@ public class SpecificParsingTests
         var config = new RequiredOptionConfig();
         var parser = new Parser<RequiredOptionConfig>(config)
         {
-            Names = new []
+            Names = new[]
                 {"program"},
             Description = null
         };
-        
+
         var requiredOption = new Option<RequiredOptionConfig, string>
         {
             Names = new[]
@@ -157,13 +157,13 @@ public class SpecificParsingTests
             Converter = ConverterFactory.CreateStringConverter(),
             IsRequired = true
         };
-        
+
         parser.AddOption(requiredOption);
-        
+
         string[] args = { "--required", "foo" };
         parser.Parse(args);
         Assert.That(config.StringValue, Is.EqualTo("foo"));
-        
+
         args = Array.Empty<string>();
         Assert.Throws<ParserRuntimeException>(() => parser.Parse(args));
     }

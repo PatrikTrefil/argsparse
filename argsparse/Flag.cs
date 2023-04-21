@@ -7,7 +7,7 @@ namespace Argparse;
 /// value provided by the user.
 /// </summary>
 /// <typeparam name="C">The cofiguration context type for the given parser, see <see cref="Parser{C}"/> </typeparam>
-public sealed record class Flag<C> 
+public sealed record class Flag<C>
 {
     /// <summary>
     /// Names the options as they will be parsed by the parser.
