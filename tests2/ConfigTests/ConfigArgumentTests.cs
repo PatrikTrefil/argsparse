@@ -269,5 +269,35 @@ namespace TestsArgparseAPI.ConfigTests
                 Throws.TypeOf<InvalidParserConfigurationException>());
         }
 
+        [Test]
+        public void AddArgumentAfterArgumentWithMultiplicityAllThatFollowsRaisesException()
+        {
+            var config = new TestConfiguration();
+            var parser = new Parser<TestConfiguration>(config)
+            {
+                Names = new string[] { "test" },
+                Description = "Test description."
+            };
+
+            var intAllThatFollowArgument = new Argument<TestConfiguration, int>
+            {
+                Description = "Integer argument",
+                Action = (storage, value) => { storage.IntArgument = value; },
+                Converter = ConverterFactory.CreateIntConverter(),
+                Multiplicity = new ArgumentMultiplicity.AllThatFollow(),
+            };
+
+            var stringArgument = new Argument<TestConfiguration, string>
+            {
+                Description = "String argument",
+                Action = (storage, value) => { storage.StringArgument = value; },
+                Converter = ConverterFactory.CreateStringConverter(),
+            };
+
+            parser.AddArgument(intAllThatFollowArgument);
+
+            Assert.That(() => parser.AddArgument(stringArgument),
+                Throws.TypeOf<InvalidParserConfigurationException>());
+        }
     }
 }
