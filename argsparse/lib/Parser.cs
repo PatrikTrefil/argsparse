@@ -245,8 +245,9 @@ public partial record class Parser<C>
             throw new InvalidParserConfigurationException(
                    $"Option has no name: {options}");
 
-        var invalid = option.Names.FirstOrDefault(name => name is null || !LongOrShortName().IsMatch(name), null);
-        if (invalid is not null) throw new InvalidParserConfigurationException($"Invalid option name: {invalid}");
+        var invalidOptionNames = option.Names.Where(name => !LongOrShortName().IsMatch(name));
+        if (invalidOptionNames.Any())
+            throw new InvalidParserConfigurationException($"Invalid flag names: {string.Join(", ", invalidOptionNames)}");
 
         checkConflictingOptionsAndFlags(option.Names, option);
     }
