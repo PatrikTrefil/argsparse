@@ -167,5 +167,49 @@ namespace TestsArgparseAPI.ConfigTests
             Assert.That(() => parser.AddOption(stringOption2),
                 Throws.TypeOf<InvalidParserConfigurationException>());
         }
+        [Test]
+        public void AddOptionWithoutNameFailsWithException()
+        {
+            var config = new TestConfiguration();
+            var parser = new Parser<TestConfiguration>(config)
+            {
+                Names = new string[] { "test" },
+                Description = "Test description."
+            };
+
+            var stringOption = new Option<TestConfiguration, string>
+            {
+                Names = new string[] { },
+                Description = "Test option accepting string value",
+                Action = (storage, value) => { storage.StringOption = value; },
+                Converter = ConverterFactory.CreateStringConverter(),
+            };
+
+
+            Assert.That(() => parser.AddOption(stringOption),
+                Throws.TypeOf<InvalidParserConfigurationException>());
+        }
+
+        [Test]
+        public void AddOptionWithInvalidNameFailsWithException()
+        {
+            var config = new TestConfiguration();
+            var parser = new Parser<TestConfiguration>(config)
+            {
+                Names = new string[] { "test" },
+                Description = "Test description."
+            };
+
+            var stringOption = new Option<TestConfiguration, string>
+            {
+                Names = new string[] { "--valid", "invalid1", "invalid2" },
+                Description = "Test option accepting string value",
+                Action = (storage, value) => { storage.StringOption = value; },
+                Converter = ConverterFactory.CreateStringConverter(),
+            };
+
+            Assert.That(() => parser.AddOption(stringOption),
+                Throws.TypeOf<InvalidParserConfigurationException>());
+        }
     }
 }
