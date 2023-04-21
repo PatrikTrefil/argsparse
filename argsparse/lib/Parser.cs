@@ -36,15 +36,15 @@ public partial record class Parser<C>
             // that parser with the commands removed from the arguments
             //ParseAndRun(..., false);
             // TODO subcommands
-            this.run(args, localRun);
+            this.Run(args, localRun);
         }
         else
         {
-            this.run(args, localRun);
+            this.Run(args, localRun);
         }
     }
 
-    private void run(string[] args, Action<C, Parser<C>> localRun)
+    private void Run(string[] args, Action<C, Parser<C>> localRun)
     {
         if (Config is null)
         {
@@ -52,12 +52,12 @@ public partial record class Parser<C>
                 throw new InvalidParserConfigurationException("Config and ConfigFactory are both null. This should never happen");
             Config = ConfigFactory();
         }
-        parse(args);
+        Parse(args);
 
         localRun(Config, this);
     }
 
-    private void parse(string[] args)
+    private void Parse(string[] args)
     {
         Debug.Assert(Config is not null);
 
@@ -205,7 +205,7 @@ public partial record class Parser<C>
 
 
 
-    private void checkConflictingOptionsAndFlags(string[] names, object what)
+    private void CheckConflictingOptionsAndFlags(string[] names, object what)
     {
         if (names.ToHashSet().Count != names.Length)
         {
@@ -239,7 +239,7 @@ public partial record class Parser<C>
         }
     }
 
-    private void validateOptionNames(IOption<C> option)
+    private void ValidateOptionNames(IOption<C> option)
     {
         if (option.Names.Length == 0)
             throw new InvalidParserConfigurationException(
@@ -249,10 +249,10 @@ public partial record class Parser<C>
         if (invalidOptionNames.Any())
             throw new InvalidParserConfigurationException($"Invalid flag names: {string.Join(", ", invalidOptionNames)}");
 
-        checkConflictingOptionsAndFlags(option.Names, option);
+        CheckConflictingOptionsAndFlags(option.Names, option);
     }
 
-    private void validateFlagNames(Flag<C> flag)
+    private void ValidateFlagNames(Flag<C> flag)
     {
         if (flag.Names.Length == 0)
             throw new InvalidParserConfigurationException(
@@ -262,7 +262,7 @@ public partial record class Parser<C>
         if (invalidFlagNames.Any())
             throw new InvalidParserConfigurationException($"Invalid flag names: {string.Join(", ", invalidFlagNames)}");
 
-        checkConflictingOptionsAndFlags(flag.Names, flag);
+        CheckConflictingOptionsAndFlags(flag.Names, flag);
     }
     /// <summary>
     /// Checks if the argument is valid.
@@ -270,7 +270,7 @@ public partial record class Parser<C>
     /// An argument is valid if it does not follow an argument with multiplicity AllThatFollow.
     /// </summary>
     /// <exception cref="InvalidParserConfigurationException">If the argument is invalid.</exception>
-    private void validateArgument(IArgument<C> argument)
+    private void ValidateArgument(IArgument<C> argument)
     {
         if (plainArguments.Any())
         {
@@ -289,7 +289,7 @@ public partial record class Parser<C>
     }
     public partial Parser<C> AddArgument(IArgument<C> argument)
     {
-        validateArgument(argument);
+        ValidateArgument(argument);
         plainArguments.Add(argument);
         return this;
     }
@@ -300,7 +300,7 @@ public partial record class Parser<C>
     }
     public partial Parser<C> AddOption(IOption<C> option)
     {
-        validateOptionNames(option);
+        ValidateOptionNames(option);
         options.Add(option);
         foreach (var name in option.Names)
             optionsMap.Add(name, option);
@@ -313,7 +313,7 @@ public partial record class Parser<C>
     }
     public partial Parser<C> AddFlag(Flag<C> flag)
     {
-        validateFlagNames(flag);
+        ValidateFlagNames(flag);
         flags.Add(flag);
         foreach (var name in flag.Names)
             flagsMap.Add(name, flag);
