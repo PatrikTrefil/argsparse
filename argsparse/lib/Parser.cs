@@ -264,6 +264,22 @@ public partial record class Parser<C>
 
         checkConflictingOptionsAndFlags(flag.Names, flag);
     }
+    /// <summary>
+    /// Checks if the argument is valid.
+    ///
+    /// An argument is valid if it does not follow an argument with multiplicity AllThatFollow.
+    /// </summary>
+    /// <exception cref="InvalidParserConfigurationException">If the argument is invalid.</exception>
+    private void validateArgument(IArgument<C> argument)
+    {
+        if (plainArguments.Any())
+        {
+            var lastArg = plainArguments.Last();
+            if (lastArg.Multiplicity is ArgumentMultiplicity.AllThatFollow)
+                throw new InvalidParserConfigurationException(
+                    $"Argument {argument} cannot follow an argument with multiplicity set to AllThatFollow (argument: {lastArg}).");
+        }
+    }
 
 
     public partial Parser<C> AddArguments(params IArgument<C>[] arguments)
@@ -273,7 +289,7 @@ public partial record class Parser<C>
     }
     public partial Parser<C> AddArgument(IArgument<C> argument)
     {
-        // TODO Validate
+        validateArgument(argument);
         plainArguments.Add(argument);
         return this;
     }

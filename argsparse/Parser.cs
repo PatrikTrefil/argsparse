@@ -149,6 +149,8 @@ public partial record class Parser<C> : IParser
     /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
     /// </summary>
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
+    /// <exception cref="InvalidParserConfigurationException">If the argument comes
+    /// after an argument with multiplicity set to <see cref="ArgumentMultiplicity.AllThatFollow"></exception>
     public partial Parser<C> AddArgument(IArgument<C> argument);
 
     /// <summary>
@@ -156,6 +158,8 @@ public partial record class Parser<C> : IParser
     /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
     /// </summary>
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
+    /// <exception cref="InvalidParserConfigurationException">If there is an argument which comes
+    /// after an argument with multiplicity set to <see cref="ArgumentMultiplicity.AllThatFollow"></exception>
     public partial Parser<C> AddArguments(params IArgument<C>[] arguments);
 
     /// <summary>
