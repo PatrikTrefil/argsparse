@@ -115,5 +115,47 @@ namespace TestsArgparseAPI.ConfigTests
                 Throws.TypeOf<InvalidParserConfigurationException>());
 
         }
+
+        [Test]
+        public void AddFlagWithoutNameFailsWithException()
+        {
+            var config = new TestConfiguration();
+            var parser = new Parser<TestConfiguration>(config)
+            {
+                Names = new string[] { "test" },
+                Description = "Test description."
+            };
+
+            var helpFlag = new Flag<TestConfiguration>
+            {
+                Names = new string[] {},
+                Description = "Show help",
+                Action = storage => { storage.Help = true; }
+            };
+
+            Assert.That(() => parser.AddFlag(helpFlag),
+                Throws.TypeOf<InvalidParserConfigurationException>());
+        }
+
+        [Test]
+        public void AddFlagWithInvalidNameFailsWithException()
+        {
+            var config = new TestConfiguration();
+            var parser = new Parser<TestConfiguration>(config)
+            {
+                Names = new string[] { "test" },
+                Description = "Test description."
+            };
+
+            var helpFlag = new Flag<TestConfiguration>
+            {
+                Names = new string[] { "--valid", "invalid1", "invalid2" },
+                Description = "Show help",
+                Action = storage => { storage.Help = true; }
+            };
+
+            Assert.That(() => parser.AddFlag(helpFlag),
+                Throws.TypeOf<InvalidParserConfigurationException>());
+        }
     }
 }
