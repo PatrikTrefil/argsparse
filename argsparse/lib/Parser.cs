@@ -112,7 +112,7 @@ public partial record class Parser<C>
 
         IEnumerable<string> parseShortOpts(string token, IEnumerable<string> remainingTokens)
         {
-            Debug.Assert(remainingTokens is not null && token is not null && Config is not null);
+            Debug.Assert(Config is not null);
             int i = 1;
             for (; i < token.Length; i++)
             {
@@ -165,7 +165,7 @@ public partial record class Parser<C>
 
         IEnumerable<string> parseLongName(string token, IEnumerable<string> remainingTokens)
         {
-            Debug.Assert(remainingTokens is not null && token is not null && Config is not null);
+            Debug.Assert(Config is not null);
 
             if (token.Contains(valueSeparator))
             {
