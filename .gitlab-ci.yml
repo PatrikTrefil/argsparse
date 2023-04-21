@@ -30,6 +30,12 @@ build:
   script:
     - 'dotnet build --no-restore'
 
+format:
+  stage: format
+  image: microsoft/dotnet:latest
+  script:
+    - 'dotnet format --verify-no-changes --no-restore argsparse.sln'
+
 tests:
   stage: test
   # ### Run the tests
