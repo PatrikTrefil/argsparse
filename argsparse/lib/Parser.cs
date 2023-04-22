@@ -103,6 +103,8 @@ public partial record class Parser<C>
                 parsePlainArg(token, argsl);
         }
 
+        checkAllRequiredHaveBeenParsed();
+
         execute(Config);
 
         /// Carry out action associated with the flag identified by the name 
@@ -233,8 +235,18 @@ public partial record class Parser<C>
             // TODO here
             return remainingTokens;
         }
-    }
 
+        void checkAllRequiredHaveBeenParsed() {
+            List<object> missingOpts = new();
+
+            missingOpts.AddRange(Options.Where(o => o.IsRequired && !alreadyParsedOptions.Contains(o)));
+            // TOOD for arguments
+
+            if (missingOpts.Count > 0)
+                throw new ParserRuntimeException("One or more required option was not specified:\n"
+                    + String.Join('\n', missingOpts));
+        }
+    }
 
 
     private void CheckConflictingOptionsAndFlags(string[] names, object what)
