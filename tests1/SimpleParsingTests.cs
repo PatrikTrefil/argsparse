@@ -147,7 +147,7 @@ public class SimpleParsingTests
     [Test]
     public void Parse_SetsIntList()
     {
-        string[] args = { "--int-list", "1", "2", "3" };
+        string[] args = { "--int-list", "1,2,3" };
         _parser.Parse(args);
         Assert.That(_config.IntList, Is.EqualTo(new List<int> { 1, 2, 3 }));
     }
@@ -155,7 +155,7 @@ public class SimpleParsingTests
     [Test]
     public void Parse_SetsIntListAndInt()
     {
-        string[] args = { "--int-list", "1", "2", "3", "--int", "42" };
+        string[] args = { "--int-list", "1,2,3", "--int", "42" };
         _parser.Parse(args);
         Assert.That(_config.IntList, Is.EqualTo(new List<int> { 1, 2, 3 }));
         Assert.That(_config.IntValue, Is.EqualTo(42));
@@ -231,7 +231,7 @@ public class SimpleParsingTests
     [Test]
     public void Parse_ThrowsOnInvalidIntList()
     {
-        string[] args = { "--int-list", "1", "foo", "3" };
-        Assert.Throws<ParserRuntimeException>(() => _parser.Parse(args));
+        string[] args = { "--int-list", "1,foo,3" };
+        Assert.Throws<ParserConversionException>(() => _parser.Parse(args));
     }
 }
