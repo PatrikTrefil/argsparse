@@ -36,15 +36,24 @@ public partial record class Parser<C>
             // that parser with the commands removed from the arguments
             //ParseAndRun(..., false);
             // TODO subcommands
-            this.Run(args, localRun);
+            this.RunParser(args, localRun);
         }
         else
         {
-            this.Run(args, localRun);
+            this.RunParser(args, localRun);
         }
     }
 
-    private void Run(string[] args, Action<C, Parser<C>> localRun)
+    /// <summary>
+    /// Run the parser. Invoking this methods starts the parsing process.
+    /// If there are subparsers configured,
+    /// this method should only be invoked on the one selected parsers
+    /// </summary>
+    /// <param name="args">Command line arguments</param>
+    /// <param name="localRun">Action to run after parsing</param>
+    /// <exception cref="InvalidParserConfigurationException">If there is no config instance nor factory</exception>
+    /// <exception cref="ParserRuntimeException">On invalid input</exception>
+    private void RunParser(string[] args, Action<C, Parser<C>> localRun)
     {
         if (Config is null)
         {
@@ -52,12 +61,18 @@ public partial record class Parser<C>
                 throw new InvalidParserConfigurationException("Config and ConfigFactory are both null. This should never happen");
             Config = ConfigFactory();
         }
-        Parse(args);
+        ParseImpl(args);
 
         localRun(Config, this);
     }
 
-    private void Parse(string[] args)
+    /// <summary>
+    /// Parse the command line arguments and store the values in the config instance.
+    /// The config instance needs to be instantiated before calling this method.
+    /// </summary>
+    /// <param name="args">Command line arguments</param>
+    /// <exception cref="ParserRuntimeException">On invalid input</exception>
+    private void ParseImpl(string[] args)
     {
         Debug.Assert(Config is not null);
 
@@ -88,6 +103,8 @@ public partial record class Parser<C>
 
         execute(Config);
 
+        /// Carry out action associated with the flag identified by the name 
+        /// The token must be a valid flag name
         void invokeFlag(string token)
         {
             Debug.Assert(flagsMap.ContainsKey(token));
@@ -99,9 +116,10 @@ public partial record class Parser<C>
             execute += flg.Action;
         }
 
+        /// Carry out action associated with the option identified by the name 
+        /// The token must be a valid option name
         void invokeOption(string token, string value)
         {
-            Debug.Assert(optionsMap.ContainsKey(token));
             var opt = optionsMap[token];
             if (alreadyParsedOptions.Contains(opt))
                 throw new ParserRuntimeException($"Repeated option: {token}");
@@ -110,6 +128,10 @@ public partial record class Parser<C>
             execute += (c) => opt.Process(c, value);
         }
 
+        /// Parse token containing short-named options, e.g. "-a", "-abc", "-abc=foo", "-abc."
+        /// Accepts remaining tokens and consumes up to one of them,
+        /// when the last arg recognized in token is option/accepts value.
+        /// Returns remaining tokens with up to one token consumed, removed.
         IEnumerable<string> parseShortOpts(string token, IEnumerable<string> remainingTokens)
         {
             Debug.Assert(Config is not null);
@@ -136,7 +158,7 @@ public partial record class Parser<C>
                             $"Unknown option: {shortname}");
                     invokeFlag(shortname);
                 }
-                // option of last index
+                // option of last index, eg. in '-abc' now we are parsing '-c'
                 else if (flagsMap.ContainsKey(shortname) && value is null)
                     invokeFlag(shortname);
                 else if (flagsMap.ContainsKey(shortname) && value is not null)
@@ -163,6 +185,7 @@ public partial record class Parser<C>
             return remainingTokens;
         }
 
+        /// Parse token possibly containing a long-name,  
         IEnumerable<string> parseLongName(string token, IEnumerable<string> remainingTokens)
         {
             Debug.Assert(Config is not null);
