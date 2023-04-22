@@ -243,7 +243,7 @@ public partial record class Parser<C>
             // TOOD for arguments
 
             if (missingOpts.Count > 0)
-                throw new ParserRuntimeException("One or more required option was not specified:\n"
+                throw new ParserRuntimeException("One or more required options was not specified:\n"
                     + String.Join('\n', missingOpts));
         }
     }

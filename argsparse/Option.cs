@@ -58,7 +58,15 @@ public sealed record class Option<C, V> : IOption<C>
     public required Func<string, V> Converter { get; init; }
     void IOption<C>.Process(C config, string value)
     {
-        V convertedValue = Converter(value);
+        V convertedValue;
+        try
+        {
+            convertedValue = Converter(value);
+        }
+        catch (Exception ex)
+        {
+            throw new ParserConversionException($"Value conversion for option {Names[0]} failed", ex);
+        }
         Action(config, convertedValue);
     }
 }
