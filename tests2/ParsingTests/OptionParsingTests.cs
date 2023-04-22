@@ -275,7 +275,7 @@ namespace TestsArgparseAPI.ParsingTests
         [TestCase("-s= -i")]
         [TestCase("-s -i=")]
         [TestCase("-s -i")]
-        [TestCase("-l -int=")]
+        [TestCase("-l --int=")]
         public void ParsingOptionWithEmptyValueRaisesException(string testCase)
         {
             var input = (testCase).Split(' ');
