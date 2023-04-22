@@ -226,9 +226,11 @@ public partial record class Parser<C>
             throw new ParserRuntimeException($"Unknown option: {token}");
         }
 
+        // Try to parse plain argument
+        // This function is called for all tokens that are not options or flags or values or a delimiter.
         IEnumerable<string> parsePlainArg(string tokens, IEnumerable<string> remainingTokens)
         {
-            //Todo
+            // TODO here
             return remainingTokens;
         }
     }
