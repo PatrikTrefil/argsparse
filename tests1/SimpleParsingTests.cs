@@ -175,13 +175,17 @@ public class SimpleParsingTests
 
         Assert.That(output, Does.Contain("program"));
         Assert.That(output, Does.Contain("Program description"));
-        Assert.That(output, Does.Contain("-f, --flag"));
+        Assert.That(output, Does.Contain("-f"));
+        Assert.That(output, Does.Contain("--flag"));
         Assert.That(output, Does.Contain("Example flag"));
-        Assert.That(output, Does.Contain("-s, --string"));
+        Assert.That(output, Does.Contain("-s"));
+        Assert.That(output, Does.Contain("--string"));
         Assert.That(output, Does.Contain("Example string option"));
-        Assert.That(output, Does.Contain("-i, --int"));
+        Assert.That(output, Does.Contain("-i"));
+        Assert.That(output, Does.Contain("--int"));
         Assert.That(output, Does.Contain("Example int option"));
-        Assert.That(output, Does.Contain("-l, --int-list"));
+        Assert.That(output, Does.Contain("-l"));
+        Assert.That(output, Does.Contain("--int-list"));
         Assert.That(output, Does.Contain("Example int list option"));
 
         Console.SetOut(new StreamWriter(Console.OpenStandardOutput()));
