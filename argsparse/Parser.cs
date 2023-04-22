@@ -98,6 +98,7 @@ public partial record class Parser<C> : IParser
     /// <para>
     /// </summary>
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
+    /// <exception cref="InvalidParserConfigurationException">On invalid parser configuration, e.g. duplicate flag name</exception>
     public partial Parser<C> AddFlag(Flag<C> flag);
     /// <summary>
     /// Attach one or more flag-like options to the parser.
@@ -107,6 +108,8 @@ public partial record class Parser<C> : IParser
     /// <seealso cref="Flag{C}"/>.
     /// </summary>
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
+    /// <exception cref="InvalidParserConfigurationException">On invalid parser configuration, e.g. duplicate flag name</exception>
+
     public partial Parser<C> AddFlags(params Flag<C>[] flags);
     /// <summary>
     /// Returns all value options attached to the parser via the methods <see cref="AddFlag(Flag{C})"/> and <see cref="AddFlags(Flag{C}[])"/>.
@@ -126,6 +129,7 @@ public partial record class Parser<C> : IParser
     /// </para>
     /// </summary>
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
+    /// <exception cref="InvalidParserConfigurationException">On invalid parser configuration, e.g. duplicate option name</exception>
     public partial Parser<C> AddOption(IOption<C> option);
     /// <summary>
     /// Attach one or more value options to the parser.
@@ -135,6 +139,7 @@ public partial record class Parser<C> : IParser
     /// </para>
     /// </summary>
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
+    /// <exception cref="InvalidParserConfigurationException">On invalid parser configuration, e.g. duplicate option name</exception>
     public partial Parser<C> AddOptions(params IOption<C>[] options);
 
     /// <summary>
