@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Argparse;
 
@@ -128,7 +130,8 @@ public partial record class Parser<C>
             execute += (c) => opt.Process(c, value);
         }
 
-        /// Parse token containing short-named options, e.g. "-a", "-abc", "-abc=foo", "-abc."
+        /// Parse token containing short-named options, e.g. "-a", "-abc".
+        /// Merging flags and option is forbidden, e.g. "-abc=foo", "-abc." throws runtime error.
         /// Accepts remaining tokens and consumes up to one of them,
         /// when the last arg recognized in token is option/accepts value.
         /// Returns remaining tokens with up to one token consumed, removed.
@@ -144,42 +147,46 @@ public partial record class Parser<C>
                 break;
             }
 
-            string opts = token.Substring(1, i - 1);
-            string? value = i == token.Length ? null :
-                    token.Substring(i + 1, token.Length - i - 1);
+            if(token.Contains('=')) {
+                var (name, value) = token.Split('=', 2);
+                if(name.Length > 2) 
+                    throw new ParserRuntimeException($"Merging options that take values is not allowed: {token}\n" +
+                    $"Use separate options: {token[0..^1]} -{token[^1]}={value}");
+                if (flagsMap.ContainsKey(name))
+                    throw new ParserRuntimeException(
+                           $"Option does not take value: {name}, {value}");
+                if (!optionsMap.ContainsKey(name))
+                    throw new ParserRuntimeException($"Unknown option: {name}");
+                invokeOption(name, value);
+            }
 
-            for (int u = 0; u < opts.Length; u++)
+            else if(token.Length > 2)
             {
-                var shortname = $"-{opts[u]}";
-                if (u < opts.Length - 1)
+                foreach(char o in token[1..])
                 {
-                    if (!flagsMap.ContainsKey(shortname))
-                        throw new ParserRuntimeException(
-                            $"Unknown option: {shortname}");
-                    invokeFlag(shortname);
+                    var name = $"-{o}";
+                    if (!flagsMap.ContainsKey(name))
+                        throw new ParserRuntimeException($"Unknown option: {name}");
+                    invokeFlag(name);
                 }
-                // option of last index, eg. in '-abc' now we are parsing '-c'
-                else if (flagsMap.ContainsKey(shortname) && value is null)
-                    invokeFlag(shortname);
-                else if (flagsMap.ContainsKey(shortname) && value is not null)
-                    throw new ParserRuntimeException(
-                           $"Option does not take value: {shortname}, {value}");
-                else if (!optionsMap.ContainsKey(shortname))
-                    throw new ParserRuntimeException(
-                        $"Unknown option: {shortname}");
-                else
-                {
-                    if (value is null)
-                    {
-                        if (remainingTokens.Count() == 0)
-                            throw new ParserRuntimeException(
-                            $"Option requires value: {shortname}");
-                        value = remainingTokens.First();
-                        remainingTokens = remainingTokens.Skip(1);
-                    }
-                    invokeOption(shortname, value);
-                }
+            }
 
+            // now we know token matches form -x
+            else
+            {
+                if (flagsMap.ContainsKey(token))
+                    invokeFlag(token);
+                else if (optionsMap.ContainsKey(token))
+                {
+                    if (remainingTokens.Count() == 0)
+                        throw new ParserRuntimeException(
+                        $"Option requires value: {token}");
+                    var value = remainingTokens.First();
+                    remainingTokens = remainingTokens.Skip(1);
+                    invokeOption(token, value);
+                }
+                else
+                  throw new ParserRuntimeException($"Unknown option: {token}");
             }
 
             return remainingTokens;
