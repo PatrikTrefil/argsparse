@@ -22,10 +22,11 @@ public partial record class Parser<C>
     Dictionary<string, IOption<C>> optionsMap = new();
     Dictionary<string, Flag<C>> flagsMap = new();
 
-    Dictionary<string, IParser> subparsers;
+    Dictionary<string, IParser> subparsers = new();
 
     public partial Parser<C> AddSubparser(string command, IParser commandParser)
     {
+        subparsers.Add(command, commandParser);
         return this;
     }
 
