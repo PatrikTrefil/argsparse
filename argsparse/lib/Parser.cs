@@ -273,7 +273,7 @@ public partial record class Parser<C>
 
             argValueCounts[argEnumerator.Current]++;
 
-            argEnumerator.Current.Process(Config, token);
+            execute += (c) => argEnumerator.Current.Process(c, token);
 
             return remainingTokens;
         }
