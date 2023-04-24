@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace TestsArgparseAPI.ParsingTests
 {
+
+
     public record MixedConfig
     {
-        public bool helpFlag;
+        public class HelpPassed : Exception {}
         public int IntOption;
         public string RequiredStringOption;
         public bool BoolOption;
@@ -47,7 +49,7 @@ namespace TestsArgparseAPI.ParsingTests
             {
                 Names = new string[] { "--help", "-h" },
                 Description = "prints help message",
-                Action = (storage) => { storage.helpFlag = true; },
+                Action = (storage) => { throw new MixedConfig.HelpPassed(); },
             });
 
 
@@ -150,8 +152,10 @@ namespace TestsArgparseAPI.ParsingTests
         public void NothingIsParsedAfterHelpFlag(string testCase)
         {
             string[] input = testCase.Split(" ");
-            parser.Parse(input);
+            
 
+            Assert.That(() => parser.Parse(input),
+              Throws.TypeOf<MixedConfig.HelpPassed>());
             Assert.That(config.RequiredArgument, Is.Null);
         }
     }
