@@ -246,6 +246,25 @@ public partial record class Parser<C>
             if (missingOpts.Count > 0)
                 throw new ParserRuntimeException("One or more required options was not specified:\n"
                     + String.Join('\n', missingOpts));
+
+            List<object> missingArgs = new();
+
+            missingArgs.AddRange(Arguments.Where(a =>
+            {
+                switch (a.Multiplicity)
+                {
+                    case ArgumentMultiplicity.SpecificCount argMulSpecificCount:
+                        return argMulSpecificCount.IsRequired is true && argValueCounts[a] < argMulSpecificCount.Number;
+                    case ArgumentMultiplicity.AllThatFollow argMulAllThatFollow:
+                        return argValueCounts[a] < argMulAllThatFollow.MinimumNumberOfArguments;
+                    default:
+                        throw new ParserRuntimeException("Unknown multiplicity type: " + a.Multiplicity);
+                }
+            }));
+
+            if (missingArgs.Any())
+                throw new ParserRuntimeException("One or more required arguments was not specified:\n"
+                    + String.Join('\n', missingArgs));
         }
     }
 
