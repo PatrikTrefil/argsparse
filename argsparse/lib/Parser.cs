@@ -170,6 +170,8 @@ public partial record class Parser<C>
                            $"Option does not take value: {name}, {value}");
                 if (!optionsMap.ContainsKey(name))
                     throw new ParserRuntimeException($"Unknown option: {name}");
+                if (value.Length == 0)
+                    throw new ParserRuntimeException($"Option value missing: {token}");
                 invokeOption(name, value);
             }
 
@@ -215,6 +217,8 @@ public partial record class Parser<C>
                 var (name, value) = token.Split(valueSeparator, 2);
                 if (!optionsMap.ContainsKey(name))
                     throw new ParserRuntimeException($"Unknown option: {name}");
+                if (value.Length == 0)
+                    throw new ParserRuntimeException($"Option value missing: {token}");
                 invokeOption(name, value);
                 return remainingTokens;
             }
