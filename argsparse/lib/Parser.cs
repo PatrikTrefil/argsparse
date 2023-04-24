@@ -10,8 +10,16 @@ public partial record class Parser<C>
 {
     private const char valueSeparator = '=';
 
-    [GeneratedRegex("^-{1,2}[a-zA-Z1-9]+[a-zA-Z1-9-]*$")]
+    [GeneratedRegex("(^--[a-zA-Z1-9]+[a-zA-Z1-9-]*$)|(^-[a-zA-Z]$)")]
     private static partial Regex LongOrShortName();
+
+
+    [GeneratedRegex("^-([a-zA-Z]+)|-([a-zA-Z]=.*)$")]
+    private static partial Regex ShortOptionPassed();
+
+    [GeneratedRegex("^--[a-zA-Z1-9]+[a-zA-Z1-9-]*(=.*)?$")]
+    private static partial Regex LongOptionPassed();
+
 
     List<Flag<C>> flags = new();
     List<IOption<C>> options = new();
@@ -103,9 +111,9 @@ public partial record class Parser<C>
             }
             else if (token == this.PlainArgumentsDelimiter)
                 encounteredSeparator = true;
-            else if (token.StartsWith("--"))
+            else if (token.StartsWith("--") && LongOptionPassed().IsMatch(token))
                 argsl = parseLongName(token, argsl);
-            else if (token.StartsWith("-"))
+            else if (token.StartsWith("-") && ShortOptionPassed().IsMatch(token))
                 argsl = parseShortOpts(token, argsl);
             else
             {

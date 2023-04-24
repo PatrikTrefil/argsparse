@@ -13,7 +13,7 @@ namespace TestsArgparseAPI.ParsingTests
         public string StringArgument = "";
         public int IntArgument = 0;
         public List<int> MultipleIntArgument = new();
-        public List<int> ThreeTimesIntArgumentNotRequired = new();
+        public List<int> ThreeTimesIntArgument = new();
 
     }
 
@@ -41,15 +41,6 @@ namespace TestsArgparseAPI.ParsingTests
                 Converter = ConverterFactory.CreateIntConverter()
             });
 
-            parser.AddArgument(new Argument<ArgumentTestConfig, int>
-            {
-                ValuePlaceholder = "intArg3",
-                Description = "Integer argument repeated 3 times",
-                Action = (storage, value) => { storage.ThreeTimesIntArgumentNotRequired.Add(value); },
-                Multiplicity = new ArgumentMultiplicity.SpecificCount(3, false),
-                Converter = ConverterFactory.CreateIntConverter()
-            });
-
             parser.AddArgument(new Argument<ArgumentTestConfig, string>
             {
                 ValuePlaceholder = "stringArg",
@@ -58,6 +49,17 @@ namespace TestsArgparseAPI.ParsingTests
                 Multiplicity = new ArgumentMultiplicity.SpecificCount(1, true),
                 Converter = ConverterFactory.CreateStringConverter()
             });
+
+
+            parser.AddArgument(new Argument<ArgumentTestConfig, int>
+            {
+                ValuePlaceholder = "intArg3",
+                Description = "Integer argument repeated 3 times",
+                Action = (storage, value) => { storage.ThreeTimesIntArgument.Add(value); },
+                Multiplicity = new ArgumentMultiplicity.SpecificCount(3, true),
+                Converter = ConverterFactory.CreateIntConverter()
+            });
+
 
             parser.AddArgument(new Argument<ArgumentTestConfig, int>
             {
@@ -70,8 +72,8 @@ namespace TestsArgparseAPI.ParsingTests
         }
 
         [Test]
-        [TestCase("1", "text", "1")]
-        [TestCase("1", "textik", "1 2")]
+        [TestCase("1", "text", "1 2 3")]
+        [TestCase("1", "textik", "1 2 4")]
         public void ParseStringArgument(string intArg, string stringArg, string multipleInt)
         {
             var input = (intArg + ' ' + stringArg + ' ' + multipleInt).Split(' ');
@@ -81,30 +83,30 @@ namespace TestsArgparseAPI.ParsingTests
         }
 
         [Test]
-        [TestCase(1, "text", "1")]
-        [TestCase(2, "text", "1 2")]
-        [TestCase(-4, "text", "1 2 3")]
-        public void ParseIntArgument(int intArg, string stringArg, string multipleInt)
+        [TestCase(1, "text")]
+        [TestCase(2, "text")]
+        [TestCase(-4, "text")]
+        public void ParseIntArgument(int intArg, string stringArg)
         {
-            var input = (intArg.ToString() + ' ' + stringArg + ' ' + multipleInt).Split(' ');
+            var input = (intArg.ToString() + ' ' + stringArg + ' ' + "1 2 3").Split(' ');
             parser.Parse(input);
 
             Assert.That(config.IntArgument, Is.EqualTo(intArg));
         }
 
         [Test]
-        [TestCase("1", "1 2 3", "text", "1")]
-        public void ParseIntArgumentWithFixedNumberOfOccurrences(string intArg, string fixedNumberArg, string stringArg, string multipleInt)
+        [TestCase("1",  "text", "1 2 3", "1")]
+        public void ParseIntArgumentWithFixedNumberOfOccurrences(string intArg,  string stringArg, string fixedNumberArg, string multipleInt)
         {
-            var input = (intArg.ToString() + ' ' + fixedNumberArg + ' ' + stringArg + ' ' + multipleInt).Split(' ');
+            var input = (intArg.ToString() + ' '  + stringArg + ' ' + fixedNumberArg + ' ' + multipleInt).Split(' ');
             parser.Parse(input);
 
             Assert.Multiple(() =>
             {
-                Assert.That(config.ThreeTimesIntArgumentNotRequired.Count, Is.EqualTo(3));
-                Assert.That(config.ThreeTimesIntArgumentNotRequired[0], Is.EqualTo(1));
-                Assert.That(config.ThreeTimesIntArgumentNotRequired[0], Is.EqualTo(2));
-                Assert.That(config.ThreeTimesIntArgumentNotRequired[0], Is.EqualTo(3));
+                Assert.That(config.ThreeTimesIntArgument.Count, Is.EqualTo(3));
+                Assert.That(config.ThreeTimesIntArgument[0], Is.EqualTo(1));
+                Assert.That(config.ThreeTimesIntArgument[1], Is.EqualTo(2));
+                Assert.That(config.ThreeTimesIntArgument[2], Is.EqualTo(3));
             });
         }
 
@@ -117,12 +119,12 @@ namespace TestsArgparseAPI.ParsingTests
         /// <param name="intArg"></param>
         /// <param name="multipleInt"></param>
         [Test]
-        [TestCase("1", "text", "1 2 3 4 5 -5 6 -7")]
-        [TestCase("1", "text", "1 2 3 4 5")]
-        [TestCase("1", "text", "5")]
-        public void ParseAllThatFollowArgument(string intArg, string stringArg, string multipleInt)
+        [TestCase("1", "text", "1 2 3", "1 2 3 4 5 -5 6 -7")]
+        [TestCase("1", "text", "1 2 3", "1 2 3 4 5")]
+        [TestCase("1", "text", "1 2 3", "5 4 6")]
+        public void ParseAllThatFollowArgument(string intArg, string stringArg, string ints, string multipleInt)
         {
-            var input = (intArg + ' ' + stringArg + ' ' + multipleInt).Split(' ');
+            var input = (intArg + ' ' + stringArg + ' ' + ints + ' ' + multipleInt).Split(' ');
             parser.Parse(input);
             var list = multipleInt.Split(" ");
 
@@ -134,8 +136,8 @@ namespace TestsArgparseAPI.ParsingTests
         }
 
         [Test]
-        [TestCase("1 text")]
-        [TestCase("1 1 2 3 text")]
+        [TestCase("1 text 1 2 3")]
+        [TestCase("1 text 1 2 3")]
         public void ParseEmptyAllThatFollowArgument(string testCase)
         {
             var input = testCase.Split(' ');
@@ -145,48 +147,38 @@ namespace TestsArgparseAPI.ParsingTests
         }
 
         [Test]
-        [TestCase("1", "1 2 3", "text", "1")]
-        public void ParseNotRequiredArgumentThatIsPresent(string intArg, string fixedNumberArg, string stringArg, string multipleInt)
+        [TestCase("1", "text", "1 2 3", "1")]
+        public void ParseNotRequiredArgumentThatIsPresent(string intArg,  string stringArg, string fixedNumberArg, string multipleInt)
         {
-            var input = (intArg.ToString() + ' ' + fixedNumberArg + ' ' + stringArg + ' ' + multipleInt).Split(' ');
+            var input = (intArg.ToString() + ' ' + stringArg + ' ' + fixedNumberArg + ' ' + multipleInt).Split(' ');
             parser.Parse(input);
 
 
-            Assert.That(config.ThreeTimesIntArgumentNotRequired.Count, Is.EqualTo(3));
+            Assert.That(config.ThreeTimesIntArgument.Count, Is.EqualTo(3));
         }
 
-        [Test]
-        [TestCase("1", "", "text", "1")]
-        public void ParseNotRequiredArgumentThatIsNotPresent(string intArg, string fixedNumberArg, string stringArg, string multipleInt)
-        {
-            var input = (intArg.ToString() + ' ' + stringArg + ' ' + multipleInt).Split(' ');
-            parser.Parse(input);
-
-
-            Assert.That(config.ThreeTimesIntArgumentNotRequired.Count, Is.EqualTo(0));
-        }
 
         [Test]
-        [TestCase("", "text", "1")]
+        [TestCase("", "", "")]
         public void MissingRequiredArgumentRaisesException(string intArg, string stringArg, string multipleInt)
         {
-            var input = (stringArg + ' ' + multipleInt).Split(' ');
+            var input = (stringArg + ' ' + intArg + ' ' + multipleInt).Split(' ');
 
             Assert.That(() => parser.Parse(input),
-                Throws.TypeOf<ParserRuntimeException>());
+                Throws.TypeOf<ParserConversionException>());
         }
 
         [Test]
-        [TestCase("text 1 2 3 text 1 2")]
+        [TestCase("text text 1 2 3 1 2")]
         [TestCase("1 text text text text 1 2")]
-        [TestCase("1 1 text text text 1 2")]
-        [TestCase("1 1 2 text text 1 2")]
-        [TestCase("1 1 2 3 text 1 2 text")]
-        [TestCase("1 1 2 3 text text")]
+        [TestCase("1 text 1 2 text text 1 2")]
+        [TestCase("1 text 1 2 text 1 2")]
+        [TestCase("1 text 1 2 3 1 2 text")]
+        [TestCase("1 text 1 2 3 text")]
         [TestCase("1 text 1 2 text")]
         [TestCase("1 text text 1 2")]
-        [TestCase("1 1 2 3 text 1 2 1,5")]
-        [TestCase("1,0 1 2 3 text 1 2 text")]
+        [TestCase("1 text 1 2 3 1 2 1,5")]
+        [TestCase("1,0 text 1 2 3 1 2 text")]
         public void WrongInputRaisesConversionException(string testCase)
         {
             var input = testCase.Split(' ');

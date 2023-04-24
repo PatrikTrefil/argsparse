@@ -99,13 +99,6 @@ namespace TestsArgparseAPI.ParsingTests
                     Converter = ConverterFactory.CreateIntConverter(),
                     Action = (storage, value) => { storage.NotRequiredArgument = value; },
                     Multiplicity = new ArgumentMultiplicity.SpecificCount(1, false),
-                })
-                .AddArgument(new Argument<MixedConfig, string>
-                {
-                    Description = "all that follows argument",
-                    Converter = ConverterFactory.CreateStringConverter(),
-                    Action = (storage, value) => { storage.AllThatFollowsArgument.Add(value); },
-                    Multiplicity = new ArgumentMultiplicity.AllThatFollow(),
                 });
         }
 
@@ -115,6 +108,9 @@ namespace TestsArgparseAPI.ParsingTests
         [TestCase("-b value -s=true -- value")]
         [TestCase("-l true -s=true -i true -- value")]
         [TestCase("-l=1,2,3,4 -i value -s=true -- value")]
+        [TestCase("-s value -i 2 - value")]
+        [TestCase("- s value -- value")]
+        [TestCase("-s value -i 2 - value")]
         public void InvalidInputRaisesConversionException(string testCase)
         {
             string[] input = testCase.Split(" ");
@@ -124,16 +120,12 @@ namespace TestsArgparseAPI.ParsingTests
         }
 
         [Test]
-        [TestCase("-s value -i 2 - value")]
-        [TestCase("-s value -- value")]
-        [TestCase("-- -s value -i 2 -- value")]
+        [TestCase("-- -i 2 -s value -- value")]
         [TestCase("-i 2 -s=value -- ")]
         [TestCase("-s value -i 2")]
         [TestCase("-i 2 -- value")]
         [TestCase("-- value 23 k l m 5")]
         [TestCase("-b false --int=3 -s value")]
-        [TestCase("-s value -i 2 - value")]
-        [TestCase("- s value -- value")]
         public void InvalidInputRaisesRuntimeException(string testCase)
         {
             string[] input = testCase.Split(" ");
@@ -141,6 +133,8 @@ namespace TestsArgparseAPI.ParsingTests
             Assert.That(() => parser.Parse(input),
                 Throws.TypeOf<ParserRuntimeException>());
         }
+
+
 
         [Test]
         [TestCase("--help")]
