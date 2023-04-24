@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -325,10 +325,19 @@ public partial record class Parser<C>
     {
         if (plainArguments.Any())
         {
+            if (plainArguments.Contains(argument))
+                throw new InvalidParserConfigurationException(
+                    $"Argument {argument} is already added to the parser.");
+
             var lastArg = plainArguments.Last();
             if (lastArg.Multiplicity is ArgumentMultiplicity.AllThatFollow)
                 throw new InvalidParserConfigurationException(
                     $"Argument {argument} cannot follow an argument with multiplicity set to AllThatFollow (argument: {lastArg}).");
+
+            if (lastArg.Multiplicity is ArgumentMultiplicity.SpecificCount argMulSpecificCount && argMulSpecificCount.IsRequired is false)
+                throw new InvalidParserConfigurationException(
+                    $"Argument {argument} can not follow a non-required argument (argument: {lastArg})."
+                );
         }
     }
 
