@@ -128,7 +128,7 @@ namespace TestsArgparseAPI.ConfigTests
 
             var helpFlag = new Flag<TestConfiguration>
             {
-                Names = new string[] {},
+                Names = new string[] { },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
             };

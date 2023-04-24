@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace Argparse;
 
@@ -150,9 +148,10 @@ public partial record class Parser<C>
                 break;
             }
 
-            if(token.Contains('=')) {
+            if (token.Contains('='))
+            {
                 var (name, value) = token.Split('=', 2);
-                if(name.Length > 2) 
+                if (name.Length > 2)
                     throw new ParserRuntimeException($"Merging options that take values is not allowed: {token}\n" +
                     $"Use separate options: {token[0..^1]} -{token[^1]}={value}");
                 if (flagsMap.ContainsKey(name))
@@ -163,9 +162,9 @@ public partial record class Parser<C>
                 invokeOption(name, value);
             }
 
-            else if(token.Length > 2)
+            else if (token.Length > 2)
             {
-                foreach(char o in token[1..])
+                foreach (char o in token[1..])
                 {
                     var name = $"-{o}";
                     if (!flagsMap.ContainsKey(name))
@@ -189,7 +188,7 @@ public partial record class Parser<C>
                     invokeOption(token, value);
                 }
                 else
-                  throw new ParserRuntimeException($"Unknown option: {token}");
+                    throw new ParserRuntimeException($"Unknown option: {token}");
             }
 
             return remainingTokens;
@@ -237,11 +236,11 @@ public partial record class Parser<C>
             return remainingTokens;
         }
 
-        void checkAllRequiredHaveBeenParsed() {
+        void checkAllRequiredHaveBeenParsed()
+        {
             List<object> missingOpts = new();
 
             missingOpts.AddRange(Options.Where(o => o.IsRequired && !alreadyParsedOptions.Contains(o)));
-            // TOOD for arguments
 
             if (missingOpts.Count > 0)
                 throw new ParserRuntimeException("One or more required options was not specified:\n"
@@ -261,13 +260,13 @@ public partial record class Parser<C>
             {
                 if (namesFound.Contains(name))
                     duplicateNames.Add(name);
-                    
+
                 namesFound.Add(name);
             }
-            if(duplicateNames.Count > 0)
-                throw new InvalidParserConfigurationException( duplicateNames.Count == 1 ?
+            if (duplicateNames.Count > 0)
+                throw new InvalidParserConfigurationException(duplicateNames.Count == 1 ?
                         $"Duplicate name \"{duplicateNames.First()}\" for {what}."
-                        :$"Duplicate names: {String.Join(',', duplicateNames)} for {what}."
+                        : $"Duplicate names: {String.Join(',', duplicateNames)} for {what}."
                         );
         }
         foreach (var name in names)
