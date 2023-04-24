@@ -17,7 +17,21 @@ public abstract record class ArgumentMultiplicity
     /// <param name="IsRequired">Allows for the omitting of the argument.</param>
     /// <remarks>Only one non-required argument is allowed per parser. 
     /// Do not mix non-required arguments with <see cref="AllThatFollow"/></remarks>
-    public sealed record class SpecificCount(int Number, bool IsRequired) : ArgumentMultiplicity();
+    public sealed record class SpecificCount : ArgumentMultiplicity
+    {
+        public int Number { get; }
+        public bool IsRequired { get; }
+
+        /// <exception cref="ArgumentException">Thrown when <paramref name="Number"/> is not positive.</exception>
+        public SpecificCount(int Number, bool IsRequired)
+        {
+            if (Number <= 0)
+                throw new ArgumentException("Count must be positive.");
+
+            this.Number = Number;
+            this.IsRequired = IsRequired;
+        }
+    }
     /// <summary>
     /// Represents such a multiplicity in which all the following argument parts belong to the given
     /// plain argument. 
@@ -26,7 +40,19 @@ public abstract record class ArgumentMultiplicity
     /// which should then be enforced by the parser.</param>
     /// <remarks>Only one such argument is allowed per parser. 
     /// Do not mix non-required <see cref="SpecificCount"/> arguments with <see cref="AllThatFollow"/></remarks>
-    public sealed record class AllThatFollow(int MinimumNumberOfArguments = 0) : ArgumentMultiplicity();
+    public sealed record class AllThatFollow : ArgumentMultiplicity
+    {
+        public int MinimumNumberOfArguments { get; }
+        /// <param name="MinimumNumberOfArguments">Minimum number of values that should be present for the argument to be considered valid. This number must be non-negative.</param>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="MinimumNumberOfArguments"/> is negative.</exception>
+        public AllThatFollow(int MinimumNumberOfArguments = 0)
+        {
+            if (MinimumNumberOfArguments < 0)
+                throw new ArgumentException("Minimum number of arguments must be non-negative");
+
+            this.MinimumNumberOfArguments = MinimumNumberOfArguments;
+        }
+    }
 
     /// <summary>
     /// Hiding the constructor so that the user can't create a class that is derived from this one.
