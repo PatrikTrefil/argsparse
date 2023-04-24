@@ -123,7 +123,7 @@ public partial record class Parser<C>
 
         checkAllRequiredHaveBeenParsed();
 
-        execute(Config);
+        // execute(Config);
 
         /// Carry out action associated with the flag identified by the name 
         /// The token must be a valid flag name
@@ -135,7 +135,9 @@ public partial record class Parser<C>
                 throw new ParserRuntimeException($"Repeated option: {token}");
             alreadyParsedFlags.Add(flg);
 
-            execute += flg.Action;
+
+            // execute += flg.Action;
+            flg.Action(Config);
         }
 
         /// Carry out action associated with the option identified by the name 
@@ -147,7 +149,8 @@ public partial record class Parser<C>
                 throw new ParserRuntimeException($"Repeated option: {token}");
             alreadyParsedOptions.Add(opt);
 
-            execute += (c) => opt.Process(c, value);
+            // execute += (c) => opt.Process(c, value);
+            opt.Process(Config, value);
         }
 
         /// Parse token containing short-named options, e.g. "-a", "-abc".
@@ -273,7 +276,9 @@ public partial record class Parser<C>
 
             argValueCounts[argEnumerator.Current]++;
 
-            execute += (c) => argEnumerator.Current.Process(c, token);
+            // execute += (c) => argEnumerator.Current.Process(c, token);
+
+            argEnumerator.Current.Process(Config, token);
 
             return remainingTokens;
         }
