@@ -306,7 +306,7 @@ namespace TestsArgparseAPI.ParsingTests
         {
             var input = testCase.Split(' ');
 
-            Assert.That(() => parser.Parse(input),
+            Assert.That(() => requiredOptionParser.Parse(input),
                 Throws.TypeOf<ParserRuntimeException>());
         }
 
