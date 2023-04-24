@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -79,11 +79,18 @@ public partial record class Parser<C>
 
         HashSet<IOption<C>> alreadyParsedOptions = new();
         HashSet<Flag<C>> alreadyParsedFlags = new();
+        Dictionary<IArgument<C>, int> argValueCounts = new();
+        // init argValueCounts
+        foreach (var arg in plainArguments)
+            argValueCounts.Add(arg, 0);
 
         Action<C> execute = c => { };
 
         bool encounteredSeparator = false;
         var argsl = args.AsEnumerable();
+        // this calls the explicit implementation of IEnumerable<T>, because of the variable type
+        IEnumerator<IArgument<C>> plainArgEnumerator = plainArguments.GetEnumerator();
+        plainArgEnumerator.MoveNext(); // move to first element
 
         while (argsl.Count() > 0)
         {
@@ -91,7 +98,9 @@ public partial record class Parser<C>
             argsl = argsl.Skip(1);
 
             if (encounteredSeparator)
-                parsePlainArg(token, argsl);
+            {
+                argsl = parsePlainArg(token, argsl, plainArgEnumerator);
+            }
             else if (token == this.PlainArgumentsDelimiter)
                 encounteredSeparator = true;
             else if (token.StartsWith("--"))
@@ -99,7 +108,9 @@ public partial record class Parser<C>
             else if (token.StartsWith("-"))
                 argsl = parseShortOpts(token, argsl);
             else
-                parsePlainArg(token, argsl);
+            {
+                argsl = parsePlainArg(token, argsl, plainArgEnumerator);
+            }
         }
 
         checkAllRequiredHaveBeenParsed();
@@ -228,11 +239,30 @@ public partial record class Parser<C>
             throw new ParserRuntimeException($"Unknown option: {token}");
         }
 
-        // Try to parse plain argument
-        // This function is called for all tokens that are not options or flags or values or a delimiter.
-        IEnumerable<string> parsePlainArg(string tokens, IEnumerable<string> remainingTokens)
+        IEnumerable<string> parsePlainArg(string token, IEnumerable<string> remainingTokens, IEnumerator<IArgument<C>> argEnumerator)
         {
-            // TODO here
+            Debug.Assert(Config is not null);
+
+            switch (argEnumerator.Current.Multiplicity)
+            {
+                case ArgumentMultiplicity.SpecificCount argMulSpecificCount:
+                    if (argValueCounts[argEnumerator.Current] == argMulSpecificCount.Number)
+                    {
+                        bool success = argEnumerator.MoveNext();
+                        if (!success)
+                            throw new ParserRuntimeException("Too many arguments");
+                    }
+                    break;
+                case ArgumentMultiplicity.AllThatFollow:
+                    break;
+                default:
+                    throw new ParserRuntimeException("Unknown multiplicity type: " + argEnumerator.Current.Multiplicity);
+            }
+
+            argValueCounts[argEnumerator.Current]++;
+
+            argEnumerator.Current.Process(Config, token);
+
             return remainingTokens;
         }
 
@@ -245,6 +275,25 @@ public partial record class Parser<C>
             if (missingOpts.Count > 0)
                 throw new ParserRuntimeException("One or more required options was not specified:\n"
                     + String.Join('\n', missingOpts));
+
+            List<object> missingArgs = new();
+
+            missingArgs.AddRange(Arguments.Where(a =>
+            {
+                switch (a.Multiplicity)
+                {
+                    case ArgumentMultiplicity.SpecificCount argMulSpecificCount:
+                        return argMulSpecificCount.IsRequired is true && argValueCounts[a] < argMulSpecificCount.Number;
+                    case ArgumentMultiplicity.AllThatFollow argMulAllThatFollow:
+                        return argValueCounts[a] < argMulAllThatFollow.MinimumNumberOfArguments;
+                    default:
+                        throw new ParserRuntimeException("Unknown multiplicity type: " + a.Multiplicity);
+                }
+            }));
+
+            if (missingArgs.Any())
+                throw new ParserRuntimeException("One or more required arguments was not specified:\n"
+                    + String.Join('\n', missingArgs));
         }
     }
 
@@ -324,10 +373,19 @@ public partial record class Parser<C>
     {
         if (plainArguments.Any())
         {
+            if (plainArguments.Contains(argument))
+                throw new InvalidParserConfigurationException(
+                    $"Argument {argument} is already added to the parser.");
+
             var lastArg = plainArguments.Last();
             if (lastArg.Multiplicity is ArgumentMultiplicity.AllThatFollow)
                 throw new InvalidParserConfigurationException(
                     $"Argument {argument} cannot follow an argument with multiplicity set to AllThatFollow (argument: {lastArg}).");
+
+            if (lastArg.Multiplicity is ArgumentMultiplicity.SpecificCount argMulSpecificCount && argMulSpecificCount.IsRequired is false)
+                throw new InvalidParserConfigurationException(
+                    $"Argument {argument} can not follow a non-required argument (argument: {lastArg})."
+                );
         }
     }
 
