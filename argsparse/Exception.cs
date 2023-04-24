@@ -13,7 +13,7 @@ public class InvalidParserConfigurationException : Exception
 /// <summary>
 /// Models an exception thrown when the parser fails to convert a value from string to the intended type.
 /// </summary>
-public class ParserConversionException : Exception
+public class ParserConversionException : ParserRuntimeException
 {
     public ParserConversionException(string message) : base(message) { }
 
