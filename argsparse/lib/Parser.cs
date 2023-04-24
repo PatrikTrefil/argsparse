@@ -81,11 +81,18 @@ public partial record class Parser<C>
 
         HashSet<IOption<C>> alreadyParsedOptions = new();
         HashSet<Flag<C>> alreadyParsedFlags = new();
+        Dictionary<IArgument<C>, int> argValueCounts = new();
+        // init argValueCounts
+        foreach (var arg in plainArguments)
+            argValueCounts.Add(arg, 0);
 
         Action<C> execute = c => { };
 
         bool encounteredSeparator = false;
         var argsl = args.AsEnumerable();
+        // this calls the explicit implementation of IEnumerable<T>, because of the variable type
+        IEnumerator<IArgument<C>> plainArgEnumerator = plainArguments.GetEnumerator();
+        plainArgEnumerator.MoveNext(); // move to first element
 
         while (argsl.Count() > 0)
         {
@@ -93,7 +100,9 @@ public partial record class Parser<C>
             argsl = argsl.Skip(1);
 
             if (encounteredSeparator)
-                parsePlainArg(token, argsl);
+            {
+                argsl = parsePlainArg(token, argsl, plainArgEnumerator);
+            }
             else if (token == this.PlainArgumentsDelimiter)
                 encounteredSeparator = true;
             else if (token.StartsWith("--"))
@@ -101,7 +110,9 @@ public partial record class Parser<C>
             else if (token.StartsWith("-"))
                 argsl = parseShortOpts(token, argsl);
             else
-                parsePlainArg(token, argsl);
+            {
+                argsl = parsePlainArg(token, argsl, plainArgEnumerator);
+            }
         }
 
         checkAllRequiredHaveBeenParsed();
@@ -229,11 +240,30 @@ public partial record class Parser<C>
             throw new ParserRuntimeException($"Unknown option: {token}");
         }
 
-        // Try to parse plain argument
-        // This function is called for all tokens that are not options or flags or values or a delimiter.
-        IEnumerable<string> parsePlainArg(string tokens, IEnumerable<string> remainingTokens)
+        IEnumerable<string> parsePlainArg(string token, IEnumerable<string> remainingTokens, IEnumerator<IArgument<C>> argEnumerator)
         {
-            // TODO here
+            Debug.Assert(Config is not null);
+
+            switch (argEnumerator.Current.Multiplicity)
+            {
+                case ArgumentMultiplicity.SpecificCount argMulSpecificCount:
+                    if (argValueCounts[argEnumerator.Current] == argMulSpecificCount.Number)
+                    {
+                        bool success = argEnumerator.MoveNext();
+                        if (!success)
+                            throw new ParserRuntimeException("Too many arguments");
+                    }
+                    break;
+                case ArgumentMultiplicity.AllThatFollow:
+                    break;
+                default:
+                    throw new ParserRuntimeException("Unknown multiplicity type: " + argEnumerator.Current.Multiplicity);
+            }
+
+            argValueCounts[argEnumerator.Current]++;
+
+            argEnumerator.Current.Process(Config, token);
+
             return remainingTokens;
         }
 
