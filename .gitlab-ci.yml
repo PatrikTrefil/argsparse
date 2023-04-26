@@ -32,7 +32,6 @@ build:
 
 format:
   stage: test
-  image: microsoft/dotnet:latest
   script:
     - 'dotnet format --verify-no-changes --no-restore argsparse.sln'
 
