@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Argparse;
 
@@ -35,9 +37,25 @@ public interface IOption<C>
 /// </summary>
 /// <typeparam name="C">The cofiguration context type for the given parser, see <see cref="Parser{C}"/></typeparam>
 /// <typeparam name="V">Type of the value the provided string is to be converted to. /// </typeparam>
-public sealed record class Option<C, V> : IOption<C>
+public sealed partial record class Option<C, V> : IOption<C>
 {
-    public required string[] Names { get; init; }
+    [GeneratedRegex("(^--[a-zA-Z1-9]+[a-zA-Z1-9-]*$)|(^-[a-zA-Z]$)")]
+    private static partial Regex LongOrShortName();
+
+    private readonly string[] names;
+    /// <summary>Array of names of the option. It must be set to a non-empty array.</summary>
+    /// <exception cref="ArgumentException">Thrown when set to an empty array or the any of the
+    /// provided names is in an invalid format.</exception>
+    public required string[] Names { get => names; init {
+        if (value.Length == 0)
+            throw new ArgumentException("Option must have at least one name");
+
+        var invalidOptionNames = value.Where(name => !LongOrShortName().IsMatch(name));
+        if (invalidOptionNames.Any())
+            throw new ArgumentException($"Invalid option names: {string.Join(", ", invalidOptionNames)}");
+
+        names = value;
+    } }
     public string ValuePlaceHolder { get; init; } = "<value>";
     public required string Description { get; init; }
     /// <summary>
