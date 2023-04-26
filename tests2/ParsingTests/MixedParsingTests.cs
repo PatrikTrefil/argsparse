@@ -121,7 +121,7 @@ namespace TestsArgparseAPI.ParsingTests
 
         [Test]
         [TestCase("-- -i 2 -s value -- value")]
-        [TestCase("-i 2 -s=value -- ")]
+        [TestCase("-i 2 -s=value --")]
         [TestCase("-s value -i 2")]
         [TestCase("-i 2 -- value")]
         [TestCase("-- value 23 k l m 5")]

@@ -10,6 +10,7 @@ public static class ConverterFactory
 
     /// <summary>
     /// Creates a converter that does not convert the input string, but returns it as is.
+    /// This converter does not fail if the input string is empty i.e. "".
     /// </summary>
     public static Func<string, string> CreateStringConverter() => (string s) => s;
 
