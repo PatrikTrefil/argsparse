@@ -370,14 +370,6 @@ public partial record class Parser<C>
 
     private void ValidateFlagNames(Flag<C> flag)
     {
-        if (flag.Names.Length == 0)
-            throw new InvalidParserConfigurationException(
-                   $"Flag has no name: {flag}");
-
-        var invalidFlagNames = flag.Names.Where(name => !LongOrShortName().IsMatch(name));
-        if (invalidFlagNames.Any())
-            throw new InvalidParserConfigurationException($"Invalid flag names: {string.Join(", ", invalidFlagNames)}");
-
         CheckConflictingOptionsAndFlags(flag.Names, flag);
     }
     /// <summary>

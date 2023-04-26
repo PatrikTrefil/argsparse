@@ -126,15 +126,12 @@ namespace TestsArgparseAPI.ConfigTests
                 Description = "Test description."
             };
 
-            var helpFlag = new Flag<TestConfiguration>
+            Assert.That(() => new Flag<TestConfiguration>
             {
                 Names = new string[] { },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
-            };
-
-            Assert.That(() => parser.AddFlag(helpFlag),
-                Throws.TypeOf<InvalidParserConfigurationException>());
+            }, Throws.TypeOf<ArgumentException>());
         }
 
         [Test]
@@ -147,15 +144,12 @@ namespace TestsArgparseAPI.ConfigTests
                 Description = "Test description."
             };
 
-            var helpFlag = new Flag<TestConfiguration>
+            Assert.That(() => new Flag<TestConfiguration>
             {
                 Names = new string[] { "--valid", "invalid1", "invalid2" },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
-            };
-
-            Assert.That(() => parser.AddFlag(helpFlag),
-                Throws.TypeOf<InvalidParserConfigurationException>());
+            }, Throws.TypeOf<ArgumentException>());
         }
     }
 }
