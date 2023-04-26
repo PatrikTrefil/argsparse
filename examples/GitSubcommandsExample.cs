@@ -1,4 +1,3 @@
-using System;
 namespace Argparse.Examples;
 
 // I was getting errors in build...
