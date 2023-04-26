@@ -8,7 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "examples", "examples\exampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Numactl", "numactl\Numactl.csproj", "{3B3E0950-3BDD-41B5-8257-C86DAE9326F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tests2", "tests2\tests2.csproj", "{73320130-5819-483E-B2F0-4D0C9D0FE332}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tests", "tests2\tests.csproj", "{73320130-5819-483E-B2F0-4D0C9D0FE332}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
