@@ -13,7 +13,7 @@ namespace TestsArgparseAPI.ParsingTests
 
     public record MixedConfig
     {
-        public class HelpPassed : Exception {}
+        public class HelpPassed : Exception { }
         public int IntOption;
         public string RequiredStringOption;
         public bool BoolOption;
@@ -146,7 +146,7 @@ namespace TestsArgparseAPI.ParsingTests
         public void NothingIsParsedAfterHelpFlag(string testCase)
         {
             string[] input = testCase.Split(" ");
-            
+
 
             Assert.That(() => parser.Parse(input),
               Throws.TypeOf<MixedConfig.HelpPassed>());

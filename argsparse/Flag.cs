@@ -22,16 +22,20 @@ public sealed partial record class Flag<C>
     /// </summary>
     /// <exception cref="ArgumentException">Thrown when set to an empty array or the any of the
     /// provided names is in an invalid format.</exception>
-    public required string[] Names { get => names; init {
-        if (value.Length == 0)
-            throw new ArgumentException("Flag must have at least one name");
+    public required string[] Names
+    {
+        get => names; init
+        {
+            if (value.Length == 0)
+                throw new ArgumentException("Flag must have at least one name");
 
-        var invalidOptionNames = value.Where(name => !LongOrShortName().IsMatch(name));
-        if (invalidOptionNames.Any())
-            throw new ArgumentException($"Invalid option names: {string.Join(", ", invalidOptionNames)}");
+            var invalidOptionNames = value.Where(name => !LongOrShortName().IsMatch(name));
+            if (invalidOptionNames.Any())
+                throw new ArgumentException($"Invalid option names: {string.Join(", ", invalidOptionNames)}");
 
-        names = value;
-    } }
+            names = value;
+        }
+    }
     /// <summary>
     /// Description of the flag-like option as it should appear in help write-up.
     /// </summary>

@@ -95,10 +95,10 @@ namespace TestsArgparseAPI.ParsingTests
         }
 
         [Test]
-        [TestCase("1",  "text", "1 2 3", "1")]
-        public void ParseIntArgumentWithFixedNumberOfOccurrences(string intArg,  string stringArg, string fixedNumberArg, string multipleInt)
+        [TestCase("1", "text", "1 2 3", "1")]
+        public void ParseIntArgumentWithFixedNumberOfOccurrences(string intArg, string stringArg, string fixedNumberArg, string multipleInt)
         {
-            var input = (intArg.ToString() + ' '  + stringArg + ' ' + fixedNumberArg + ' ' + multipleInt).Split(' ');
+            var input = (intArg.ToString() + ' ' + stringArg + ' ' + fixedNumberArg + ' ' + multipleInt).Split(' ');
             parser.Parse(input);
 
             Assert.Multiple(() =>
@@ -148,7 +148,7 @@ namespace TestsArgparseAPI.ParsingTests
 
         [Test]
         [TestCase("1", "text", "1 2 3", "1")]
-        public void ParseNotRequiredArgumentThatIsPresent(string intArg,  string stringArg, string fixedNumberArg, string multipleInt)
+        public void ParseNotRequiredArgumentThatIsPresent(string intArg, string stringArg, string fixedNumberArg, string multipleInt)
         {
             var input = (intArg.ToString() + ' ' + stringArg + ' ' + fixedNumberArg + ' ' + multipleInt).Split(' ');
             parser.Parse(input);
