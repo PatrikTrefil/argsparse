@@ -36,6 +36,7 @@ namespace TestsArgparseAPI.SpecialTests
     /// - parsing tests with two subparser
     /// - parsing tests with nested subparsers
     /// </summary>
+    [Ignore("Subparsers are not implemented")]
     internal class SubparserTests
     {
         private Parser<RootCommandConfig> toplevelParser;

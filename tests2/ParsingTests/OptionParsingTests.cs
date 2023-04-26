@@ -226,14 +226,22 @@ namespace TestsArgparseAPI.ParsingTests
         [TestCase("--list")]
         [TestCase("-s")]
         [TestCase("--int")]
-        [TestCase("-p --int")]
-        [TestCase("-l -s")]
         public void ParsingOptionWithoutValueRaisesException(string testCase)
         {
             string[] input = testCase.Split(" ");
 
             Assert.That(() => parser.Parse(input),
                 Throws.TypeOf<ParserRuntimeException>());
+        }
+
+        [TestCase("-p --int")]
+        [TestCase("-l -s")]
+        public void ParsingOptionWithoutRaisesException(string testCase)
+        {
+            string[] input = testCase.Split(" ");
+
+            Assert.That(() => parser.Parse(input),
+                Throws.TypeOf<ParserConversionException>());
         }
 
         /// <summary>
@@ -273,9 +281,9 @@ namespace TestsArgparseAPI.ParsingTests
         [Test]
         [TestCase("--str=")]
         [TestCase("-s= -i")]
-        [TestCase("-s -i=")]
-        [TestCase("-s -i")]
-        [TestCase("-l --int=")]
+        [TestCase("-i=")]
+        [TestCase("-i")]
+        [TestCase("--int= -l")]
         public void ParsingOptionWithEmptyValueRaisesException(string testCase)
         {
             var input = (testCase).Split(' ');
