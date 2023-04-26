@@ -90,11 +90,9 @@ public partial record class Parser<C>
 
         Action<C> execute = c => { };
 
+        var plainArgEnumerator = new ArgumentEnumerable<C>(Arguments).GetEnumerator();
         bool encounteredSeparator = false;
         var argsl = args.AsEnumerable();
-        // this calls the explicit implementation of IEnumerable<T>, because of the variable type
-        IEnumerator<IArgument<C>> plainArgEnumerator = plainArguments.GetEnumerator();
-        plainArgEnumerator.MoveNext(); // move to first element
 
         while (argsl.Count() > 0)
         {
@@ -102,9 +100,7 @@ public partial record class Parser<C>
             argsl = argsl.Skip(1);
 
             if (encounteredSeparator)
-            {
                 argsl = parsePlainArg(token, argsl, plainArgEnumerator);
-            }
             else if (token == this.PlainArgumentsDelimiter)
                 encounteredSeparator = true;
             else if (token.StartsWith("--") && LongOptionPassed().IsMatch(token))
@@ -254,25 +250,13 @@ public partial record class Parser<C>
         {
             Debug.Assert(Config is not null);
 
-            switch (argEnumerator.Current.Multiplicity)
-            {
-                case ArgumentMultiplicity.SpecificCount argMulSpecificCount:
-                    if (argValueCounts[argEnumerator.Current] == argMulSpecificCount.Number)
-                    {
-                        bool success = argEnumerator.MoveNext();
-                        if (!success)
-                            throw new ParserRuntimeException("Too many arguments");
-                    }
-                    break;
-                case ArgumentMultiplicity.AllThatFollow:
-                    break;
-                default:
-                    throw new ParserRuntimeException("Unknown multiplicity type: " + argEnumerator.Current.Multiplicity);
-            }
-
-            argValueCounts[argEnumerator.Current]++;
+            bool isThereNextArg = argEnumerator.MoveNext();
+            if (isThereNextArg is false)
+                throw new ParserRuntimeException("Too many arguments provided.");
 
             // execute += (c) => argEnumerator.Current.Process(c, token);
+
+            argValueCounts[argEnumerator.Current]++;
 
             argEnumerator.Current.Process(Config, token);
 
