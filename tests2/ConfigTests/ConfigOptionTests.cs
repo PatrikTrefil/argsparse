@@ -173,21 +173,17 @@ namespace TestsArgparseAPI.ConfigTests
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new string[] { },
                 Description = "Test description."
             };
 
-            var stringOption = new Option<TestConfiguration, string>
+            Assert.That(() => new Option<TestConfiguration, string>
             {
                 Names = new string[] { },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
-            };
-
-
-            Assert.That(() => parser.AddOption(stringOption),
-                Throws.TypeOf<InvalidParserConfigurationException>());
+            }, Throws.TypeOf<ArgumentException>());
         }
 
         [Test]
@@ -200,16 +196,13 @@ namespace TestsArgparseAPI.ConfigTests
                 Description = "Test description."
             };
 
-            var stringOption = new Option<TestConfiguration, string>
+            Assert.That(() => new Option<TestConfiguration, string>
             {
                 Names = new string[] { "--valid", "invalid1", "invalid2" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
-            };
-
-            Assert.That(() => parser.AddOption(stringOption),
-                Throws.TypeOf<InvalidParserConfigurationException>());
+            }, Throws.TypeOf<ArgumentException>());
         }
     }
 }
