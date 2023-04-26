@@ -1,4 +1,4 @@
-﻿using Argparse;
+using Argparse;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace TestsArgparseAPI.ConfigTests
                 Description = "Test parser."
             };
 
-            parser.Parse(new string[] { "" });
+            parser.Parse(new string[] { });
 
             Assert.IsNotNull(parser.Config);
         }
