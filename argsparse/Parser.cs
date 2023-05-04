@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 
 namespace Argparse;
 
@@ -10,7 +11,8 @@ namespace Argparse;
 /// </summary>
 public interface IParser
 {
-    /// <value>The parser name as it will appear in help and debug messages.</value>
+    /// <value>The parser name as it will appear in help and debug messages. The names must not start with "-" or "--".
+    /// There must be at least one name.</value>
     public string[] Names { get; init; }
     /// <value>The parser description as it will appear in help.</value>
     public string Description { get; init; }
@@ -35,7 +37,21 @@ public interface IParser
 }
 public partial record class Parser<C> : IParser
 {
-    public required string[] Names { get; init; }
+    private string[] names;
+    public required string[] Names
+    {
+        get => names; init
+        {
+            if (value.Length == 0)
+                throw new ArgumentException("Parser must have at least one name");
+
+            var invalidOptionNames = value.Where(name => name[0] == '-' || name[..2] == "--");
+            if (invalidOptionNames.Any())
+                throw new ArgumentException($"Invalid parser names: {string.Join(", ", invalidOptionNames)}");
+
+            names = value;
+        }
+    }
     /// <value>The parser description as it will appear in help.</value>
     public required string Description { get; init; }
     /// <value><para><c>PlainArgumentsDelimiter</c> can be used to configure the arguments delimiter,

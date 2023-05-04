@@ -1,6 +1,4 @@
-﻿using Argparse;
-
-namespace TestsArgparseAPI.ConfigTests
+﻿namespace TestsArgparseAPI.ConfigTests
 {
     public class ConfigOptionTests
     {
@@ -168,7 +166,7 @@ namespace TestsArgparseAPI.ConfigTests
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { },
+                Names = new string[] { "test" },
                 Description = "Test description."
             };
 
