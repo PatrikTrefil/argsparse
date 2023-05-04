@@ -284,24 +284,6 @@ public partial record class Parser<C>
 
     private void CheckConflictingOptionsAndFlags(string[] names, object what)
     {
-        if (names.ToHashSet().Count != names.Length)
-        {
-            // check duplicates in names discover invalid setups
-            HashSet<string> namesFound = new();
-            HashSet<string> duplicateNames = new();
-            foreach (var name in names)
-            {
-                if (namesFound.Contains(name))
-                    duplicateNames.Add(name);
-
-                namesFound.Add(name);
-            }
-            if (duplicateNames.Count > 0)
-                throw new InvalidParserConfigurationException(duplicateNames.Count == 1 ?
-                        $"Duplicate name \"{duplicateNames.First()}\" for {what}."
-                        : $"Duplicate names: {String.Join(',', duplicateNames)} for {what}."
-                        );
-        }
         foreach (var name in names)
         {
 
