@@ -175,9 +175,9 @@ internal static class GitSubcommandsExample {
             Action = (config) => { config.Version = true; }
         });
 
-        GitParser.AddSubparser("push", PushParser);
-        GitParser.AddSubparser("clone", CloneParser);
-        GitParser.AddSubparser("log", LogParser);
+        GitParser.AddSubparser( PushParser);
+        GitParser.AddSubparser( CloneParser);
+        GitParser.AddSubparser( LogParser);
         return GitParser;
     }
 }

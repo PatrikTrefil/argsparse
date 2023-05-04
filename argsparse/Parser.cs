@@ -50,7 +50,7 @@ public partial record class Parser<C> : IParser<C>
     /// <inheritdoc/>
     public ReadOnlyDictionary<string, IParser> SubParsers => subparsers.AsReadOnly();
     /// <inheritdoc/>
-    public partial IParser<C> AddSubparser(string command, IParser commandParser);
+    public partial IParser<C> AddSubparser(IParser commandParser);
     /// <inheritdoc/>
     public ReadOnlyCollection<Flag<C>> Flags => flags.AsReadOnly();
     /// <inheritdoc/>

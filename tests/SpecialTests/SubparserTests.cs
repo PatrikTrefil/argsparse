@@ -33,6 +33,7 @@
         private Parser<RootCommandConfig> toplevelParser;
         private Parser<SubCommandConfig> subcommandParser;
         private Parser<SecondSubCommandConfig> secondsubcommandParser;
+        private Parser<SecondSubCommandConfig> nestedsubcommandParser;
 
         /// <summary>
         /// In the setup three parsers are set with contexts and required arguments and flags.
@@ -46,7 +47,7 @@
             () => new RootCommandConfig()
             )
             {
-                Names = new string[] { "My program" },
+                Names = new string[] { "program" },
                 Description = "My description",
                 Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
             };
@@ -62,7 +63,7 @@
                 () => new SubCommandConfig()
                 )
             {
-                Names = new string[] { "My subcommand" },
+                Names = new string[] { "subcommand" },
                 Description = "My subcommand description",
                 Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
             };
@@ -90,7 +91,7 @@
                 () => new SecondSubCommandConfig()
                 )
             {
-                Names = new string[] { "My subcommand" },
+                Names = new string[] { "secondsubcommand" },
                 Description = "My subcommand description",
                 Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
             };
@@ -109,6 +110,31 @@
                 Action = (storage, value) => { storage.number = value; },
                 Converter = ConverterFactory.CreateIntConverter()
             });
+
+            // nested subcommand definition
+            nestedsubcommandParser = new Parser<SecondSubCommandConfig>(
+                () => new SecondSubCommandConfig()
+                )
+            {
+                Names = new string[] { "nestedcommand" },
+                Description = "My subcommand description",
+                Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
+            };
+
+            nestedsubcommandParser.AddFlag(new Flag<SecondSubCommandConfig>()
+            {
+                Names = new string[] { "-h", "--help" },
+                Description = "Print help",
+                Action = (c) => { c.help = true; }
+            });
+
+            nestedsubcommandParser.AddArgument(new Argument<SecondSubCommandConfig, int>()
+            {
+                ValuePlaceholder = "Number",
+                Description = "Number description",
+                Action = (storage, value) => { storage.number = value; },
+                Converter = ConverterFactory.CreateIntConverter()
+            });
         }
 
         /// <summary>
@@ -117,7 +143,7 @@
         [Test]
         public void SubparserAddedSuccesfully()
         {
-            toplevelParser.AddSubparser("subcommand", subcommandParser);
+            toplevelParser.AddSubparser(subcommandParser);
 
             Assert.That(toplevelParser.SubParsers.Count, Is.EqualTo(1));
         }
@@ -129,7 +155,7 @@
         {
             var splittedInput = input.Split(' ');
 
-            toplevelParser.AddSubparser("subcommand", subcommandParser);
+            toplevelParser.AddSubparser(subcommandParser);
             toplevelParser.Parse(splittedInput);
 
             Assert.Multiple(() =>
@@ -145,7 +171,7 @@
         {
             var splittedInput = input.Split(' ');
 
-            toplevelParser.AddSubparser("subcommand", subcommandParser);
+            toplevelParser.AddSubparser(subcommandParser);
             toplevelParser.Parse(splittedInput);
 
             Assert.Multiple(() =>
@@ -165,8 +191,8 @@
         {
             var splittedInput = input.Split(' ');
 
-            toplevelParser.AddSubparser("subcommand", subcommandParser);
-            toplevelParser.AddSubparser("secondcommand", secondsubcommandParser);
+            toplevelParser.AddSubparser(subcommandParser);
+            toplevelParser.AddSubparser(secondsubcommandParser);
 
             Assert.That(() => toplevelParser.Parse(splittedInput),
                 Throws.InstanceOf<ParserRuntimeException>());
@@ -187,8 +213,8 @@
         {
             var splittedInput = input.Split(" ");
 
-            toplevelParser.AddSubparser("subcommand", subcommandParser);
-            subcommandParser.AddSubparser("nestedcommand", secondsubcommandParser);
+            toplevelParser.AddSubparser(subcommandParser);
+            subcommandParser.AddSubparser(nestedsubcommandParser);
 
             Assert.That(() => toplevelParser.Parse(splittedInput),
                 Throws.InstanceOf<ParserRuntimeException>());
@@ -207,12 +233,12 @@
         {
             var splittedInput = input.Split(" ");
 
-            toplevelParser.AddSubparser("subcommand", subcommandParser);
-            subcommandParser.AddSubparser("nestedcommand", secondsubcommandParser);
+            toplevelParser.AddSubparser(subcommandParser);
+            subcommandParser.AddSubparser(nestedsubcommandParser);
 
             toplevelParser.Parse(splittedInput);
 
-            Assert.That(secondsubcommandParser.Config.number, Is.EqualTo(2));
+            Assert.That(nestedsubcommandParser.Config.number, Is.EqualTo(2));
         }
     }
 }

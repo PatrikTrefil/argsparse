@@ -26,9 +26,14 @@ public partial record class Parser<C>
 
     readonly Dictionary<string, IParser> subparsers = new();
 
-    public partial IParser<C> AddSubparser(string command, IParser commandParser)
+    public partial IParser<C> AddSubparser(IParser commandParser)
     {
-        subparsers.Add(command, commandParser);
+        foreach (var name in commandParser.Names)
+        {
+            if (subparsers.ContainsKey(name))
+                throw new ArgumentException($"Parser already has a subparser with name {name}");
+            subparsers.Add(name, commandParser);
+        }
         return this;
     }
 

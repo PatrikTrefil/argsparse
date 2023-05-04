@@ -89,17 +89,16 @@ public interface IParser<C> : IParser
     /// </summary>
     public ReadOnlyCollection<Flag<C>> Flags { get; }
     /// <summary>
-    /// Attach a subparser to this parser as a subcommand <paramref name="command"/>. 
-    /// The subparser is then triggered and used to parse the rest of the input after the command
-    /// token is found in input.
+    /// Attach a subparser to this parser as a subcommand. 
+    /// The subparser is then triggered and used to parse the rest of the input after one of the names of the subparser
+    /// tokens is found in input.
     /// <para>
     /// See <see cref="Parser{C}"/>.
     /// </para>
     /// </summary>
-    /// <param name="command">A string command with which the subparser will be triggred. May not contain spaces</param>
     /// <param name="commandParser">Parser to attach.</param>
     /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
-    public IParser<C> AddSubparser(string command, IParser commandParser);
+    public IParser<C> AddSubparser(IParser commandParser);
     /// <value>Config context instance. Either passed to the parser in the constructor or created
     /// by the parser right before parsing of input.</value>
     public C? Config { get; }
