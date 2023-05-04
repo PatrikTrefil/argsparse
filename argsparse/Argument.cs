@@ -17,7 +17,21 @@ public abstract record class ArgumentMultiplicity
     /// <param name="IsRequired">Allows for the omitting of the argument.</param>
     /// <remarks>Only one non-required argument is allowed per parser. 
     /// Do not mix non-required arguments with <see cref="AllThatFollow"/></remarks>
-    public sealed record class SpecificCount(int Number, bool IsRequired) : ArgumentMultiplicity();
+    public sealed record class SpecificCount : ArgumentMultiplicity
+    {
+        public int Number { get; }
+        public bool IsRequired { get; }
+
+        /// <exception cref="ArgumentException">Thrown when <paramref name="Number"/> is not positive.</exception>
+        public SpecificCount(int Number, bool IsRequired)
+        {
+            if (Number <= 0)
+                throw new ArgumentException("Count must be positive.");
+
+            this.Number = Number;
+            this.IsRequired = IsRequired;
+        }
+    }
     /// <summary>
     /// Represents such a multiplicity in which all the following argument parts belong to the given
     /// plain argument. 
@@ -26,8 +40,20 @@ public abstract record class ArgumentMultiplicity
     /// which should then be enforced by the parser.</param>
     /// <remarks>Only one such argument is allowed per parser. 
     /// Do not mix non-required <see cref="SpecificCount"/> arguments with <see cref="AllThatFollow"/></remarks>
-    public sealed record class AllThatFollow(int MinimumNumberOfArguments = 0) : ArgumentMultiplicity();
-    
+    public sealed record class AllThatFollow : ArgumentMultiplicity
+    {
+        public int MinimumNumberOfArguments { get; }
+        /// <param name="MinimumNumberOfArguments">Minimum number of values that should be present for the argument to be considered valid. This number must be non-negative.</param>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="MinimumNumberOfArguments"/> is negative.</exception>
+        public AllThatFollow(int MinimumNumberOfArguments = 0)
+        {
+            if (MinimumNumberOfArguments < 0)
+                throw new ArgumentException("Minimum number of arguments must be non-negative");
+
+            this.MinimumNumberOfArguments = MinimumNumberOfArguments;
+        }
+    }
+
     /// <summary>
     /// Hiding the constructor so that the user can't create a class that is derived from this one.
     /// </summary>
@@ -41,7 +67,6 @@ public interface IArgument<C>
     /// Description of the argument as it should appear in help write-up.
     /// </summary>
     public string Description { get; init; }
-    
     /// <summary>
     /// Value placeholder will be used in synopsis and appear in help write-up, 
     /// e.g. program [options] <value-placeholder>
@@ -60,12 +85,18 @@ public interface IArgument<C>
     /// Only one non-required argument is allowed per parser.
     /// Do not mix non-required <see cref="SpecificCount"/> arguments with <see cref="AllThatFollow"/></remarks>
     public ArgumentMultiplicity Multiplicity { get; init; }
+    /// <summary>
+    /// Process is called when the argument is encountered in the input.
+    /// </summary>
+
     internal void Process(C config, string value);
 }
 
 public sealed record class Argument<C, V> : IArgument<C>
 {
+    /// <inheritdoc/>
     public required string Description { get; init; }
+    /// <inheritdoc/>
     public string ValuePlaceholder { get; init; } = "<arg>";
     /// <summary>
     /// Function to convert the argument value parsed as a string from the input to the target type.
@@ -85,11 +116,9 @@ public sealed record class Argument<C, V> : IArgument<C>
     /// <value>Converters may throw exceptions, 
     /// they will be caught and the parser will throw <see cref="ParserConversionException"/></value>
     public required Action<C, V> Action { get; init; }
-
+    /// <inheritdoc/>
     public ArgumentMultiplicity Multiplicity { get; init; } = new ArgumentMultiplicity.SpecificCount(Number: 1, IsRequired: true);
-    /// <summary>
-    /// Process is called when the argument is encountered in the input.
-    /// </summary>
+    /// <inheritdoc/>
     void IArgument<C>.Process(C config, string value)
     {
         V convertedValue = Converter(value);

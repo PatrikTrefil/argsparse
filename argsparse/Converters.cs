@@ -10,8 +10,9 @@ public static class ConverterFactory
 
     /// <summary>
     /// Creates a converter that does not convert the input string, but returns it as is.
+    /// This converter does not fail if the input string is empty i.e. "".
     /// </summary>
-    public static Func<string, string> CreateStringConverter() => (string s) => { return s; };
+    public static Func<string, string> CreateStringConverter() => (string s) => s;
 
     /// <summary>
     /// Creates a converter that converts a string to a list of values of type T.
@@ -25,6 +26,8 @@ public static class ConverterFactory
         return (string s) => { return s.Split(separator).Select(x => converter(x)).ToList(); };
     }
 
+    private static string[] trueValues = new string[] { "true", "1", "yes", "y", "on" };
+    private static string[] falseValues = new string[] { "false", "0", "no", "n", "off" };
     /// <summary>
     /// Creates a converter that converts a value to boolean.
     /// Accepts following values: true, false, 1, 0, yes, no, y, n, on, off.
@@ -35,9 +38,12 @@ public static class ConverterFactory
         // this implementation is only a demo, it is not complete, do not base tests on it
         return (string s) =>
             {
-                if (s == "true") return true;
-                // more logic here
-                return false;
+                string val = s.ToLower();
+                if (trueValues.Contains(val))
+                    return true;
+                if (falseValues.Contains(val))
+                    return false;
+                throw new ParserConversionException($"Value {s} is not a valid boolean value.");
             };
     }
 
@@ -55,15 +61,16 @@ public static class ConverterFactory
     /// </exception>
     public static Func<string, int> CreateIntConverter(int minValueInclusive = int.MinValue, int maxValueInclusive = int.MaxValue)
     {
-        // this implementation is only a demo, it is not complete, do not base tests on it
         return (string s) =>
             {
-                int value = int.Parse(s);
-                if (value <= minValueInclusive || value >= maxValueInclusive)
-                    throw new ArgumentException(
+                int value;
+                bool result = int.TryParse(s, out value);
+                if (!result)
+                    throw new ParserConversionException($"Value {s} is not a valid integer value.");
+                if (value < minValueInclusive || value > maxValueInclusive)
+                    throw new ParserConversionException(
                         $"Value {value} is out of range [{minValueInclusive}, {maxValueInclusive}]"
                         );
-
                 return value;
             };
     }
@@ -81,9 +88,21 @@ public static class ConverterFactory
     /// <exception cref="ArgumentException">
     /// If the min value provided is higher than the max value.
     /// </exception>
-    public static Func<string, double> CreateDoubleConverter(double minValueInclusive = double.NegativeInfinity, double maxValueInclusive = double.PositiveInfinity) {
-        return null!;
-     }
+    public static Func<string, double> CreateDoubleConverter(double minValueInclusive = double.NegativeInfinity, double maxValueInclusive = double.PositiveInfinity)
+    {
+        return (string s) =>
+        {
+            double value;
+            bool result = double.TryParse(s, out value);
+            if (!result)
+                throw new ParserConversionException($"Value {s} is not a valid floating point value.");
+            if (value < minValueInclusive || value > maxValueInclusive)
+                throw new ParserConversionException(
+                    $"Value {value} is out of range [{minValueInclusive}, {maxValueInclusive}]"
+                    );
+            return value;
+        };
+    }
 
     /// <summary>
     /// Creates a converter for an enumeration type.
@@ -106,7 +125,7 @@ public static class ConverterFactory
     public static Func<string, T> CreateEnumerationConverter<T>(
         bool caseSensitive = true, Dictionary<T, ImmutableHashSet<string>>? explicitMapping = null, bool useImplicitMapping = true)
         where T : Enum
-    {        
+    {
         return null!;
     }
 

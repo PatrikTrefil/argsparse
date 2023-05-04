@@ -23,7 +23,7 @@ internal class TimeExample
 
         var parser = new Parser<TimeCommandConfiguration>(config)
         {
-            Names = new string[] {"time"},
+            Names = new string[] { "time" },
             Description = "Program to print information about time"
         };
 

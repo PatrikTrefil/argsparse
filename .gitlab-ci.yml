@@ -1,0 +1,50 @@
+image: mcr.microsoft.com/dotnet/sdk:7.0
+
+# ### Define variables
+#
+variables:
+  # 1) Name of directory where restore and build objects are stored.
+  OBJECTS_DIRECTORY: 'obj'
+  # 2) Name of directory used for keeping restored dependencies.
+  NUGET_PACKAGES_DIRECTORY: '.nuget'
+  # 3) A relative path to the source code from project repository root.
+  SOURCE_CODE_PATH: '/'
+
+# global cache rule
+cache:
+  # Per-stage and per-branch caching.
+  key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+  paths:
+    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/project.assets.json'
+    - '$SOURCE_CODE_PATH$OBJECTS_DIRECTORY/*.csproj.nuget.*'
+    - '$NUGET_PACKAGES_DIRECTORY'
+  policy: pull-push
+
+# Restore project dependencies
+before_script:
+  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+
+build:
+  stage: build
+  # Build all projects discovered from solution file.
+  script:
+    - 'dotnet build --no-restore'
+
+format:
+  stage: test
+  script:
+    - 'dotnet format --verify-no-changes --no-restore argsparse.sln'
+
+tests:
+  stage: test
+  # ### Run the tests
+  #
+  # You can either run tests for all test projects that are defined in your solution
+  # with 'dotnet test' or run tests only for specific project by specifying
+  # a relative path to the directory where it is located (e.g. 'dotnet test ./test/UnitTests').
+  #
+  # You may want to define separate testing jobs for different types of testing
+  # (e.g. integration tests, unit tests etc).
+  script:
+    - 'dotnet test --no-restore'
+

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Argparse;
 
@@ -10,8 +12,9 @@ public interface IOption<C>
     /// Names of short options are prefixed with one dash '-'
     /// One option can represent both long and short options
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown when set to an empty array or any of the
+    /// provided names is in an invalid format.</exception>
     public string[] Names { get; init; }
-
     /// <summary>
     /// Description of the option as it should appear in help write-up.
     /// </summary>
@@ -35,15 +38,38 @@ public interface IOption<C>
 /// </summary>
 /// <typeparam name="C">The cofiguration context type for the given parser, see <see cref="Parser{C}"/></typeparam>
 /// <typeparam name="V">Type of the value the provided string is to be converted to. /// </typeparam>
-public sealed record class Option<C, V> : IOption<C>
+public sealed partial record class Option<C, V> : IOption<C>
 {
-    public required string[] Names { get; init; }
+    [GeneratedRegex("(^--[a-zA-Z1-9]+[a-zA-Z1-9-]*$)|(^-[a-zA-Z]$)")]
+    private static partial Regex LongOrShortName();
+    /// <value>
+    /// Backing field for <see cref="Names"/>
+    /// </value>
+    private readonly string[] names;
+    /// <inheritdoc/>
+    public required string[] Names
+    {
+        get => names; init
+        {
+            if (value.Length == 0)
+                throw new ArgumentException("Option must have at least one name");
+
+            var invalidOptionNames = value.Where(name => !LongOrShortName().IsMatch(name));
+            if (invalidOptionNames.Any())
+                throw new ArgumentException($"Invalid option names: {string.Join(", ", invalidOptionNames)}");
+
+            names = value;
+        }
+    }
+    /// <inheritdoc/>
     public string ValuePlaceHolder { get; init; } = "<value>";
+    /// <inheritdoc/>
     public required string Description { get; init; }
     /// <summary>
     /// Action to be carried out upon parsing and conversion of the option from the input.
     /// </summary>
     public required Action<C, V> Action { get; init; }
+    /// <inheritdoc/>
     public bool IsRequired { get; init; } = false;
     /// <summary>
     /// Function to convert the option value parsed as a string from the input to the target type.
@@ -56,9 +82,18 @@ public sealed record class Option<C, V> : IOption<C>
     /// </para>
     /// </remarks>
     public required Func<string, V> Converter { get; init; }
+    /// <inheritdoc/>
     void IOption<C>.Process(C config, string value)
     {
-        V convertedValue = Converter(value);
+        V convertedValue;
+        try
+        {
+            convertedValue = Converter(value);
+        }
+        catch (Exception ex)
+        {
+            throw new ParserConversionException($"Value conversion for option {Names[0]} failed", ex);
+        }
         Action(config, convertedValue);
     }
 }

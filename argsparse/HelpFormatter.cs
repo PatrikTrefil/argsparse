@@ -15,7 +15,7 @@ public interface IParserHelpFormatter<T>
     /// Prints a help write-up to the provided <see cref="TextWriter"/> from the information
     /// gathered from the provided <paramref name="parser"/>.
     /// </summary>
-    public abstract void PrintHelp<T2>(Parser<T2> parser, TextWriter writer) 
+    public abstract void PrintHelp<T2>(IParser<T2> parser, TextWriter writer)
         where T2 : T;
 
 }
@@ -27,22 +27,23 @@ public interface IParserHelpFormatter<T>
 public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
 {
 
-    public void PrintHelp<T2>(Parser<T2> parser, TextWriter writer)
+    public void PrintHelp<T2>(IParser<T2> parser, TextWriter writer)
         where T2 : T
     {
-        System.Console.WriteLine(parser.Names);
+        if (parser.Names.Length > 0)
+            writer.WriteLine(parser.Names[0]);
 
         if (parser.Description is not null)
         {
-            System.Console.WriteLine();
-            System.Console.WriteLine(parser.Description);
+            writer.WriteLine();
+            writer.WriteLine(parser.Description);
         }
 
-        System.Console.WriteLine();
+        writer.WriteLine();
 
-        Console.Write(parser.Names);
+        writer.Write(string.Join(',', parser.Names));
         if (parser.Options.Any() || parser.Flags.Any())
-            Console.Write(" [options]");
+            writer.Write(" [options]");
         if (parser.Arguments.Any())
         {
             foreach (var arg in parser.Arguments)
@@ -51,82 +52,136 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
                 {
                     case ArgumentMultiplicity.SpecificCount argMulSpecCount:
                         for (int i = 0; i < argMulSpecCount.Number; i++)
-                            Console.Write(" " + arg.ValuePlaceholder);
+                            writer.Write(" " + arg.ValuePlaceholder);
 
                         break;
                     case ArgumentMultiplicity.AllThatFollow:
-                        Console.Write(" " + arg.ValuePlaceholder + " ...");
+                        writer.Write(" " + arg.ValuePlaceholder + " ...");
                         break;
                 }
             }
-            Console.WriteLine();
+            writer.WriteLine();
         }
 
         if (parser.Options.Any())
         {
-            Console.WriteLine();
-            Console.WriteLine("Options:");
+            writer.WriteLine();
+            writer.WriteLine("Options:");
         }
 
         foreach (var option in parser.Options)
         {
             if (option.Names is null)
-                Console.Write("no-names-provided");
+                writer.Write("no-names-provided");
             else
                 foreach (var name in option.Names)
                 {
-                    System.Console.Write(name + "=" + option.ValuePlaceHolder);
-                    System.Console.Write(", ");
+                    writer.Write(name + "=" + option.ValuePlaceHolder);
+                    writer.Write(", ");
                 }
+
+            if (option.IsRequired)
+                writer.Write("(required) ");
 
             if (option.Description is not null)
             {
-                System.Console.Write("- ");
-                System.Console.Write(option.Description);
+                writer.Write("- ");
+                writer.Write(option.Description);
             }
-            Console.WriteLine();
+            writer.WriteLine();
         }
 
         if (parser.Flags.Any())
         {
-            Console.WriteLine();
-            Console.WriteLine("Flags:");
+            writer.WriteLine();
+            writer.WriteLine("Flags:");
         }
         foreach (var flag in parser.Flags)
         {
             if (flag.Names is null)
-                Console.Write("no-name-provided");
+                writer.Write("no-name-provided");
             else
                 foreach (var name in flag.Names)
                 {
-                    Console.Write(name);
-                    Console.Write(", ");
+                    writer.Write(name);
+                    writer.Write(", ");
                 }
 
             if (flag.Description is not null)
             {
-                Console.Write("- ");
-                Console.Write(flag.Description);
+                writer.Write("- ");
+                writer.Write(flag.Description);
             }
-            Console.WriteLine();
+            writer.WriteLine();
         }
 
         if (parser.Arguments.Any())
         {
-            Console.WriteLine();
-            Console.WriteLine("Arguments:");
+            writer.WriteLine();
+            writer.WriteLine("Arguments:");
         }
         foreach (var arg in parser.Arguments)
         {
-            Console.Write(arg.ValuePlaceholder);
+            writer.Write(arg.ValuePlaceholder);
+
+            PrintMultiplicity(arg.Multiplicity, writer);
+            
             if (arg.Description is not null)
             {
-                Console.Write("- ");
-                Console.Write(arg.Description);
+                writer.Write("- ");
+                writer.Write(arg.Description);
             }
-            Console.WriteLine();
+            writer.WriteLine();
         }
-        Console.WriteLine();
+        writer.WriteLine();
+
+        if(parser.SubParsers.Any())
+        {
+            writer.WriteLine("Sub-Commands:");
+            foreach(var  subParser in parser.SubParsers.Values)
+            {
+                writer.Write(String.Join(", ", subParser.Names));
+                if(subParser.Description is not null)
+                {
+                    writer.Write(" - ");
+                    writer.Write(subParser.Description);
+                }
+                writer.WriteLine();
+            }
+        }
+        writer.WriteLine();
+    }
+
+
+    private void PrintMultiplicity(ArgumentMultiplicity mult, TextWriter writer) {
+         switch(mult)
+            {
+                case ArgumentMultiplicity.SpecificCount argMulSpecCount when argMulSpecCount.Number == 1 &&  argMulSpecCount.IsRequired:
+                    break;
+                case ArgumentMultiplicity.SpecificCount argMulSpecCount when argMulSpecCount.Number == 1 &&  !argMulSpecCount.IsRequired:
+                    writer.Write(" (optional)");
+                    break;
+                case ArgumentMultiplicity.SpecificCount argMulSpecCount when argMulSpecCount.Number > 1 :
+                    writer.Write(" (x" + argMulSpecCount.Number );
+                    if (!argMulSpecCount.IsRequired)
+                        writer.Write(", optional)");
+                    else 
+                        writer.Write(")");
+                    break;
+
+                case ArgumentMultiplicity.AllThatFollow argMulAllFollow when argMulAllFollow.MinimumNumberOfArguments == 0:
+                    writer.Write(" (any number of arguments)");
+                    break;
+                case ArgumentMultiplicity.AllThatFollow argMulAllFollow when argMulAllFollow.MinimumNumberOfArguments == 1:
+                    writer.Write(" (at least x1)");
+                    break;
+                    case ArgumentMultiplicity.AllThatFollow argMulAllFollow when argMulAllFollow.MinimumNumberOfArguments < 1:
+                    writer.Write($" (at least x{argMulAllFollow.MinimumNumberOfArguments})");
+                    break;
+
+                default: throw new NotImplementedException();
+            }; 
+
     }
 
 

@@ -1,7 +1,7 @@
-using System;
-
 namespace Argparse.Examples;
 
+// I was getting errors in build...
+#if COMPILE
 internal static class GitSubcommandsExample {
 
     record GitConfig {
@@ -51,7 +51,7 @@ internal static class GitSubcommandsExample {
 
         var PushParser = new Parser<GitPushConfig>(() => new GitPushConfig())
         {
-            Name = "push",
+            Names = new string[] {"push"},
             Description = "Pushes to a remote repository",
             Run = (config, parser) =>
             {
@@ -96,7 +96,7 @@ internal static class GitSubcommandsExample {
 
         var CloneParser = new Parser<GitCloneConfig>(() => new GitCloneConfig())
         {
-            Name = "clone",
+            Names = new string[] { "clone" },
             Description = "Clones a remote repository",
             Run = (config, parser) =>
             {
@@ -124,7 +124,7 @@ internal static class GitSubcommandsExample {
 
         var LogParser = new Parser<GitLogConfig>(() => new GitLogConfig())
         {
-            Name = "log",
+            Names = new string[] { "log" },
             Description = "Shows the commit log",
             Run = (config, parser) =>
             {
@@ -151,7 +151,7 @@ internal static class GitSubcommandsExample {
 
         var GitParser = new Parser<GitConfig>(() => new GitConfig())
         {
-            Name = "git",
+            Names = new string[] { "git" },
             Description = "A git clone written in C#",
             Run = (config, parser) =>
             {
@@ -175,9 +175,10 @@ internal static class GitSubcommandsExample {
             Action = (config) => { config.Version = true; }
         });
 
-        GitParser.AddSubparser("push", PushParser);
-        GitParser.AddSubparser("clone", CloneParser);
-        GitParser.AddSubparser("log", LogParser);
+        GitParser.AddSubparser( PushParser);
+        GitParser.AddSubparser( CloneParser);
+        GitParser.AddSubparser( LogParser);
         return GitParser;
     }
 }
+#endif

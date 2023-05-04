@@ -20,9 +20,9 @@ internal class ComplexExample
             () => new ComplexExampleCommandConfig()
             )
         {
-            Names = new string[] {"My program"},
+            Names = new string[] { "My program" },
             Description = "My description",
-            Run = (c,_) => { Console.WriteLine("I will run after my config is ready"); }
+            Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
         };
         toplevelParser.AddFlag(new Flag<ComplexExampleCommandConfig>
         {
@@ -35,9 +35,9 @@ internal class ComplexExample
             () => new ComplexExampleSubCommandConfig()
             )
         {
-            Names = new string[] {"My subcommand"},
+            Names = new string[] { "subcommand" },
             Description = "My subcommand description",
-            Run = (c,_) => { Console.WriteLine("I will run after my config is ready"); }
+            Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
         };
         subcommandParser.AddFlag(new Flag<ComplexExampleSubCommandConfig>()
         {
@@ -55,7 +55,7 @@ internal class ComplexExample
         };
         subcommandParser.AddArgument(numberArg);
 
-        toplevelParser.AddSubparser("subcommand", subcommandParser);
+        toplevelParser.AddSubparser(subcommandParser);
 
         // Now we would run `toplevelParser.ParseAndRun(args);` and
         // one of the provided Run methods would run (or an exception is thrown)

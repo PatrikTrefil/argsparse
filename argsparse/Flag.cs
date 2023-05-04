@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Argparse;
 
@@ -7,15 +9,36 @@ namespace Argparse;
 /// value provided by the user.
 /// </summary>
 /// <typeparam name="C">The cofiguration context type for the given parser, see <see cref="Parser{C}"/> </typeparam>
-public sealed record class Flag<C>
+public sealed partial record class Flag<C>
 {
+    [GeneratedRegex("(^--[a-zA-Z1-9]+[a-zA-Z1-9-]*$)|(^-[a-zA-Z]$)")]
+    private static partial Regex LongOrShortName();
+    /// <value>
+    /// Backing field for <see cref="Names"/>
+    /// </value>
+    private readonly string[] names;
     /// <summary>
     /// Names the options as they will be parsed by the parser.
     /// Names of long options are prefixed with two dashes '--'
     /// Names of short options are prefixed with one dash '-'
     /// One option can represent both long and short options
     /// </summary>
-    public required string[] Names { get; set; }
+    /// <exception cref="ArgumentException">Thrown when set to an empty array or the any of the
+    /// provided names is in an invalid format.</exception>
+    public required string[] Names
+    {
+        get => names; init
+        {
+            if (value.Length == 0)
+                throw new ArgumentException("Flag must have at least one name");
+
+            var invalidOptionNames = value.Where(name => !LongOrShortName().IsMatch(name));
+            if (invalidOptionNames.Any())
+                throw new ArgumentException($"Invalid option names: {string.Join(", ", invalidOptionNames)}");
+
+            names = value;
+        }
+    }
     /// <summary>
     /// Description of the flag-like option as it should appear in help write-up.
     /// </summary>
