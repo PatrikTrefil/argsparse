@@ -1,6 +1,4 @@
-﻿using Argparse;
-
-namespace TestsArgparseAPI.ConfigTests
+﻿namespace TestsArgparseAPI.ConfigTests
 {
     public class ConfigArgumentTests
     {
@@ -95,7 +93,7 @@ namespace TestsArgparseAPI.ConfigTests
                 Converter = ConverterFactory.CreateStringConverter(),
             };
 
-            parser.AddArguments(new IArgument<TestConfiguration>[] { intArgument, stringArgument });
+            parser.AddArguments(intArgument, stringArgument);
 
             var arguments = parser.Arguments;
 
