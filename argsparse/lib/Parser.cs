@@ -66,7 +66,7 @@ public partial record class Parser<C>
                 throw new InvalidParserConfigurationException("Config and ConfigFactory are both null. This should never happen");
             Config = ConfigFactory();
         }
-        ParseImpl(args);
+        ParseImpl(args.AsEnumerable());
 
         localRun(Config, this);
     }
@@ -77,7 +77,7 @@ public partial record class Parser<C>
     /// </summary>
     /// <param name="args">Command line arguments</param>
     /// <exception cref="ParserRuntimeException">On invalid input</exception>
-    private void ParseImpl(string[] args)
+    private void ParseImpl(IEnumerable<string> args)
     {
         Debug.Assert(Config is not null);
 
@@ -88,31 +88,30 @@ public partial record class Parser<C>
         foreach (var arg in plainArguments)
             argValueCounts.Add(arg, 0);
 
-        var plainArgEnumerator = new ArgumentEnumerable<C>(Arguments).GetEnumerator();
+        var expectedPlainArgEnumerator = new ArgumentEnumerable<C>(Arguments).GetEnumerator();
         bool encounteredSeparator = false;
-        var argsl = args.AsEnumerable();
+        IEnumerator<string> tokenEnumerator = args.GetEnumerator();
 
-        while (argsl.Count() > 0)
+        while (tokenEnumerator.MoveNext())
         {
-            var token = argsl.First();
-            argsl = argsl.Skip(1);
+            var token = tokenEnumerator.Current;
 
             if (encounteredSeparator)
-                argsl = parsePlainArg(token, argsl, plainArgEnumerator);
+                parsePlainArg(tokenEnumerator, expectedPlainArgEnumerator);
             else if (token == this.PlainArgumentsDelimiter)
                 encounteredSeparator = true;
             else if (token.StartsWith("--") && LongOptionPassed().IsMatch(token))
-                argsl = parseLongName(token, argsl);
+                parseLongName(tokenEnumerator);
             else if (token.StartsWith("-") && ShortOptionPassed().IsMatch(token))
-                argsl = parseShortOpts(token, argsl);
+                parseShortOpts(tokenEnumerator);
             else
-                argsl = parsePlainArg(token, argsl, plainArgEnumerator);
+                parsePlainArg(tokenEnumerator, expectedPlainArgEnumerator);
         }
 
         checkAllRequiredHaveBeenParsed();
 
-        /// Carry out action associated with the flag identified by the name 
-        /// The token must be a valid flag name
+        /// <summary>Carry out action associated with the flag identified by the name 
+        /// The token must be a valid flag name</summary>
         void invokeFlag(string token)
         {
             Debug.Assert(flagsMap.ContainsKey(token));
@@ -124,8 +123,8 @@ public partial record class Parser<C>
             flg.Action(Config);
         }
 
-        /// Carry out action associated with the option identified by the name 
-        /// The token must be a valid option name
+        /// <summary>Carry out action associated with the option identified by the name 
+        /// The token must be a valid option name.</summary>
         void invokeOption(string token, string value)
         {
             var opt = optionsMap[token];
@@ -136,14 +135,14 @@ public partial record class Parser<C>
             opt.Process(Config, value);
         }
 
-        /// Parse token containing short-named options, e.g. "-a", "-abc".
+        /// <summary>Parse token containing short-named options, e.g. "-a", "-abc".
         /// Merging flags and option is forbidden, e.g. "-abc=foo", "-abc." throws runtime error.
-        /// Accepts remaining tokens and consumes up to one of them,
-        /// when the last arg recognized in token is option/accepts value.
-        /// Returns remaining tokens with up to one token consumed, removed.
-        IEnumerable<string> parseShortOpts(string token, IEnumerable<string> remainingTokens)
+        /// Accepts <param name="remainingTokens">remaining tokens</param> and consumes up to one of them,
+        /// when the last arg recognized in token is option/accepts value.</summary>
+        void parseShortOpts(IEnumerator<string> remainingTokens)
         {
             Debug.Assert(Config is not null);
+            var token = remainingTokens.Current;
             int i = 1;
             for (; i < token.Length; i++)
             {
@@ -187,24 +186,22 @@ public partial record class Parser<C>
                     invokeFlag(token);
                 else if (optionsMap.ContainsKey(token))
                 {
-                    if (remainingTokens.Count() == 0)
+                    if (!remainingTokens.MoveNext())
                         throw new ParserRuntimeException(
                         $"Option requires value: {token}");
-                    var value = remainingTokens.First();
-                    remainingTokens = remainingTokens.Skip(1);
+                    var value = remainingTokens.Current;
                     invokeOption(token, value);
                 }
                 else
                     throw new ParserRuntimeException($"Unknown option: {token}");
             }
-
-            return remainingTokens;
         }
 
-        /// Parse token possibly containing a long-name,  
-        IEnumerable<string> parseLongName(string token, IEnumerable<string> remainingTokens)
+        /// <summary>Parse token possibly containing a long-name</summary>
+        void parseLongName(IEnumerator<string> remainingTokens)
         {
             Debug.Assert(Config is not null);
+            var token = remainingTokens.Current;
 
             if (token.Contains(valueSeparator))
             {
@@ -214,20 +211,20 @@ public partial record class Parser<C>
                 if (value.Length == 0)
                     throw new ParserRuntimeException($"Option value missing: {token}");
                 invokeOption(name, value);
-                return remainingTokens;
+                return;
             }
             else if (flagsMap.ContainsKey(token))
             {
                 invokeFlag(token);
-                return remainingTokens;
+                return;
             }
             else if (optionsMap.ContainsKey(token))
             {
-                if (remainingTokens.Count() == 0)
+                if (!remainingTokens.MoveNext())
                     throw new ParserRuntimeException($"Option requires value: {token}");
-                var value = remainingTokens.First();
+                var value = remainingTokens.Current;
                 invokeOption(token, value);
-                return remainingTokens.Skip(1);
+                return;
             }
             else if (false)
             {
@@ -237,19 +234,20 @@ public partial record class Parser<C>
             throw new ParserRuntimeException($"Unknown option: {token}");
         }
 
-        IEnumerable<string> parsePlainArg(string token, IEnumerable<string> remainingTokens, IEnumerator<IArgument<C>> argEnumerator)
+        /// <summary>Parse token as plain argument. Check that the token is the next expected argument
+        /// (i.e. there is a corresponding argument in the <param name="expectedPlainArg">expected plain
+        /// arguments</param>).</summary>
+        void parsePlainArg(IEnumerator<string> remainingTokens, IEnumerator<IArgument<C>> expectedPlaiArgs)
         {
             Debug.Assert(Config is not null);
 
-            bool isThereNextArg = argEnumerator.MoveNext();
+            bool isThereNextArg = expectedPlaiArgs.MoveNext();
             if (isThereNextArg is false)
                 throw new ParserRuntimeException("Too many arguments provided.");
 
-            argValueCounts[argEnumerator.Current]++;
+            argValueCounts[expectedPlaiArgs.Current]++;
 
-            argEnumerator.Current.Process(Config, token);
-
-            return remainingTokens;
+            expectedPlaiArgs.Current.Process(Config, remainingTokens.Current);
         }
 
         void checkAllRequiredHaveBeenParsed()
