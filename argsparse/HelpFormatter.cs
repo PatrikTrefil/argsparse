@@ -127,7 +127,7 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
             writer.Write(arg.ValuePlaceholder);
 
             PrintMultiplicity(arg.Multiplicity, writer);
-            
+
             if (arg.Description is not null)
             {
                 writer.Write("- ");
@@ -137,13 +137,13 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
         }
         writer.WriteLine();
 
-        if(parser.SubParsers.Any())
+        if (parser.SubParsers.Any())
         {
             writer.WriteLine("Sub-Commands:");
-            foreach(var  subParser in parser.SubParsers.Values)
+            foreach (var subParser in parser.SubParsers.Values)
             {
                 writer.Write(String.Join(", ", subParser.Names));
-                if(subParser.Description is not null)
+                if (subParser.Description is not null)
                 {
                     writer.Write(" - ");
                     writer.Write(subParser.Description);
@@ -155,34 +155,35 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
     }
 
 
-    private void PrintMultiplicity(ArgumentMultiplicity mult, TextWriter writer) {
-         switch(mult)
-            {
-                case ArgumentMultiplicity.SpecificCount argMulSpecCount when argMulSpecCount.Number == 1 &&  argMulSpecCount.IsRequired:
-                    break;
-                case ArgumentMultiplicity.SpecificCount argMulSpecCount when argMulSpecCount.Number == 1 &&  !argMulSpecCount.IsRequired:
-                    writer.Write(" (optional)");
-                    break;
-                case ArgumentMultiplicity.SpecificCount argMulSpecCount when argMulSpecCount.Number > 1 :
-                    writer.Write(" (x" + argMulSpecCount.Number );
-                    if (!argMulSpecCount.IsRequired)
-                        writer.Write(", optional)");
-                    else 
-                        writer.Write(")");
-                    break;
+    private void PrintMultiplicity(ArgumentMultiplicity mult, TextWriter writer)
+    {
+        switch (mult)
+        {
+            case ArgumentMultiplicity.SpecificCount argMulSpecCount when argMulSpecCount.Number == 1 && argMulSpecCount.IsRequired:
+                break;
+            case ArgumentMultiplicity.SpecificCount argMulSpecCount when argMulSpecCount.Number == 1 && !argMulSpecCount.IsRequired:
+                writer.Write(" (optional)");
+                break;
+            case ArgumentMultiplicity.SpecificCount argMulSpecCount when argMulSpecCount.Number > 1:
+                writer.Write(" (x" + argMulSpecCount.Number);
+                if (!argMulSpecCount.IsRequired)
+                    writer.Write(", optional)");
+                else
+                    writer.Write(")");
+                break;
 
-                case ArgumentMultiplicity.AllThatFollow argMulAllFollow when argMulAllFollow.MinimumNumberOfArguments == 0:
-                    writer.Write(" (any number of arguments)");
-                    break;
-                case ArgumentMultiplicity.AllThatFollow argMulAllFollow when argMulAllFollow.MinimumNumberOfArguments == 1:
-                    writer.Write(" (at least x1)");
-                    break;
-                    case ArgumentMultiplicity.AllThatFollow argMulAllFollow when argMulAllFollow.MinimumNumberOfArguments < 1:
-                    writer.Write($" (at least x{argMulAllFollow.MinimumNumberOfArguments})");
-                    break;
+            case ArgumentMultiplicity.AllThatFollow argMulAllFollow when argMulAllFollow.MinimumNumberOfArguments == 0:
+                writer.Write(" (any number of arguments)");
+                break;
+            case ArgumentMultiplicity.AllThatFollow argMulAllFollow when argMulAllFollow.MinimumNumberOfArguments == 1:
+                writer.Write(" (at least x1)");
+                break;
+            case ArgumentMultiplicity.AllThatFollow argMulAllFollow when argMulAllFollow.MinimumNumberOfArguments < 1:
+                writer.Write($" (at least x{argMulAllFollow.MinimumNumberOfArguments})");
+                break;
 
-                default: throw new NotImplementedException();
-            }; 
+            default: throw new NotImplementedException();
+        };
 
     }
 

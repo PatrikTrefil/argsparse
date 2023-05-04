@@ -235,7 +235,7 @@ public partial record class Parser<C>
                 invokeOption(token, value);
                 return;
             }
-           
+
 
             throw new ParserRuntimeException($"Unknown option: {token}");
         }
