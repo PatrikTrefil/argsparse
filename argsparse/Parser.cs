@@ -25,7 +25,7 @@ public interface IParser
     /// <exception cref="InvalidParserConfigurationException">Thrown when the parser is not configured properly.</exception>
     /// <exception cref="ParserConversionException">Thrown when the parser fails to convert a value from string to the intended type.</exception>
     /// <exception cref="ParserRuntimeException">Thrown when the parser fails to run the action associated with an option, flag or argument or a parser.</exception>
-    void ParseAndRun(string[] args);
+    void ParseAndRun(IEnumerable<string> args);
 
     /// <summary>
     /// Parses command line-like input from <paramref name="args"/>.
@@ -33,7 +33,27 @@ public interface IParser
     /// <exception cref="InvalidParserConfigurationException">Thrown when the parser is not configured properly.</exception>
     /// <exception cref="ParserConversionException">Thrown when the parser fails to convert a value from string to the intended type.</exception>
     /// <exception cref="ParserRuntimeException">Thrown when the parser fails to run the action associated with an option, flag or argument or a parser.</exception>
-    void Parse(string[] args);
+    void Parse(IEnumerable<string> args);
+    /// <summary>
+    /// Run the parser. Invoking this methods starts the parsing process.
+    /// If there are subparsers configured,
+    /// this method should only be invoked on the one selected parsers.
+    /// The Run method is invoked after the parsing process is finished.
+    /// </summary>
+    /// <param name="args">Command line arguments without command strings</param>
+    /// <exception cref="InvalidParserConfigurationException">If there is no config instance nor factory</exception>
+    /// <exception cref="ParserRuntimeException">On invalid input</exception>
+    internal void ParseWithoutCommandsAndRun(IEnumerable<string> args);
+    /// <summary>
+    /// Run the parser. Invoking this methods starts the parsing process.
+    /// If there are subparsers configured,
+    /// this method should only be invoked on the one selected parsers
+    /// </summary>
+    /// <param name="args">Command line arguments without command strings</param>
+    /// <exception cref="InvalidParserConfigurationException">If there is no config instance nor factory</exception>
+    /// <exception cref="ParserRuntimeException">On invalid input</exception>
+    internal void ParseWithoutCommands(IEnumerable<string> args);
+
 }
 public partial record class Parser<C> : IParser
 {
@@ -216,13 +236,35 @@ public partial record class Parser<C> : IParser
     /// Prints a formatted help message to the console with information
     /// about parser usage, arguments, options, and subcommand parsers as formatted by the provided <paramref name="formatter"/>.
     /// </summary>
-    public void PrintHelp(IParserHelpFormatter<C> formatter) => PrintHelp(formatter, System.Console.Out);
+    public void PrintHelp(IParserHelpFormatter<C> formatter) => PrintHelp(formatter, Console.Out);
     /// <summary>
     /// Prints a formatted help message to the console with information
     /// about parser usage, arguments, options, and subcommand parsers as formatted by <see cref="DefaultHelpFormatter{T}"/>
     /// </summary>
-    public void PrintHelp() => PrintHelp(new DefaultHelpFormatter<C>(), System.Console.Out);
-    public void Parse(string[] args) => ParseAndRun(args, true, (_, _) => { });
-    public void ParseAndRun(string[] args) => ParseAndRun(args, isRoot: true, localRun: Run);
-    partial void ParseAndRun(string[] args, bool isRoot, Action<C, Parser<C>> localRun);
+    public void PrintHelp() => PrintHelp(new DefaultHelpFormatter<C>(), Console.Out);
+    /// <inheritdoc/>
+    public void Parse(IEnumerable<string> args)
+    {
+        ProcessCommands(args, out IParser selectedParser, out IEnumerable<string> argsWithoutCommands);
+        selectedParser.ParseWithoutCommands(argsWithoutCommands);
+    }
+    /// <inheritdoc/>
+    public void ParseAndRun(IEnumerable<string> args)
+    {
+        ProcessCommands(args, out IParser selectedParser, out IEnumerable<string> argsWithoutCommands);
+        selectedParser.ParseWithoutCommandsAndRun(argsWithoutCommands);
+    }
+    /// <inheritdoc/>
+    void IParser.ParseWithoutCommandsAndRun(IEnumerable<string> args)
+    {
+        if (Config is null)
+        {
+            if (ConfigFactory is null)
+                throw new InvalidParserConfigurationException("Config and ConfigFactory are both null. This should never happen");
+            Config = ConfigFactory();
+        }
+
+        (this as IParser).ParseWithoutCommands(args);
+        Run(Config, this);
+    }
 }
