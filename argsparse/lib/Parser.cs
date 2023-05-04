@@ -230,10 +230,7 @@ public partial record class Parser<C>
                 invokeOption(token, value);
                 return;
             }
-            else if (false)
-            {
-                // maybe try to parse it as plain argument?
-            }
+           
 
             throw new ParserRuntimeException($"Unknown option: {token}");
         }
