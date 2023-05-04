@@ -88,8 +88,6 @@ public partial record class Parser<C>
         foreach (var arg in plainArguments)
             argValueCounts.Add(arg, 0);
 
-        Action<C> execute = c => { };
-
         var plainArgEnumerator = new ArgumentEnumerable<C>(Arguments).GetEnumerator();
         bool encounteredSeparator = false;
         var argsl = args.AsEnumerable();
@@ -108,14 +106,10 @@ public partial record class Parser<C>
             else if (token.StartsWith("-") && ShortOptionPassed().IsMatch(token))
                 argsl = parseShortOpts(token, argsl);
             else
-            {
                 argsl = parsePlainArg(token, argsl, plainArgEnumerator);
-            }
         }
 
         checkAllRequiredHaveBeenParsed();
-
-        // execute(Config);
 
         /// Carry out action associated with the flag identified by the name 
         /// The token must be a valid flag name
@@ -127,8 +121,6 @@ public partial record class Parser<C>
                 throw new ParserRuntimeException($"Repeated option: {token}");
             alreadyParsedFlags.Add(flg);
 
-
-            // execute += flg.Action;
             flg.Action(Config);
         }
 
@@ -141,7 +133,6 @@ public partial record class Parser<C>
                 throw new ParserRuntimeException($"Repeated option: {token}");
             alreadyParsedOptions.Add(opt);
 
-            // execute += (c) => opt.Process(c, value);
             opt.Process(Config, value);
         }
 
@@ -253,8 +244,6 @@ public partial record class Parser<C>
             bool isThereNextArg = argEnumerator.MoveNext();
             if (isThereNextArg is false)
                 throw new ParserRuntimeException("Too many arguments provided.");
-
-            // execute += (c) => argEnumerator.Current.Process(c, token);
 
             argValueCounts[argEnumerator.Current]++;
 
