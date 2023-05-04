@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\argsparse\Argparse.csproj" />
+    <ProjectReference Include="..\examples\examples.csproj" />
+    <ProjectReference Include="..\numactl\Numactl.csproj" />
   </ItemGroup>
 
 </Project>

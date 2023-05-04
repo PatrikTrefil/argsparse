@@ -2,7 +2,7 @@
 
 namespace Argparse.Examples;
 
-internal class ComplexExample
+public class ComplexExample
 {
     record ComplexExampleCommandConfig
     {

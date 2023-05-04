@@ -1,5 +1,5 @@
 ﻿namespace Argparse.Examples;
-internal class SimpleExample
+public class SimpleExample
 {
     record ExampleConfiguration
     {

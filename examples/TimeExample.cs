@@ -2,7 +2,7 @@
 
 namespace Argparse.Examples;
 
-internal class TimeExample
+public class TimeExample
 {
     record TimeCommandConfiguration
     {
@@ -54,7 +54,7 @@ internal class TimeExample
 
         var verboseFlag = new Flag<TimeCommandConfiguration>()
         {
-            Names = new string[] { "-v", "--verbose " },
+            Names = new string[] { "-v", "--verbose" },
             Description = "Give very verbose output about all the program knows about.",
             Action = (storage) => { storage.verbose = true; }
         };

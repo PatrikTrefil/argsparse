@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Argparse.Examples;
 
-internal static class NumactlExample
+public static class NumactlExample
 {
     public static class Converter
     {
