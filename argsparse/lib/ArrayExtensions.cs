@@ -1,6 +1,6 @@
 ﻿using System;
 
-internal static class StringArray
+internal static class ArrayExtension
 {
     public static void Deconstruct<T>(this T[] array, out T o0)
     {
