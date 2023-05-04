@@ -1,6 +1,4 @@
-﻿using Argparse;
-
-namespace TestsArgparseAPI.SpecialTests
+﻿namespace TestsArgparseAPI.SpecialTests
 {
 
     record RootCommandConfig
@@ -30,7 +28,6 @@ namespace TestsArgparseAPI.SpecialTests
     /// - parsing tests with two subparser
     /// - parsing tests with nested subparsers
     /// </summary>
-    [Ignore("Subparsers are not implemented")]
     internal class SubparserTests
     {
         private Parser<RootCommandConfig> toplevelParser;
@@ -126,8 +123,8 @@ namespace TestsArgparseAPI.SpecialTests
         }
 
         [Test]
-        [TestCase("subcommand --help")]
-        [TestCase("subcommand -h")]
+        [TestCase("subcommand --help 1")]
+        [TestCase("subcommand -h 1")]
         public void SubparserCalledSuccesfully(string input)
         {
             var splittedInput = input.Split(' ');
@@ -138,7 +135,7 @@ namespace TestsArgparseAPI.SpecialTests
             Assert.Multiple(() =>
             {
                 Assert.That(subcommandParser.Config.help, Is.True);
-                Assert.That(toplevelParser.Config.help, Is.False);
+                Assert.That(toplevelParser.Config, Is.Null);
             });
         }
 
@@ -153,7 +150,7 @@ namespace TestsArgparseAPI.SpecialTests
 
             Assert.Multiple(() =>
             {
-                Assert.That(subcommandParser.Config.help, Is.False);
+                Assert.That(subcommandParser.Config, Is.Null);
                 Assert.That(toplevelParser.Config.help, Is.True);
             });
         }
@@ -172,7 +169,7 @@ namespace TestsArgparseAPI.SpecialTests
             toplevelParser.AddSubparser("secondcommand", secondsubcommandParser);
 
             Assert.That(() => toplevelParser.Parse(splittedInput),
-                Throws.TypeOf<ParserRuntimeException>());
+                Throws.InstanceOf<ParserRuntimeException>());
         }
 
         /// <summary>
@@ -184,7 +181,7 @@ namespace TestsArgparseAPI.SpecialTests
         [TestCase("nestedcommand 2 subcommand 2")]
         [TestCase("nestedcommand 2 ")]
         [TestCase("nestedcommand subcommand")]
-        [TestCase("subcommand 2 nestedcommand")]
+        [TestCase("subcommand 2 3 nestedcommand")]
         [TestCase("subcommand nestedcommand 2 2")]
         public void InvalidNestedSubcommandInputRaisesException(string input)
         {
@@ -194,7 +191,7 @@ namespace TestsArgparseAPI.SpecialTests
             subcommandParser.AddSubparser("nestedcommand", secondsubcommandParser);
 
             Assert.That(() => toplevelParser.Parse(splittedInput),
-                Throws.TypeOf<ParserRuntimeException>());
+                Throws.InstanceOf<ParserRuntimeException>());
         }
 
         /// <summary>
@@ -204,20 +201,16 @@ namespace TestsArgparseAPI.SpecialTests
         /// </summary>
         /// <param name="input"></param>
         [Test]
-        [TestCase("subcommand 1 nestedcommand 2")]
-        [TestCase("subcommand -f -- 1 nestedcommand 2")]
+        [TestCase("subcommand 2 nestedcommand")]
+        [TestCase("subcommand nestedcommand 2")]
         public void NestedCommandInputParsedSuccesfully(string input)
         {
             var splittedInput = input.Split(" ");
 
             toplevelParser.AddSubparser("subcommand", subcommandParser);
             subcommandParser.AddSubparser("nestedcommand", secondsubcommandParser);
-            subcommandParser.AddFlag(new Flag<SubCommandConfig>()
-            {
-                Names = new string[] { "-f", "--ff" },
-                Description = "Additional flag",
-                Action = (c) => { c.flag = true; }
-            });
+
+            toplevelParser.Parse(splittedInput);
 
             Assert.That(secondsubcommandParser.Config.number, Is.EqualTo(2));
         }

@@ -32,33 +32,51 @@ public partial record class Parser<C>
         return this;
     }
 
-    partial void ParseAndRun(string[] args, bool isRoot, Action<C, Parser<C>> localRun)
-
+    /// <summary>
+    /// Determine which parser to use for the given arguments based on the found commands.
+    /// </summary>
+    /// <param name="args">arguments from terminal</param>
+    /// <param name="selectedParser">parser to use for options/flags/plain args parsing</param>
+    /// <param name="argsWithoutCommands">given arguments with commands filtered out</param>
+    void ProcessCommands(IEnumerable<string> args, out IParser selectedParser, out IEnumerable<string> argsWithoutCommands)
     {
-        if (isRoot)
+        List<string> argsWithoutCommandsList = new();
+        selectedParser = this;
+        bool hitPlainArgsDelimiter = false;
+        foreach (var arg in args)
         {
-            // determine command and then find parser and run ParseAndRun on
-            // that parser with the commands removed from the arguments
-            //ParseAndRun(..., false);
-            // TODO subcommands
-            this.RunParser(args, localRun);
+            if (arg == PlainArgumentsDelimiter)
+                hitPlainArgsDelimiter = true;
+
+            if (hitPlainArgsDelimiter)
+            {
+                argsWithoutCommandsList.Add(arg);
+                continue;
+            }
+
+            bool isArgCommand = false;
+            foreach (var (command, parser) in selectedParser.SubParsers)
+            {
+                if (command == arg)
+                {
+                    isArgCommand = true;
+                    selectedParser = parser;
+                    break;
+                }
+            }
+            if (!isArgCommand)
+                argsWithoutCommandsList.Add(arg);
         }
-        else
-        {
-            this.RunParser(args, localRun);
-        }
+        argsWithoutCommands = argsWithoutCommandsList;
     }
 
     /// <summary>
-    /// Run the parser. Invoking this methods starts the parsing process.
-    /// If there are subparsers configured,
-    /// this method should only be invoked on the one selected parsers
+    /// Parse the command line arguments and store the values in the config instance,
+    /// which is created by this method if it does not already exist.
     /// </summary>
     /// <param name="args">Command line arguments</param>
-    /// <param name="localRun">Action to run after parsing</param>
-    /// <exception cref="InvalidParserConfigurationException">If there is no config instance nor factory</exception>
     /// <exception cref="ParserRuntimeException">On invalid input</exception>
-    private void RunParser(string[] args, Action<C, Parser<C>> localRun)
+    void IParser.ParseWithoutCommands(IEnumerable<string> args)
     {
         if (Config is null)
         {
@@ -66,20 +84,6 @@ public partial record class Parser<C>
                 throw new InvalidParserConfigurationException("Config and ConfigFactory are both null. This should never happen");
             Config = ConfigFactory();
         }
-        ParseImpl(args.AsEnumerable());
-
-        localRun(Config, this);
-    }
-
-    /// <summary>
-    /// Parse the command line arguments and store the values in the config instance.
-    /// The config instance needs to be instantiated before calling this method.
-    /// </summary>
-    /// <param name="args">Command line arguments</param>
-    /// <exception cref="ParserRuntimeException">On invalid input</exception>
-    private void ParseImpl(IEnumerable<string> args)
-    {
-        Debug.Assert(Config is not null);
 
         HashSet<IOption<C>> alreadyParsedOptions = new();
         HashSet<Flag<C>> alreadyParsedFlags = new();
@@ -98,7 +102,7 @@ public partial record class Parser<C>
 
             if (encounteredSeparator)
                 parsePlainArg(tokenEnumerator, expectedPlainArgEnumerator);
-            else if (token == this.PlainArgumentsDelimiter)
+            else if (token == PlainArgumentsDelimiter)
                 encounteredSeparator = true;
             else if (token.StartsWith("--") && LongOptionPassed().IsMatch(token))
                 parseLongName(tokenEnumerator);
@@ -378,6 +382,4 @@ public partial record class Parser<C>
 
         return this;
     }
-
-
 }
