@@ -26,7 +26,7 @@ public partial record class Parser<C>
 
     readonly Dictionary<string, IParser> subparsers = new();
 
-    public partial Parser<C> AddSubparser(string command, IParser commandParser)
+    public partial IParser<C> AddSubparser(string command, IParser commandParser)
     {
         subparsers.Add(command, commandParser);
         return this;
@@ -344,23 +344,23 @@ public partial record class Parser<C>
     }
 
 
-    public partial Parser<C> AddArguments(params IArgument<C>[] arguments)
+    public partial IParser<C> AddArguments(params IArgument<C>[] arguments)
     {
         foreach (var a in arguments) AddArgument(a);
         return this;
     }
-    public partial Parser<C> AddArgument(IArgument<C> argument)
+    public partial IParser<C> AddArgument(IArgument<C> argument)
     {
         ValidateArgument(argument);
         plainArguments.Add(argument);
         return this;
     }
-    public partial Parser<C> AddOptions(params IOption<C>[] options)
+    public partial IParser<C> AddOptions(params IOption<C>[] options)
     {
         foreach (var o in options) AddOption(o);
         return this;
     }
-    public partial Parser<C> AddOption(IOption<C> option)
+    public partial IParser<C> AddOption(IOption<C> option)
     {
         ValidateOptionNames(option);
         options.Add(option);
@@ -368,12 +368,12 @@ public partial record class Parser<C>
             optionsMap.Add(name, option);
         return this;
     }
-    public partial Parser<C> AddFlags(params Flag<C>[] flags)
+    public partial IParser<C> AddFlags(params Flag<C>[] flags)
     {
         foreach (var f in flags) AddFlag(f);
         return this;
     }
-    public partial Parser<C> AddFlag(Flag<C> flag)
+    public partial IParser<C> AddFlag(Flag<C> flag)
     {
         ValidateFlagNames(flag);
         flags.Add(flag);

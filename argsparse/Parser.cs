@@ -6,9 +6,13 @@ using System.Linq;
 
 namespace Argparse;
 
-public partial record class Parser<C> : IParser
+public partial record class Parser<C> : IParser<C>
 {
+    /// <value>
+    /// Backing field of <see cref="Names"/>
+    /// </value>
     private string[] names;
+    /// <inheritdoc/>
     public required string[] Names
     {
         get => names; init
@@ -23,19 +27,11 @@ public partial record class Parser<C> : IParser
             names = value;
         }
     }
-    /// <value>The parser description as it will appear in help.</value>
+    /// <inheritdoc/>
     public required string Description { get; init; }
-    /// <value><para><c>PlainArgumentsDelimiter</c> can be used to configure the arguments delimiter,
-    /// which when parsed gives signal to the parser to treat all subsequent tokens as plain
-    /// arguments.</para>
-    /// <para>
-    /// Defaults to "--".
-    /// </para>
-    /// </value>
+    /// <inheritdoc/>
     public string PlainArgumentsDelimiter { get; init; } = "--";
-
-    /// <value>Config context instance. Either passed to the parser in the constructor or created
-    /// by the parser right before parsing of input.</value>
+    /// <inheritdoc/>
     public C? Config { get; private set; }
     /// <value>
     /// Factory method used to create config context instance when the parser is run.
@@ -44,7 +40,6 @@ public partial record class Parser<C> : IParser
     /// </para>
     /// </value>
     public Func<C>? ConfigFactory { get; private set; }
-
     /// <value>
     /// Delegate to be run after the parser finishes parsing.
     /// <para>
@@ -52,107 +47,28 @@ public partial record class Parser<C> : IParser
     /// </para>
     /// </value>
     public Action<C, Parser<C>> Run { get; set; } = (_, _) => { };
-
-    /// <summary>
-    /// Returns a dictionary of all atached subparsers with keys being names of the 
-    /// commands attached to the parsers.
-    /// <para>See <see cref="AddSubparser(string, IParser)"</see></para>
-    /// </summary>
-    public ReadOnlyDictionary<string, IParser> SubParsers => this.subparsers.AsReadOnly();
-
-    /// <summary>
-    /// Attach a subparser to this parser as a subcommand <paramref name="command"/>. 
-    /// The subparser is then triggered and used to parse the rest of the input after the command
-    /// token is found in input.
-    /// <para>
-    /// See <see cref="Parser{C}"/>.
-    /// </para>
-    /// </summary>
-    /// <param name="command">A string command with which the subparser will be triggred. May not contain spaces</param>
-    /// <param name="commandParser">Parser to attach.</param>
-    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
-    public partial Parser<C> AddSubparser(string command, IParser commandParser);
-
-
-    /// <summary>
-    /// Returns all flag-like options attached to the parser via the methods <see cref="AddFlag(Flag{C})"/> and <see cref="AddFlags(Flag{C}[])"/>.
-    /// </summary>
+    /// <inheritdoc/>
+    public ReadOnlyDictionary<string, IParser> SubParsers => subparsers.AsReadOnly();
+    /// <inheritdoc/>
+    public partial IParser<C> AddSubparser(string command, IParser commandParser);
+    /// <inheritdoc/>
     public ReadOnlyCollection<Flag<C>> Flags => flags.AsReadOnly();
-
-    /// <summary>
-    /// Attach a flag-like option to the parser.
-    /// <para>To attach more <see cref="Flag{C}"/> objects at once, see <see cref="AddFlags(Flag{C}[])"/></para>
-    /// <para>
-    /// </summary>
-    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
-    /// <exception cref="InvalidParserConfigurationException">On invalid parser configuration, e.g. duplicate flag name</exception>
-    public partial Parser<C> AddFlag(Flag<C> flag);
-    /// <summary>
-    /// Attach one or more flag-like options to the parser.
-    /// <para>
-    /// See also
-    /// </para>
-    /// <seealso cref="Flag{C}"/>.
-    /// </summary>
-    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
-    /// <exception cref="InvalidParserConfigurationException">On invalid parser configuration, e.g. duplicate flag name</exception>
-
-    public partial Parser<C> AddFlags(params Flag<C>[] flags);
-    /// <summary>
-    /// Returns all value options attached to the parser via the methods <see cref="AddFlag(Flag{C})"/> and <see cref="AddFlags(Flag{C}[])"/>.
-    /// <para>
-    /// See also
-    /// <seealso cref="Option{C, V}"/>.
-    /// </para>
-    /// </summary>
+    /// <inheritdoc/>
+    public partial IParser<C> AddFlag(Flag<C> flag);
+    /// <inheritdoc/>
+    public partial IParser<C> AddFlags(params Flag<C>[] flags);
+    /// <inheritdoc/>
     public ReadOnlyCollection<IOption<C>> Options => options.AsReadOnly();
-
-    /// <summary>
-    /// Attach a value option to the parser.
-    /// <para>To attach more <see cref="Option{C,V}"/> objects at once, see <see cref="AddOptions(IOption{C}[])"/></para>
-    /// <para> See also
-    /// <seealso cref="Option{C, V}"/>
-    /// <seealso cref="OptionFactory"/>
-    /// </para>
-    /// </summary>
-    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
-    /// <exception cref="InvalidParserConfigurationException">On invalid parser configuration, e.g. duplicate option name</exception>
-    public partial Parser<C> AddOption(IOption<C> option);
-    /// <summary>
-    /// Attach one or more value options to the parser.
-    /// <para> See also
-    /// <seealso cref="Option{C, V}"/>,
-    /// <seealso cref="OptionFactory"/>
-    /// </para>
-    /// </summary>
-    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
-    /// <exception cref="InvalidParserConfigurationException">On invalid parser configuration, e.g. duplicate option name</exception>
-    public partial Parser<C> AddOptions(params IOption<C>[] options);
-
-    /// <summary>
-    /// Returns all plain arguments attached to the parser via the methods <see cref="AddArgument(IArgument{C}))"/> and <see cref="AddArguments(IArgument{C}[])"/>.
-    /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
-    /// </summary>
+    /// <inheritdoc/>
+    public partial IParser<C> AddOption(IOption<C> option);
+    /// <inheritdoc/>
+    public partial IParser<C> AddOptions(params IOption<C>[] options);
+    /// <inheritdoc/>
     public ReadOnlyCollection<IArgument<C>> Arguments => plainArguments.AsReadOnly();
-
-    /// <summary>
-    /// Attach a plain argument to the parser.
-    /// <para>To attach more plain arguments at once, use <see cref="AddArguments(IArgument{C}[])"/>.</para>
-    /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
-    /// </summary>
-    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
-    /// <exception cref="InvalidParserConfigurationException">If the argument comes
-    /// after an argument with multiplicity set to <see cref="ArgumentMultiplicity.AllThatFollow"></exception>
-    public partial Parser<C> AddArgument(IArgument<C> argument);
-
-    /// <summary>
-    /// Attach one or more plain arguments to the parser.
-    /// <para>See also <seealso cref="Argument{C, V}"/>.</para>
-    /// </summary>
-    /// <returns>The parent parser as to allow for chaining of calls and fluent syntax.</returns>
-    /// <exception cref="InvalidParserConfigurationException">If there is an argument which comes
-    /// after an argument with multiplicity set to <see cref="ArgumentMultiplicity.AllThatFollow"></exception>
-    public partial Parser<C> AddArguments(params IArgument<C>[] arguments);
+    /// <inheritdoc/>
+    public partial IParser<C> AddArgument(IArgument<C> argument);
+    /// <inheritdoc/>
+    public partial IParser<C> AddArguments(params IArgument<C>[] arguments);
 
     /// <summary>
     /// Creates parser with config context <typeparamref name="C"/>.
@@ -173,20 +89,14 @@ public partial record class Parser<C> : IParser
         ConfigFactory = configFactory;
     }
 
-    /// <summary>
-    /// Prints a formatted help message to the provided output <c>TextWriter</c> with information
-    /// about parser usage, arguments, options, and subcommand parsers as formatted by the provided <paramref name="formatter"/>
-    /// </summary>
+    /// <inheritdoc/>
     public void PrintHelp(IParserHelpFormatter<C> formatter, TextWriter writer) => formatter.PrintHelp(this, writer);
     /// <summary>
     /// Prints a formatted help message to the provided output <c>TextWriter</c> with information
     /// about parser usage, arguments, options, and subcommand parsers as formatted by <see cref="DefaultHelpFormatter{T}"/>
     /// </summary>
     public void PrintHelp(TextWriter writer) => PrintHelp(new DefaultHelpFormatter<C>(), writer);
-    /// <summary>
-    /// Prints a formatted help message to the console with information
-    /// about parser usage, arguments, options, and subcommand parsers as formatted by the provided <paramref name="formatter"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public void PrintHelp(IParserHelpFormatter<C> formatter) => PrintHelp(formatter, Console.Out);
     /// <summary>
     /// Prints a formatted help message to the console with information
