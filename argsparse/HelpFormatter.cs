@@ -44,6 +44,8 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
         writer.Write(string.Join(',', parser.Names));
         if (parser.Options.Any() || parser.Flags.Any())
             writer.Write(" [options]");
+        if (parser.SubParsers.Any())
+            writer.Write(" [commands]");
         if (parser.Arguments.Any())
         {
             foreach (var arg in parser.Arguments)
