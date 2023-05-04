@@ -98,7 +98,7 @@
                 Converter = ConverterFactory.CreateStringConverter(),
             };
 
-            parser.AddOptions(new IOption<TestConfiguration>[] { intOption, stringOption });
+            parser.AddOptions(intOption, stringOption);
 
             var options = parser.Options;
 
@@ -161,15 +161,8 @@
                 Throws.TypeOf<InvalidParserConfigurationException>());
         }
         [Test]
-        public void AddOptionWithoutNameFailsWithException()
+        public void CreateOptionWithoutNameFailsWithException()
         {
-            var config = new TestConfiguration();
-            var parser = new Parser<TestConfiguration>(config)
-            {
-                Names = new string[] { "test" },
-                Description = "Test description."
-            };
-
             Assert.That(() => new Option<TestConfiguration, string>
             {
                 Names = new string[] { },
@@ -180,15 +173,8 @@
         }
 
         [Test]
-        public void AddOptionWithInvalidNameFailsWithException()
+        public void CreateOptionWithInvalidNameFailsWithException()
         {
-            var config = new TestConfiguration();
-            var parser = new Parser<TestConfiguration>(config)
-            {
-                Names = new string[] { "test" },
-                Description = "Test description."
-            };
-
             Assert.That(() => new Option<TestConfiguration, string>
             {
                 Names = new string[] { "--valid", "invalid1", "invalid2" },
