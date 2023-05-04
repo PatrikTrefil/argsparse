@@ -17,14 +17,14 @@ public partial record class Parser<C>
     private static partial Regex LongOptionPassed();
 
 
-    List<Flag<C>> flags = new();
-    List<IOption<C>> options = new();
-    List<IArgument<C>> plainArguments = new();
+    readonly List<Flag<C>> flags = new();
+    readonly List<IOption<C>> options = new();
+    readonly List<IArgument<C>> plainArguments = new();
 
-    Dictionary<string, IOption<C>> optionsMap = new();
-    Dictionary<string, Flag<C>> flagsMap = new();
+    readonly Dictionary<string, IOption<C>> optionsMap = new();
+    readonly Dictionary<string, Flag<C>> flagsMap = new();
 
-    Dictionary<string, IParser> subparsers = new();
+    readonly Dictionary<string, IParser> subparsers = new();
 
     public partial Parser<C> AddSubparser(string command, IParser commandParser)
     {
