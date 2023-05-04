@@ -329,7 +329,7 @@ public partial record class Parser<C>
         {
             if (plainArguments.Contains(argument))
                 throw new InvalidParserConfigurationException(
-                    $"Argument {argument} is already added to the parser.");
+                    $"Argument {argument} is already added to the parser. If you want to accept more values, you should set the multiplicity of the argument.");
 
             var lastArg = plainArguments.Last();
             if (lastArg.Multiplicity is ArgumentMultiplicity.AllThatFollow)
