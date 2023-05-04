@@ -12,8 +12,9 @@ public interface IOption<C>
     /// Names of short options are prefixed with one dash '-'
     /// One option can represent both long and short options
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown when set to an empty array or any of the
+    /// provided names is in an invalid format.</exception>
     public string[] Names { get; init; }
-
     /// <summary>
     /// Description of the option as it should appear in help write-up.
     /// </summary>
@@ -41,11 +42,11 @@ public sealed partial record class Option<C, V> : IOption<C>
 {
     [GeneratedRegex("(^--[a-zA-Z1-9]+[a-zA-Z1-9-]*$)|(^-[a-zA-Z]$)")]
     private static partial Regex LongOrShortName();
-
+    /// <value>
+    /// Backing field for <see cref="Names"/>
+    /// </value>
     private readonly string[] names;
-    /// <summary>Array of names of the option. It must be set to a non-empty array.</summary>
-    /// <exception cref="ArgumentException">Thrown when set to an empty array or the any of the
-    /// provided names is in an invalid format.</exception>
+    /// <inheritdoc/>
     public required string[] Names
     {
         get => names; init
@@ -60,12 +61,15 @@ public sealed partial record class Option<C, V> : IOption<C>
             names = value;
         }
     }
+    /// <inheritdoc/>
     public string ValuePlaceHolder { get; init; } = "<value>";
+    /// <inheritdoc/>
     public required string Description { get; init; }
     /// <summary>
     /// Action to be carried out upon parsing and conversion of the option from the input.
     /// </summary>
     public required Action<C, V> Action { get; init; }
+    /// <inheritdoc/>
     public bool IsRequired { get; init; } = false;
     /// <summary>
     /// Function to convert the option value parsed as a string from the input to the target type.
@@ -78,6 +82,7 @@ public sealed partial record class Option<C, V> : IOption<C>
     /// </para>
     /// </remarks>
     public required Func<string, V> Converter { get; init; }
+    /// <inheritdoc/>
     void IOption<C>.Process(C config, string value)
     {
         V convertedValue;

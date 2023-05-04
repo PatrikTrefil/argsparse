@@ -13,6 +13,9 @@ public sealed partial record class Flag<C>
 {
     [GeneratedRegex("(^--[a-zA-Z1-9]+[a-zA-Z1-9-]*$)|(^-[a-zA-Z]$)")]
     private static partial Regex LongOrShortName();
+    /// <value>
+    /// Backing field for <see cref="Names"/>
+    /// </value>
     private readonly string[] names;
     /// <summary>
     /// Names the options as they will be parsed by the parser.

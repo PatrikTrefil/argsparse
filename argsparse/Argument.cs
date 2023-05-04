@@ -67,7 +67,6 @@ public interface IArgument<C>
     /// Description of the argument as it should appear in help write-up.
     /// </summary>
     public string Description { get; init; }
-
     /// <summary>
     /// Value placeholder will be used in synopsis and appear in help write-up, 
     /// e.g. program [options] <value-placeholder>
@@ -86,12 +85,18 @@ public interface IArgument<C>
     /// Only one non-required argument is allowed per parser.
     /// Do not mix non-required <see cref="SpecificCount"/> arguments with <see cref="AllThatFollow"/></remarks>
     public ArgumentMultiplicity Multiplicity { get; init; }
+    /// <summary>
+    /// Process is called when the argument is encountered in the input.
+    /// </summary>
+
     internal void Process(C config, string value);
 }
 
 public sealed record class Argument<C, V> : IArgument<C>
 {
+    /// <inheritdoc/>
     public required string Description { get; init; }
+    /// <inheritdoc/>
     public string ValuePlaceholder { get; init; } = "<arg>";
     /// <summary>
     /// Function to convert the argument value parsed as a string from the input to the target type.
@@ -111,11 +116,9 @@ public sealed record class Argument<C, V> : IArgument<C>
     /// <value>Converters may throw exceptions, 
     /// they will be caught and the parser will throw <see cref="ParserConversionException"/></value>
     public required Action<C, V> Action { get; init; }
-
+    /// <inheritdoc/>
     public ArgumentMultiplicity Multiplicity { get; init; } = new ArgumentMultiplicity.SpecificCount(Number: 1, IsRequired: true);
-    /// <summary>
-    /// Process is called when the argument is encountered in the input.
-    /// </summary>
+    /// <inheritdoc/>
     void IArgument<C>.Process(C config, string value)
     {
         V convertedValue = Converter(value);
