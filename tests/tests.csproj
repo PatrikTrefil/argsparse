@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\argsparse\Argparse.csproj" />
-    <ProjectReference Include="..\examples\examples.csproj" />
+    <ProjectReference Include="..\examples\Examples.csproj" />
     <ProjectReference Include="..\numactl\Numactl.csproj" />
   </ItemGroup>
 
