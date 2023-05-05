@@ -20,13 +20,13 @@ public class ComplexExample
             () => new ComplexExampleCommandConfig()
             )
         {
-            Names = new string[] { "My program" },
+            Names = new() { "My program" },
             Description = "My description",
             Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
         };
         toplevelParser.AddFlag(new Flag<ComplexExampleCommandConfig>
         {
-            Names = new string[] { "-h", "--help" },
+            Names = new() { "-h", "--help" },
             Description = "Print help",
             Action = (c) => { c.help = true; }
         });
@@ -35,13 +35,13 @@ public class ComplexExample
             () => new ComplexExampleSubCommandConfig()
             )
         {
-            Names = new string[] { "subcommand" },
+            Names = new() { "subcommand" },
             Description = "My subcommand description",
             Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
         };
         subcommandParser.AddFlag(new Flag<ComplexExampleSubCommandConfig>()
         {
-            Names = new string[] { "-h", "--help" },
+            Names = new() { "-h", "--help" },
             Description = "Print help",
             Action = (c) => { c.help = true; }
         });

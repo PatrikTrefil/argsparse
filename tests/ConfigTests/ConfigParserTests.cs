@@ -9,7 +9,7 @@ namespace TestsArgparseAPI.ConfigTests
         {
             var parser = new Parser<TestConfiguration>(() => new TestConfiguration())
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test parser."
             };
 

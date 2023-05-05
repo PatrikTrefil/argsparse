@@ -288,7 +288,7 @@ public partial record class Parser<C>
     }
 
 
-    private void CheckConflictingOptionsAndFlags(string[] names, object what)
+    private void CheckConflictingOptionsAndFlags(HashSet<string> names, object what)
     {
         foreach (var name in names)
         {

@@ -14,7 +14,7 @@ class NumaParser
     {
         parser = new Parser<NumaCtlArgs>(args)
         {
-            Names = new string[] { "numactl" },
+            Names = new() { "numactl" },
             Description = "Run a program under control of numactl.",
             Run = (result, _) => args = result
         };
@@ -45,14 +45,14 @@ class NumaParser
     {
         parser.AddFlag(new Flag<NumaCtlArgs>
         {
-            Names = new string[] { "-h", "--help" },
+            Names = new() { "-h", "--help" },
             Description = "Show help for the program.",
             Action = (x) => x.Help = true,
         });
 
         parser.AddOption(new Option<NumaCtlArgs, List<int>>
         {
-            Names = new string[] { "-i", "--interleave" },
+            Names = new() { "-i", "--interleave" },
             Description = "Interleave memory allocation across given nodes.",
             Action = (x, v) => x.Interleave = v,
             Converter = ConverterFactory.CreateListConverter(int.Parse),
@@ -60,7 +60,7 @@ class NumaParser
 
         parser.AddOption(new Option<NumaCtlArgs, int>
         {
-            Names = new string[] { "-p", "--preferred" },
+            Names = new() { "-p", "--preferred" },
             Description = "Prefer memory allocations from given node.",
             Action = (x, v) => x.Preferred = v,
             Converter = ConverterFactory.CreateIntConverter()
@@ -68,7 +68,7 @@ class NumaParser
 
         parser.AddOption(new Option<NumaCtlArgs, List<int>>
         {
-            Names = new string[] { "-m", "--membind" },
+            Names = new() { "-m", "--membind" },
             Description = "Allocate memory from given nodes only.",
             Action = (x, v) => x.MemBind = v,
             Converter = ConverterFactory.CreateListConverter(int.Parse),
@@ -76,7 +76,7 @@ class NumaParser
 
         parser.AddOption(new Option<NumaCtlArgs, List<int>>
         {
-            Names = new string[] { "-C", "--physcpubind" },
+            Names = new() { "-C", "--physcpubind" },
             Description = "Run on given CPUs only.",
             Action = (x, v) => x.PhysCpuBind = v,
             Converter = ConverterFactory.CreateListConverter(int.Parse),
@@ -84,14 +84,14 @@ class NumaParser
 
         parser.AddFlag(new Flag<NumaCtlArgs>
         {
-            Names = new string[] { "-S", "--show" },
+            Names = new() { "-S", "--show" },
             Description = "Show current NUMA policy.",
             Action = (x) => x.Show = true,
         });
 
         parser.AddFlag(new Flag<NumaCtlArgs>
         {
-            Names = new string[] { "-H", "--hardware" },
+            Names = new() { "-H", "--hardware" },
             Description = "Print hardware configuration.",
             Action = (x) => x.Hardware = true,
         });

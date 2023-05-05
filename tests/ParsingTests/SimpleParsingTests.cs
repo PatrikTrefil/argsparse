@@ -23,13 +23,13 @@ public class SimpleParsingTests
         _config = new TestConfig();
         _parser = new Parser<TestConfig>(_config)
         {
-            Names = new[] { "program" },
+            Names = new() { "program" },
             Description = "Program description"
         };
 
         var exampleFlag = new Flag<TestConfig>()
         {
-            Names = new[] { "-f", "--flag" },
+            Names = new() { "-f", "--flag" },
             Description = "Example flag",
             Action = storage => { storage.Flag = true; }
         };
@@ -37,7 +37,7 @@ public class SimpleParsingTests
 
         var stringOption = new Option<TestConfig, string>
         {
-            Names = new[]
+            Names = new()
             {
                 "-s",
                 "--string"
@@ -53,7 +53,7 @@ public class SimpleParsingTests
 
         var intOption = new Option<TestConfig, int>
         {
-            Names = new[]
+            Names = new()
             {
                 "-i",
                 "--int"
@@ -70,7 +70,7 @@ public class SimpleParsingTests
 
         var intListOption = new Option<TestConfig, List<int>>
         {
-            Names = new[]
+            Names = new()
             {
                 "-l",
                 "--int-list"

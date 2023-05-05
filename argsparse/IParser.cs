@@ -12,7 +12,7 @@ public interface IParser
 {
     /// <value>The parser name as it will appear in help and debug messages. The names must not start with "-" or "--".
     /// There must be at least one name.</value>
-    public string[] Names { get; init; }
+    public HashSet<string> Names { get; init; }
     /// <value>The parser description as it will appear in help.</value>
     public string Description { get; init; }
     /// <value>Used to configure the arguments delimiter,

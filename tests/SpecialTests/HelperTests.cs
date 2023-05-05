@@ -17,7 +17,7 @@ public class HelperTests
     {
         var flag = new Flag<TestConfig>
         {
-            Names = new[] { "--flag", "-f" },
+            Names = new() { "--flag", "-f" },
             Description = "A flag for testing purposes",
             Action = config => config.Flag = true
         };
@@ -52,7 +52,7 @@ public class HelperTests
     {
         var option = new Option<TestConfig, int>
         {
-            Names = new[] { "--option", "-o" },
+            Names = new() { "--option", "-o" },
             Description = "An integer option for testing purposes",
             Converter = ConverterFactory.CreateIntConverter(),
             Action = (config, value) => config.IntValue = value,

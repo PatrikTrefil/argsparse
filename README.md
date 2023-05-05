@@ -70,7 +70,7 @@ static void SimpleExample(string[] args)
 
     var helpFlag = new Flag<ExampleConfiguration>()
     {
-        Names = new string[] { "-h", "--help" },
+        Names = new() { "-h", "--help" },
         Description = "Show help",
         Action = (storage) => { storage.help = true; }
     };
@@ -79,7 +79,7 @@ static void SimpleExample(string[] args)
 
     var algorithmOption = OptionFactory.CreateStringOption<ExampleConfiguration>() with
     {
-        Names = new string[] { "-a", "--algorithm" },
+        Names = new() { "-a", "--algorithm" },
         Description = "Set algorithm to use",
         Action = (storage, value) => { storage.algorithm = value; }
     };

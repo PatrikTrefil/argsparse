@@ -18,7 +18,7 @@ public class SpecificParsingTests
         var config = new ArgumentConfig();
         var parser = new Parser<ArgumentConfig>(config)
         {
-            Names = new[]
+            Names = new()
                 {"program"},
             Description = null
         };
@@ -75,14 +75,14 @@ public class SpecificParsingTests
         var config = new ArgumentConfig();
         var parser = new Parser<ArgumentConfig>(config)
         {
-            Names = new[]
+            Names = new()
                 {"program"},
             Description = null
         };
 
         var intOption = new Option<ArgumentConfig, int>
         {
-            Names = new[] { "--int-option", "-i" },
+            Names = new() { "--int-option", "-i" },
             Description = "Example int option",
             Converter = ConverterFactory.CreateIntConverter(),
             Action = (storage, value) =>
@@ -137,14 +137,14 @@ public class SpecificParsingTests
         var config = new RequiredOptionConfig();
         var parser = new Parser<RequiredOptionConfig>(config)
         {
-            Names = new[]
+            Names = new()
                 {"program"},
             Description = null
         };
 
         var requiredOption = new Option<RequiredOptionConfig, string>
         {
-            Names = new[]
+            Names = new()
             {
                 "-r",
                 "--required"

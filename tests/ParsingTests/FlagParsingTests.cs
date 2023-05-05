@@ -19,20 +19,20 @@ namespace TestsArgparseAPI.ParsingTests
             config = new FlagTestConfig();
             parser = new Parser<FlagTestConfig>(config)
             {
-                Names = new string[] { "flagTest" },
+                Names = new() { "flagTest" },
                 Description = "test inputs for flags"
             };
 
             parser.AddFlag(new Flag<FlagTestConfig>
             {
-                Names = new[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
             });
 
             parser.AddFlag(new Flag<FlagTestConfig>
             {
-                Names = new[] { "-v", "--version" },
+                Names = new() { "-v", "--version" },
                 Description = "Show version",
                 Action = storage => { storage.Version = true; }
             });

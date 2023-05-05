@@ -14,13 +14,13 @@ public class SimpleExample
 
         var parser = new Parser<ExampleConfiguration>(config)
         {
-            Names = new string[] { "program" },
+            Names = new() { "program" },
             Description = "Program description"
         };
 
         var helpFlag = new Flag<ExampleConfiguration>()
         {
-            Names = new string[] { "-h", "--help" },
+            Names = new() { "-h", "--help" },
             Description = "Show help",
             Action = (storage) => { storage.help = true; }
         };
@@ -29,7 +29,7 @@ public class SimpleExample
 
         var algorithmOption = new Option<ExampleConfiguration, string>
         {
-            Names = new string[] { "-a", "--algorithm" },
+            Names = new() { "-a", "--algorithm" },
             Description = "Set algorithm to use",
             Action = (storage, value) => { storage.algorithm = value; },
             Converter = ConverterFactory.CreateStringConverter(),

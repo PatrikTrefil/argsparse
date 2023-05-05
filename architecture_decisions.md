@@ -21,7 +21,7 @@ Example of object initializer:
 ```csharp
 var flag = new Flag<Config>
 {
-    Names = new[] { "-h", "--help" },
+    Names = new() { "-h", "--help" },
     Description = "Print help",
     Action = (config, value) => { config.PrintHelp = true; }
 };

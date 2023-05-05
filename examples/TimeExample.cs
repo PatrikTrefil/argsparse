@@ -23,13 +23,13 @@ public class TimeExample
 
         var parser = new Parser<TimeCommandConfiguration>(config)
         {
-            Names = new string[] { "time" },
+            Names = new() { "time" },
             Description = "Program to print information about time"
         };
 
         var helpFlag = new Flag<TimeCommandConfiguration>()
         {
-            Names = new string[] { "-h", "--help" },
+            Names = new() { "-h", "--help" },
             Description = "Print a usage message on standard output and exit successfully.",
             Action = (storage) => { storage.help = true; }
         };
@@ -38,7 +38,7 @@ public class TimeExample
 
         var versionFlag = new Flag<TimeCommandConfiguration>()
         {
-            Names = new string[] { "-V", "--version" },
+            Names = new() { "-V", "--version" },
             Description = "Print version information on standard output, then exit successfully.",
             Action = (storage) => { storage.version = true; }
         };
@@ -46,7 +46,7 @@ public class TimeExample
 
         var appendFlag = new Flag<TimeCommandConfiguration>()
         {
-            Names = new string[] { "-a", "--append" },
+            Names = new() { "-a", "--append" },
             Description = "(Used together with -o.) Do not overwrite but append.",
             Action = (storage) => { storage.append = true; }
         };
@@ -54,7 +54,7 @@ public class TimeExample
 
         var verboseFlag = new Flag<TimeCommandConfiguration>()
         {
-            Names = new string[] { "-v", "--verbose" },
+            Names = new() { "-v", "--verbose" },
             Description = "Give very verbose output about all the program knows about.",
             Action = (storage) => { storage.verbose = true; }
         };
@@ -62,7 +62,7 @@ public class TimeExample
 
         var portabilityFlag = new Flag<TimeCommandConfiguration>()
         {
-            Names = new string[] { "-p", "--portability" },
+            Names = new() { "-p", "--portability" },
             Description = "Use the portable output format.",
             Action = (storage) => { storage.portability = true; }
         };
@@ -71,7 +71,7 @@ public class TimeExample
 
         var formatOption = new Option<TimeCommandConfiguration, string>
         {
-            Names = new string[] { "-f", "--format" },
+            Names = new() { "-f", "--format" },
             Description = "Specify output format, possibly overriding the format specified in the environment variable TIME.",
             ValuePlaceHolder = "FORMAT",
             Action = (storage, value) =>
@@ -84,7 +84,7 @@ public class TimeExample
 
         var outputFileOption = new Option<TimeCommandConfiguration, string>
         {
-            Names = new string[] { "-o", "--output" },
+            Names = new() { "-o", "--output" },
             Description = "Do not send the results to stderr, but overwrite the specified file.",
             ValuePlaceHolder = "FILE",
             Converter = ConverterFactory.CreateStringConverter(),

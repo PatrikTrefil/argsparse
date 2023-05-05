@@ -47,14 +47,14 @@
             () => new RootCommandConfig()
             )
             {
-                Names = new string[] { "program" },
+                Names = new() { "program" },
                 Description = "My description",
                 Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
             };
 
             toplevelParser.AddFlag(new Flag<RootCommandConfig>
             {
-                Names = new string[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Print help",
                 Action = (c) => { c.help = true; }
             });
@@ -63,7 +63,7 @@
                 () => new SubCommandConfig()
                 )
             {
-                Names = new string[] { "subcommand" },
+                Names = new() { "subcommand" },
                 Description = "My subcommand description",
                 Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
             };
@@ -71,7 +71,7 @@
             // subcommand parser definition
             subcommandParser.AddFlag(new Flag<SubCommandConfig>()
             {
-                Names = new string[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Print help",
                 Action = (c) => { c.help = true; }
             });
@@ -91,14 +91,14 @@
                 () => new SecondSubCommandConfig()
                 )
             {
-                Names = new string[] { "secondsubcommand" },
+                Names = new() { "secondsubcommand" },
                 Description = "My subcommand description",
                 Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
             };
 
             secondsubcommandParser.AddFlag(new Flag<SecondSubCommandConfig>()
             {
-                Names = new string[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Print help",
                 Action = (c) => { c.help = true; }
             });
@@ -116,14 +116,14 @@
                 () => new SecondSubCommandConfig()
                 )
             {
-                Names = new string[] { "nestedcommand" },
+                Names = new() { "nestedcommand" },
                 Description = "My subcommand description",
                 Run = (c, _) => { Console.WriteLine("I will run after my config is ready"); }
             };
 
             nestedsubcommandParser.AddFlag(new Flag<SecondSubCommandConfig>()
             {
-                Names = new string[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Print help",
                 Action = (c) => { c.help = true; }
             });

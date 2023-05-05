@@ -42,7 +42,7 @@ internal static class GitSubcommandsExample {
         {
             return new Flag<T>()
             {
-                Names = new string[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Print help",
                 Action = (config) => { config.Help = true; }
             };
@@ -51,7 +51,7 @@ internal static class GitSubcommandsExample {
 
         var PushParser = new Parser<GitPushConfig>(() => new GitPushConfig())
         {
-            Names = new string[] {"push"},
+            Names = new() {"push"},
             Description = "Pushes to a remote repository",
             Run = (config, parser) =>
             {
@@ -69,7 +69,7 @@ internal static class GitSubcommandsExample {
         PushParser.AddFlag(MakeHelpFlag<GitPushConfig>());
         PushParser.AddFlag(new Flag<GitPushConfig>()
         {
-            Names = new string[] { "-t", "--tags" },
+            Names = new() { "-t", "--tags" },
             Description = "Pushes tags",
             Action = (config) => { config.Tags = true; }
         });
@@ -96,7 +96,7 @@ internal static class GitSubcommandsExample {
 
         var CloneParser = new Parser<GitCloneConfig>(() => new GitCloneConfig())
         {
-            Names = new string[] { "clone" },
+            Names = new() { "clone" },
             Description = "Clones a remote repository",
             Run = (config, parser) =>
             {
@@ -124,7 +124,7 @@ internal static class GitSubcommandsExample {
 
         var LogParser = new Parser<GitLogConfig>(() => new GitLogConfig())
         {
-            Names = new string[] { "log" },
+            Names = new() { "log" },
             Description = "Shows the commit log",
             Run = (config, parser) =>
             {
@@ -142,7 +142,7 @@ internal static class GitSubcommandsExample {
 
         LogParser.AddFlag(new Flag<GitLogConfig>()
         {
-            Names = new string[] { "-p", "--pretty" },
+            Names = new() { "-p", "--pretty" },
             Description = "Pretty prints the log",
             Action = (config) => { config.prettyPrint = true; }
         });
@@ -151,7 +151,7 @@ internal static class GitSubcommandsExample {
 
         var GitParser = new Parser<GitConfig>(() => new GitConfig())
         {
-            Names = new string[] { "git" },
+            Names = new() { "git" },
             Description = "A git clone written in C#",
             Run = (config, parser) =>
             {
@@ -170,7 +170,7 @@ internal static class GitSubcommandsExample {
 
         GitParser.AddFlag(new Flag<GitConfig>()
         {
-            Names = new string[] { "-v", "--version" },
+            Names = new() { "-v", "--version" },
             Description = "Shows the version",
             Action = (config) => { config.Version = true; }
         });

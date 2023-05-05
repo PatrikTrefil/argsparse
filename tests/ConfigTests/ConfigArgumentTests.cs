@@ -9,7 +9,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
@@ -31,7 +31,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
@@ -53,7 +53,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
@@ -75,7 +75,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
@@ -106,7 +106,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
@@ -134,7 +134,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
@@ -166,7 +166,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
@@ -204,7 +204,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
@@ -236,7 +236,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
@@ -268,7 +268,7 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -14,7 +15,7 @@ public interface IOption<C>
     /// </summary>
     /// <exception cref="ArgumentException">Thrown when set to an empty array or any of the
     /// provided names is in an invalid format.</exception>
-    public string[] Names { get; init; }
+    public HashSet<string> Names { get; init; }
     /// <summary>
     /// Description of the option as it should appear in help write-up.
     /// </summary>
@@ -45,13 +46,13 @@ public sealed partial record class Option<C, V> : IOption<C>
     /// <value>
     /// Backing field for <see cref="Names"/>
     /// </value>
-    private readonly string[] names;
+    private readonly HashSet<string> names;
     /// <inheritdoc/>
-    public required string[] Names
+    public required HashSet<string> Names
     {
         get => names; init
         {
-            if (value.Length == 0)
+            if (value.Count == 0)
                 throw new ArgumentException("Option must have at least one name");
 
             var invalidOptionNames = value.Where(name => !LongOrShortName().IsMatch(name));
@@ -92,7 +93,7 @@ public sealed partial record class Option<C, V> : IOption<C>
         }
         catch (Exception ex)
         {
-            throw new ParserConversionException($"Value conversion for option {Names[0]} failed", ex);
+            throw new ParserConversionException($"Value conversion for option {Names.First()} failed", ex);
         }
         Action(config, convertedValue);
     }

@@ -30,8 +30,8 @@ public sealed class DefaultHelpFormatter<T> : IParserHelpFormatter<T>
     public void PrintHelp<T2>(IParser<T2> parser, TextWriter writer)
         where T2 : T
     {
-        if (parser.Names.Length > 0)
-            writer.WriteLine(parser.Names[0]);
+        if (parser.Names.Count > 0)
+            writer.WriteLine(parser.Names.First());
 
         if (parser.Description is not null)
         {

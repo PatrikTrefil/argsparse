@@ -51,13 +51,13 @@ namespace TestsArgparseAPI.ParsingTests
             requiredOptionConfig = new RequiredOptionTestsConfig();
             requiredOptionParser = new Parser<RequiredOptionTestsConfig>(requiredOptionConfig)
             {
-                Names = new string[] { "requiredOptionTest" },
+                Names = new() { "requiredOptionTest" },
                 Description = "test inputs for required option"
             };
 
             requiredOptionParser.AddOption(new Option<RequiredOptionTestsConfig, string>
             {
-                Names = new[] { "-s", "--str" },
+                Names = new() { "-s", "--str" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
@@ -65,7 +65,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             requiredOptionParser.AddOption(new Option<RequiredOptionTestsConfig, string>
             {
-                Names = new[] { "-S", "--Sstr" },
+                Names = new() { "-S", "--Sstr" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.SecondStringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
@@ -73,7 +73,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             requiredOptionParser.AddOption(new Option<RequiredOptionTestsConfig, int>
             {
-                Names = new[] { "-i", "--int" },
+                Names = new() { "-i", "--int" },
                 Description = "Test required option accepting int value",
                 Action = (storage, value) => { storage.IntRequiredOption = value; },
                 IsRequired = true,
@@ -87,13 +87,13 @@ namespace TestsArgparseAPI.ParsingTests
             config = new OptionTestsConfig();
             parser = new Parser<OptionTestsConfig>(config)
             {
-                Names = new string[] { "optionTest" },
+                Names = new() { "optionTest" },
                 Description = "test inputs for options"
             };
 
             parser.AddOption(new Option<OptionTestsConfig, string>
             {
-                Names = new[] { "-s", "--str" },
+                Names = new() { "-s", "--str" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
@@ -101,7 +101,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             parser.AddOption(new Option<OptionTestsConfig, int>
             {
-                Names = new[] { "-i", "--int" },
+                Names = new() { "-i", "--int" },
                 Description = "Test option accepting int value",
                 Action = (storage, value) => { storage.IntOption = value; },
                 Converter = ConverterFactory.CreateIntConverter(),
@@ -109,7 +109,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             parser.AddOption(new Option<OptionTestsConfig, bool>
             {
-                Names = new[] { "-b", "--bool" },
+                Names = new() { "-b", "--bool" },
                 Description = "Test option accepting bool value",
                 Action = (storage, value) => { storage.BoolOption = value; },
                 Converter = ConverterFactory.CreateBoolConverter(),
@@ -117,7 +117,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             parser.AddOption(new Option<OptionTestsConfig, Person>
             {
-                Names = new[] { "-p", "--person" },
+                Names = new() { "-p", "--person" },
                 Description = "Test option accepting person value",
                 Action = (storage, value) => { storage.PersonOption = value; },
                 Converter = TestConfiguration.PersonConvertor,
@@ -125,7 +125,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             parser.AddOption(new Option<OptionTestsConfig, List<int>>
             {
-                Names = new[] { "-l", "--list" },
+                Names = new() { "-l", "--list" },
                 Description = "Test option accepting list of int value.",
                 Action = (storage, value) => { storage.ListOption = value; },
                 Converter = ConverterFactory.CreateListConverter<int>(ConverterFactory.CreateIntConverter(), ',')

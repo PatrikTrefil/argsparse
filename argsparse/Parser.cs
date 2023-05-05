@@ -11,13 +11,13 @@ public partial record class Parser<C> : IParser<C>
     /// <value>
     /// Backing field of <see cref="Names"/>
     /// </value>
-    private string[] names;
+    private HashSet<string> names;
     /// <inheritdoc/>
-    public required string[] Names
+    public required HashSet<string> Names
     {
         get => names; init
         {
-            if (value.Length == 0)
+            if (value.Count == 0)
                 throw new ArgumentException("Parser must have at least one name");
 
             var invalidOptionNames = value.Where(name => name[0] == '-' || name[..2] == "--");

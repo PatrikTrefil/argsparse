@@ -11,13 +11,13 @@ namespace TestsArgparseAPI.ConfigTests
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             parser.AddFlag(new Flag<TestConfiguration>
             {
-                Names = new[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
             });
@@ -33,20 +33,20 @@ namespace TestsArgparseAPI.ConfigTests
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             var helpFlag = new Flag<TestConfiguration>
             {
-                Names = new[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
             };
 
             var versionFlag = new Flag<TestConfiguration>
             {
-                Names = new[] { "-v", "--version" },
+                Names = new() { "-v", "--version" },
                 Description = "Show version",
                 Action = storage => { storage.Version = true; }
             };
@@ -64,13 +64,13 @@ namespace TestsArgparseAPI.ConfigTests
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             var helpFlag = new Flag<TestConfiguration>
             {
-                Names = new[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
             };
@@ -87,20 +87,20 @@ namespace TestsArgparseAPI.ConfigTests
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             var helpFlag = new Flag<TestConfiguration>
             {
-                Names = new[] { "-h", "--help" },
+                Names = new() { "-h", "--help" },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
             };
 
             var helpFlag2 = new Flag<TestConfiguration>
             {
-                Names = new[] { "--help" },
+                Names = new() { "--help" },
                 Description = "Show second help",
                 Action = storage => { storage.Help = true; }
             };
@@ -117,13 +117,13 @@ namespace TestsArgparseAPI.ConfigTests
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             Assert.That(() => new Flag<TestConfiguration>
             {
-                Names = new string[] { },
+                Names = new() { },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
             }, Throws.TypeOf<ArgumentException>());
@@ -135,13 +135,13 @@ namespace TestsArgparseAPI.ConfigTests
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             Assert.That(() => new Flag<TestConfiguration>
             {
-                Names = new string[] { "--valid", "invalid1", "invalid2" },
+                Names = new() { "--valid", "invalid1", "invalid2" },
                 Description = "Show help",
                 Action = storage => { storage.Help = true; }
             }, Throws.TypeOf<ArgumentException>());

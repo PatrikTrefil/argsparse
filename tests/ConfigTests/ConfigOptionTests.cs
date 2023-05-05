@@ -9,13 +9,13 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             parser.AddOption(new Option<TestConfiguration, int>
             {
-                Names = new[] { "-i", "--int" },
+                Names = new() { "-i", "--int" },
                 Description = "Test option accepting int value",
                 Action = (storage, value) => { storage.IntOption = value; },
                 Converter = ConverterFactory.CreateIntConverter(),
@@ -32,13 +32,13 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             parser.AddOption(new Option<TestConfiguration, string>
             {
-                Names = new[] { "-s", "--str" },
+                Names = new() { "-s", "--str" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
@@ -55,13 +55,13 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             parser.AddOption(new Option<TestConfiguration, Person>
             {
-                Names = new[] { "-p", "--person" },
+                Names = new() { "-p", "--person" },
                 Description = "Test option accepting person value",
                 Action = (storage, value) => { storage.PersonOption = value; },
                 Converter = TestConfiguration.PersonConvertor,
@@ -78,13 +78,13 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             var intOption = new Option<TestConfiguration, int>
             {
-                Names = new[] { "-i", "--int" },
+                Names = new() { "-i", "--int" },
                 Description = "Test option accepting int value",
                 Action = (storage, value) => { storage.IntOption = value; },
                 Converter = ConverterFactory.CreateIntConverter(),
@@ -92,7 +92,7 @@
 
             var stringOption = new Option<TestConfiguration, string>
             {
-                Names = new[] { "-s", "--str" },
+                Names = new() { "-s", "--str" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
@@ -111,13 +111,13 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             var stringOption = new Option<TestConfiguration, string>
             {
-                Names = new[] { "-s", "--str" },
+                Names = new() { "-s", "--str" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
@@ -135,13 +135,13 @@
             var config = new TestConfiguration();
             var parser = new Parser<TestConfiguration>(config)
             {
-                Names = new string[] { "test" },
+                Names = new() { "test" },
                 Description = "Test description."
             };
 
             var stringOption = new Option<TestConfiguration, string>
             {
-                Names = new[] { "-s", "--str" },
+                Names = new() { "-s", "--str" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
@@ -149,7 +149,7 @@
 
             var stringOption2 = new Option<TestConfiguration, string>
             {
-                Names = new[] { "-s" },
+                Names = new() { "-s" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
@@ -165,7 +165,7 @@
         {
             Assert.That(() => new Option<TestConfiguration, string>
             {
-                Names = new string[] { },
+                Names = new() { },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),
@@ -177,7 +177,7 @@
         {
             Assert.That(() => new Option<TestConfiguration, string>
             {
-                Names = new string[] { "--valid", "invalid1", "invalid2" },
+                Names = new() { "--valid", "invalid1", "invalid2" },
                 Description = "Test option accepting string value",
                 Action = (storage, value) => { storage.StringOption = value; },
                 Converter = ConverterFactory.CreateStringConverter(),

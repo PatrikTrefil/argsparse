@@ -34,13 +34,13 @@ namespace TestsArgparseAPI.ParsingTests
             config = new MixedConfig();
             parser = new Parser<MixedConfig>(config)
             {
-                Names = new string[] { "mixed test" },
+                Names = new() { "mixed test" },
                 Description = "test mixed inputs"
             };
 
             parser.AddFlag(new Flag<MixedConfig>
             {
-                Names = new string[] { "--help", "-h" },
+                Names = new() { "--help", "-h" },
                 Description = "prints help message",
                 Action = (storage) => { throw new MixedConfig.HelpPassed(); },
             });
@@ -48,7 +48,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             parser.AddOption(new Option<MixedConfig, string>
             {
-                Names = new[] { "-s", "--required-string" },
+                Names = new() { "-s", "--required-string" },
                 Description = "option accepting required string value",
                 Action = (storage, value) => { storage.RequiredStringOption = value; },
                 IsRequired = true,
@@ -57,7 +57,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             parser.AddOption(new Option<MixedConfig, bool>
             {
-                Names = new[] { "-b", "--bool" },
+                Names = new() { "-b", "--bool" },
                 Description = "option accepting bool value",
                 Action = (storage, value) => { storage.BoolOption = value; },
                 Converter = ConverterFactory.CreateBoolConverter(),
@@ -65,7 +65,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             parser.AddOption(new Option<MixedConfig, int>
             {
-                Names = new[] { "-i", "--int" },
+                Names = new() { "-i", "--int" },
                 Description = "option accepting int value",
                 Action = (storage, value) => { storage.IntOption = value; },
                 Converter = ConverterFactory.CreateIntConverter(),
@@ -73,7 +73,7 @@ namespace TestsArgparseAPI.ParsingTests
 
             parser.AddOption(new Option<MixedConfig, List<int>>
             {
-                Names = new[] { "-l", "--list" },
+                Names = new() { "-l", "--list" },
                 Description = "option accepting list of int value",
                 Action = (storage, value) => { storage.ListOption = value; },
                 Converter = ConverterFactory.CreateListConverter<int>(ConverterFactory.CreateIntConverter(), ',')

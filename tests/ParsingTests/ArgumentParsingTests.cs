@@ -22,7 +22,7 @@ namespace TestsArgparseAPI.ParsingTests
             config = new ArgumentTestConfig();
             parser = new Parser<ArgumentTestConfig>(config)
             {
-                Names = new string[] { "argumentTest" },
+                Names = new() { "argumentTest" },
                 Description = "test inputs for arguments"
             };
 

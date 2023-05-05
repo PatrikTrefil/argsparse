@@ -148,28 +148,28 @@ public static class NumactlExample
     {
         parser.AddFlag(new Flag<NumactlConfiguration>
         {
-            Names = new[] { "-h", "--help" },
+            Names = new() { "-h", "--help" },
             Description = "Show help",
             Action = storage => { storage.Help = true; }
         });
 
         parser.AddFlag(new Flag<NumactlConfiguration>
         {
-            Names = new[] { "-H", "--hardware" },
+            Names = new() { "-H", "--hardware" },
             Description = "Show hardware information",
             Action = storage => { storage.Hardware = true; }
         });
 
         parser.AddFlag(new Flag<NumactlConfiguration>
         {
-            Names = new[] { "-S", "--show" },
+            Names = new() { "-S", "--show" },
             Description = "Show current NUMA policy",
             Action = storage => { storage.Show = true; }
         });
 
         parser.AddOption(new Option<NumactlConfiguration, List<int>>
         {
-            Names = new[] { "-C", "--physcpubind" },
+            Names = new() { "-C", "--physcpubind" },
             Description = "Run on given CPUs only",
             Action = (storage, value) => { storage.CpuNodeBind = value; },
             ValuePlaceHolder = "<cpus>",
@@ -178,7 +178,7 @@ public static class NumactlExample
 
         parser.AddOption(new Option<NumactlConfiguration, List<int>>
         {
-            Names = new[] { "-i", "--interleave" },
+            Names = new() { "-i", "--interleave" },
             Description = "Interleave memory allocation across given nodes",
             Action = (storage, value) => { storage.Interleave = value; },
             ValuePlaceHolder = "<nodes>",
@@ -187,7 +187,7 @@ public static class NumactlExample
 
         parser.AddOption(new Option<NumactlConfiguration, List<int>>
         {
-            Names = new[] { "-m", "--membind" },
+            Names = new() { "-m", "--membind" },
             Description = "Allocate memory from given nodes only",
             Action = (storage, value) => { storage.MemoryBind = value; },
             ValuePlaceHolder = "<nodes>",
@@ -197,7 +197,7 @@ public static class NumactlExample
 
         parser.AddOption(new Option<NumactlConfiguration, int>
         {
-            Names = new[] { "-p", "--preferred" },
+            Names = new() { "-p", "--preferred" },
             Description = "Prefer memory allocations from given node",
             Action = (storage, value) => { storage.Preferred = value; },
             ValuePlaceHolder = "<node>",
@@ -229,7 +229,7 @@ public static class NumactlExample
         var config = new NumactlConfiguration();
         var parser = new Parser<NumactlConfiguration>(config)
         {
-            Names = new string[] { "numactl" },
+            Names = new() { "numactl" },
             Description = "numactl description"
         };
 

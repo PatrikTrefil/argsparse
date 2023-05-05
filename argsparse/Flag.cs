@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -16,7 +17,7 @@ public sealed partial record class Flag<C>
     /// <value>
     /// Backing field for <see cref="Names"/>
     /// </value>
-    private readonly string[] names;
+    private readonly HashSet<string> names;
     /// <summary>
     /// Names the options as they will be parsed by the parser.
     /// Names of long options are prefixed with two dashes '--'
@@ -25,11 +26,11 @@ public sealed partial record class Flag<C>
     /// </summary>
     /// <exception cref="ArgumentException">Thrown when set to an empty array or the any of the
     /// provided names is in an invalid format.</exception>
-    public required string[] Names
+    public required HashSet<string> Names
     {
         get => names; init
         {
-            if (value.Length == 0)
+            if (value.Count == 0)
                 throw new ArgumentException("Flag must have at least one name");
 
             var invalidOptionNames = value.Where(name => !LongOrShortName().IsMatch(name));
