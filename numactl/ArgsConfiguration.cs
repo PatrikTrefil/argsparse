@@ -7,24 +7,23 @@ namespace Numactl;
 class NumaParser
 {
 
-    NumaCtlArgs args = new NumaCtlArgs();
+    NumaCtlArgs args = new();
 
-    private Parser<NumaCtlArgs> parser = new Parser<NumaCtlArgs>(() => new NumaCtlArgs())
-    {
-        Names = new string[] { "numactl" },
-        Description = "Run a program under control of numactl.",
-    };
-
+    private Parser<NumaCtlArgs> parser;
     public NumaParser()
     {
-        parser.Run = (result, _) => args = result;
+        parser = new Parser<NumaCtlArgs>(args)
+        {
+            Names = new string[] { "numactl" },
+            Description = "Run a program under control of numactl.",
+            Run = (result, _) => args = result
+        };
+
         Configure();
     }
 
     public NumaCtlArgs Parse(string[] rawArgs)
     {
-        args = new NumaCtlArgs();
-
         parser.ParseAndRun(rawArgs);
         args.AssertValid();
 
@@ -99,20 +98,20 @@ class NumaParser
 
         parser.AddArgument(new Argument<NumaCtlArgs, string>
         {
-            Description = "Command to be executed on NUMA architecture.",
-            ValuePlaceholder = "command",
-            Multiplicity = new ArgumentMultiplicity.SpecificCount(1, IsRequired: false),
-            Action = (x, v) => x.Command = v,
-            Converter = ConverterFactory.CreateStringConverter()
-        });
-
-        parser.AddArgument(new Argument<NumaCtlArgs, List<string>>
-        {
-            Description = "Arguments of the specified command.",
+            Description = "Command and arguments of the specified command.",
             ValuePlaceholder = "args",
             Multiplicity = new ArgumentMultiplicity.AllThatFollow(),
-            Action = (x, v) => x.CommandArgs = v,
-            Converter = ConverterFactory.CreateListConverter(ConverterFactory.CreateStringConverter())
+            Action = (x, v) =>
+            {
+                if (x.Command is null)
+                {
+                    x.Command = v;
+                    x.CommandArgs = new();
+                }
+                else
+                    x.CommandArgs.Add(v);
+            },
+            Converter = ConverterFactory.CreateStringConverter()
         });
     }
 }

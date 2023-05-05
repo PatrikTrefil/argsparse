@@ -14,9 +14,9 @@ public class Program
         }
         catch (InvalidProgramArgumentsException e)
         {
-            System.Console.WriteLine("Invalid program arguments:");
-            System.Console.WriteLine(e.Message + "\n");
-            System.Console.WriteLine("  ...see numactl --help");
+            Console.WriteLine("Invalid program arguments:");
+            Console.WriteLine(e.Message + "\n");
+            Console.WriteLine("  ...see numactl --help");
             return;
         }
 
@@ -26,11 +26,13 @@ public class Program
         }
         else if (args.ShowMode())
         {
-            // show mode logic
+            Console.WriteLine("Show mode");
+            // show mode logic ...
         }
         else if (args.HardwareMode())
         {
-            // hardware mode logic
+            Console.WriteLine("Hardware mode");
+            // hardware mode logic ...
         }
         else if (args.ExecutionMode())
         {
