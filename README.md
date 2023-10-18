@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project is not actively maintained. It was created as a part of a university course and is not intended for production use.
+
 # Argsparse
 
 This is a simple implementation of a command-line argument parser in C#.
@@ -110,3 +113,8 @@ doxygen
 
 For more information, see
 [Doxygen manual](https://www.doxygen.nl/manual/index.html).
+
+## Credits
+
+The API design, library code and documentation were developed by [Patrik Trefil](http://patriktrefil.com) and Zdeněk Tomis.
+The tests were written mostly by other anonymous students of the course.
