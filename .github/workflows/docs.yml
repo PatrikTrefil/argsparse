@@ -19,4 +19,4 @@ jobs:
         run: winget install --accept-source-agreements --accept-package-agreements -e --id DimitriVanHeesch.Doxygen
 
       - name: Run doxygen
-        run: doxygen
+        run: 'C:\Program` Files\doxygen\bin\doxygen.exe'
