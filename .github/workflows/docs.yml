@@ -11,6 +11,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Install winget
+        uses: Cyberboss/install-winget@v1
+        
       - name: Install doxygen
         run: winget install -e --id DimitriVanHeesch.Doxygen
 
