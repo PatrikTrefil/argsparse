@@ -114,6 +114,8 @@ doxygen
 For more information, see
 [Doxygen manual](https://www.doxygen.nl/manual/index.html).
 
+The documentation is also available [here](https://argsparse.patriktrefil.com/).
+
 ## Credits
 
 The API design, library code and documentation were developed by [Patrik Trefil](http://patriktrefil.com) and Zdeněk Tomis.
