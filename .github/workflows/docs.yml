@@ -16,7 +16,7 @@ jobs:
         uses: Cyberboss/install-winget@v1
         
       - name: Install doxygen
-        run: winget install -e --id DimitriVanHeesch.Doxygen
+        run: winget install --accept-source-agreements --accept-package-agreements -e --id DimitriVanHeesch.Doxygen
 
       - name: Run doxygen
         run: doxygen
