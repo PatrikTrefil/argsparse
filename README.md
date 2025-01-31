@@ -51,10 +51,10 @@ We define the following configuration class as "config context" for the parser:
 
 ```csharp
 internal record ExampleConfiguration
-    {
-        public string? algorithm;
-        public bool help = false;
-    }
+{
+    public string? algorithm;
+    public bool help = false;
+}
 ```
 
 Then we define the parser and run on console arguments:
